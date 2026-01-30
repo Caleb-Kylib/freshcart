@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -8,8 +8,15 @@ const LoginPage = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Dummy login check
-    if (email === "admin@example.com" && password === "password") {
+
+    const storedUser = JSON.parse(localStorage.getItem("adminUser"));
+
+    if (
+      storedUser &&
+      storedUser.email === email &&
+      storedUser.password === password
+    ) {
+      localStorage.setItem("isAdminLoggedIn", true);
       navigate("/admin");
     } else {
       alert("Invalid email or password");
@@ -22,27 +29,24 @@ const LoginPage = () => {
         <h2 className="text-2xl font-bold mb-6 text-green-700 text-center">
           Admin Login
         </h2>
+
         <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-gray-700">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-400 outline-none"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-700">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-400 outline-none"
-            />
-          </div>
+          <input
+            type="email"
+            placeholder="Email"
+            required
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-400 outline-none"
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            required
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-400 outline-none"
+          />
+
           <button
             type="submit"
             className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
@@ -50,6 +54,13 @@ const LoginPage = () => {
             Login
           </button>
         </form>
+
+        <p className="text-center text-sm mt-4">
+          No account?{" "}
+          <Link to="/signup" className="text-green-600 font-semibold">
+            Sign Up
+          </Link>
+        </p>
       </div>
     </div>
   );

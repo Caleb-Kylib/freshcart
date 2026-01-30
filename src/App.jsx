@@ -1,18 +1,20 @@
-import React, { useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 // User pages
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import Products from './pages/Products';
-import ProductDetails from './pages/ProductDetails';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import Products from "./pages/Products";
+import ProductDetails from "./pages/ProductDetails";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 
 // Admin pages
-import LoginPage from './pages/LoginPage';
-import AdminDashboard from './pages/AdminDashboard';
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -28,7 +30,7 @@ function App() {
       <ScrollToTop />
 
       <Routes>
-        {/* Public User Routes with Navbar + Footer */}
+        {/* User site layout */}
         <Route
           path="/*"
           element={
@@ -48,9 +50,19 @@ function App() {
           }
         />
 
-        {/* Admin Routes (no Navbar/Footer) */}
+        {/* Auth pages */}
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/admin/*" element={<AdminDashboard />} />
+        <Route path="/signup" element={<SignupPage />} />
+
+        {/* Protected Admin Dashboard */}
+        <Route
+          path="/admin/*"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
