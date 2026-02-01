@@ -15,6 +15,8 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminProducts from "./pages/AdminProducts";
+
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -53,6 +55,11 @@ function App() {
         {/* Auth pages */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+
+        {/* Admin pages */}
+        <Route path="/admin/products" element={<AdminProducts />} />
+
+
 
         {/* Protected Admin Dashboard */}
         <Route
