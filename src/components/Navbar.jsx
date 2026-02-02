@@ -8,6 +8,7 @@ const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { cartCount } = useCart();
     const location = useLocation();
+    const isAdminPath = location.pathname.startsWith('/admin');
 
     useEffect(() => {
         const handleScroll = () => {
@@ -33,27 +34,37 @@ const Navbar = () => {
 
                 {/* Desktop Menu */}
                 <div className="hidden md:flex items-center space-x-8">
-                    <Link to="/" className={`font-medium hover:text-primary transition-colors ${location.pathname === '/' ? 'text-primary' : 'text-gray-600'}`}>Home</Link>
-                    <Link to="/products" className={`font-medium hover:text-primary transition-colors ${location.pathname === '/products' ? 'text-primary' : 'text-gray-600'}`}>Shop</Link>
-                    <Link to="/products?category=Fruits" className="font-medium text-gray-600 hover:text-primary transition-colors">Fruits</Link>
-                    <Link to="/products?category=Vegetables" className="font-medium text-gray-600 hover:text-primary transition-colors">Vegetables</Link>
+                    {!isAdminPath ? (
+                        <>
+                            <Link to="/" className={`font-medium hover:text-primary transition-colors ${location.pathname === '/' ? 'text-primary' : 'text-gray-600'}`}>Home</Link>
+                            <Link to="/products" className={`font-medium hover:text-primary transition-colors ${location.pathname === '/products' ? 'text-primary' : 'text-gray-600'}`}>Shop</Link>
+                            <Link to="/products?category=Fruits" className="font-medium text-gray-600 hover:text-primary transition-colors">Fruits</Link>
+                            <Link to="/products?category=Vegetables" className="font-medium text-gray-600 hover:text-primary transition-colors">Vegetables</Link>
+                        </>
+                    ) : (
+                        <span className="text-gray-400 font-bold uppercase tracking-widest text-sm">Management Console</span>
+                    )}
                     <Link to="/admin" className="font-medium text-green-700 bg-green-50 px-4 py-1.5 rounded-full hover:bg-green-100 transition-colors border border-green-100">Admin</Link>
                 </div>
 
                 {/* Icons */}
                 <div className="flex items-center space-x-4">
-                    <button className="hidden md:block p-2 text-gray-600 hover:text-primary transition-colors">
-                        <Search size={22} />
-                    </button>
+                    {!isAdminPath && (
+                        <>
+                            <button className="hidden md:block p-2 text-gray-600 hover:text-primary transition-colors">
+                                <Search size={22} />
+                            </button>
 
-                    <Link to="/cart" className="relative p-2 text-gray-600 hover:text-primary transition-colors">
-                        <ShoppingBag size={22} />
-                        {cartCount > 0 && (
-                            <span className="absolute top-0 right-0 h-5 w-5 bg-orange-500 text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-white">
-                                {cartCount}
-                            </span>
-                        )}
-                    </Link>
+                            <Link to="/cart" className="relative p-2 text-gray-600 hover:text-primary transition-colors">
+                                <ShoppingBag size={22} />
+                                {cartCount > 0 && (
+                                    <span className="absolute top-0 right-0 h-5 w-5 bg-orange-500 text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-white">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </Link>
+                        </>
+                    )}
 
                     <button
                         className="md:hidden p-2 text-gray-600"

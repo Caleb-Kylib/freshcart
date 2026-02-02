@@ -3,7 +3,7 @@ import { X, Upload, Image as ImageIcon } from "lucide-react";
 
 const ProductModal = ({
   products,
-  saveProducts,
+  onSave,
   setOpenModal,
   editingProduct,
 }) => {
@@ -34,55 +34,61 @@ const ProductModal = ({
       id: form.id || Date.now()
     };
 
+    let updatedProducts;
     if (editingProduct) {
-      const updated = products.map((p) =>
+      updatedProducts = products.map((p) =>
         p.id === editingProduct.id ? productData : p
       );
-      saveProducts(updated);
     } else {
-      saveProducts([...products, productData]);
+      updatedProducts = [productData, ...products];
     }
 
-    setOpenModal(false);
+    onSave(updatedProducts);
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
-      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white">
-          <h2 className="text-xl font-bold text-gray-800">
-            {editingProduct ? "Edit Product" : "Add New Product"}
-          </h2>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 overflow-y-auto">
+      <div className="bg-white rounded-[2rem] w-full max-w-2xl shadow-2xl relative my-auto animate-in fade-in zoom-in duration-300">
+        {/* Header */}
+        <div className="p-8 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-10 rounded-t-[2rem]">
+          <div>
+            <h2 className="text-2xl font-black text-gray-900 leading-none">
+              {editingProduct ? "Edit Product" : "Add New Product"}
+            </h2>
+            <p className="text-gray-500 text-sm mt-2 font-medium">Fill in the details below to update your inventory.</p>
+          </div>
           <button
             onClick={() => setOpenModal(false)}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-3 hover:bg-gray-100 rounded-2xl transition-all text-gray-400 hover:text-gray-900"
           >
-            <X size={20} />
+            <X size={24} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left Column: Details */}
-            <div className="space-y-4">
+        {/* Body */}
+        <form onSubmit={handleSubmit} className="p-8 space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Left Column: Essential Details */}
+            <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Product Name</label>
                 <input
-                  placeholder="e.g. Fresh Mangoes"
+                  type="text"
+                  placeholder="e.g. Organic Avocados"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full border border-gray-200 p-2.5 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                  className="w-full bg-gray-50 border-none px-4 py-3.5 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none transition-all font-medium"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Category</label>
                   <select
                     value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    className="w-full border border-gray-200 p-2.5 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    className="w-full bg-gray-50 border-none px-4 py-3.5 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none font-medium appearance-none"
                   >
                     <option value="Fruits">Fruits</option>
                     <option value="Vegetables">Vegetables</option>
@@ -91,11 +97,11 @@ const ProductModal = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Unit</label>
                   <select
                     value={form.unit}
                     onChange={(e) => setForm({ ...form, unit: e.target.value })}
-                    className="w-full border border-gray-200 p-2.5 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    className="w-full bg-gray-50 border-none px-4 py-3.5 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none font-medium appearance-none"
                   >
                     <option value="kg">kg</option>
                     <option value="bunch">bunch</option>
@@ -109,84 +115,91 @@ const ProductModal = ({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Price (KES)</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Price (KES)</label>
                   <input
                     type="number"
                     placeholder="0.00"
                     value={form.price}
                     onChange={(e) => setForm({ ...form, price: e.target.value })}
-                    className="w-full border border-gray-200 p-2.5 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    className="w-full bg-gray-50 border-none px-4 py-3.5 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none font-black text-lg"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
+                  <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Stock</label>
                   <input
                     type="number"
                     placeholder="0"
                     value={form.stock}
                     onChange={(e) => setForm({ ...form, stock: e.target.value })}
-                    className="w-full border border-gray-200 p-2.5 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                    className="w-full bg-gray-50 border-none px-4 py-3.5 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none font-black text-lg"
                     required
                   />
                 </div>
               </div>
+            </div>
 
+            {/* Right Column: Visuals & Desc */}
+            <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea
-                  placeholder="Describe the product..."
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  className="w-full border border-gray-200 p-2.5 rounded-lg focus:ring-2 focus:ring-green-500 outline-none min-h-[100px]"
+                <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Image URL</label>
+                <input
+                  type="url"
+                  placeholder="https://images.unsplash.com/..."
+                  value={form.image}
+                  onChange={(e) => setForm({ ...form, image: e.target.value })}
+                  className="w-full bg-gray-50 border-none px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none text-xs font-mono"
                   required
                 />
               </div>
-            </div>
 
-            {/* Right Column: Image */}
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Product Image URL</label>
-              <input
-                placeholder="https://images.unsplash.com/..."
-                value={form.image}
-                onChange={(e) => setForm({ ...form, image: e.target.value })}
-                className="w-full border border-gray-200 p-2.5 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-                required
-              />
-              <div className="mt-2 border-2 border-dashed border-gray-200 rounded-xl aspect-square flex flex-col items-center justify-center p-4 bg-gray-50 overflow-hidden relative">
+              <div className="border-[3px] border-dashed border-gray-100 rounded-[2rem] aspect-square flex flex-col items-center justify-center p-4 bg-gray-50 overflow-hidden relative group">
                 {form.image ? (
                   <img
                     src={form.image}
                     alt="Preview"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform hover:scale-105"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     onError={(e) => {
                       e.target.src = "https://placehold.co/400x400?text=Invalid+Image+URL";
                     }}
                   />
                 ) : (
-                  <>
-                    <ImageIcon className="text-gray-400 mb-2" size={48} />
-                    <p className="text-sm text-gray-500">Image preview will appear here</p>
-                  </>
+                  <div className="text-center p-6">
+                    <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-4 text-gray-300">
+                      <ImageIcon size={32} />
+                    </div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-loose">Image Preview<br />Will appear here</p>
+                  </div>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Full Description</label>
+            <textarea
+              placeholder="Describe the freshness, origin, and nutrients..."
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              className="w-full bg-gray-50 border-none px-6 py-4 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none min-h-[100px] font-medium leading-relaxed resize-none"
+              required
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-4 pt-4">
             <button
               type="button"
               onClick={() => setOpenModal(false)}
-              className="px-6 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex-1 px-8 py-4 text-sm font-bold text-gray-500 hover:bg-gray-50 rounded-2xl transition-all border border-transparent hover:border-gray-100"
             >
-              Cancel
+              Discard Changes
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 text-sm font-medium bg-green-600 text-white hover:bg-green-700 rounded-lg shadow-sm transition-colors"
+              className="flex-[2] px-8 py-4 bg-green-600 text-white rounded-2xl font-black shadow-xl shadow-green-100 hover:bg-green-700 transform active:scale-[0.98] transition-all"
             >
-              {editingProduct ? "Save Changes" : "Add Product"}
+              {editingProduct ? "Save Updates" : "Confirm & Add Product"}
             </button>
           </div>
         </form>

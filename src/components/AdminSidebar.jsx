@@ -22,8 +22,9 @@ const AdminSidebar = () => {
   };
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-64px)] hidden md:flex flex-col">
+    <div className="h-full flex flex-col bg-white">
       <div className="p-6">
+        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 px-4">Menu</h2>
         <nav className="space-y-1">
           {links.map((link) => (
             <NavLink
@@ -31,9 +32,9 @@ const AdminSidebar = () => {
               to={link.path}
               end={link.path === "/admin"}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
-                  ? "bg-green-50 text-green-700 shadow-sm"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
+                  ? "bg-green-50 text-green-700 shadow-sm border border-green-100"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent"
                 }`
               }
             >
@@ -47,13 +48,13 @@ const AdminSidebar = () => {
       <div className="mt-auto p-6 border-t border-gray-100">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 w-full text-left text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          className="flex items-center gap-3 px-4 py-3 w-full text-left text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors border border-transparent hover:border-red-100"
         >
           <LogOut size={20} />
           Logout
         </button>
       </div>
-    </aside>
+    </div>
   );
 };
 
