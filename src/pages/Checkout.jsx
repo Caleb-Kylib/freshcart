@@ -29,6 +29,20 @@ const Checkout = () => {
         e.preventDefault();
         setLoading(true);
 
+        // Create Order Object
+        const newOrder = {
+            id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
+            customer: { ...formData },
+            items: [...cartItems],
+            total: cartTotal,
+            status: 'Pending',
+            date: new Date().toLocaleString()
+        };
+
+        // Save to localStorage for Admin
+        const existingOrders = JSON.parse(localStorage.getItem("adminOrders")) || [];
+        localStorage.setItem("adminOrders", JSON.stringify([newOrder, ...existingOrders]));
+
         // Simulate Payment Processing
         setTimeout(() => {
             setLoading(false);

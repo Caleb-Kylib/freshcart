@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Truck, ShieldCheck, Leaf } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { products, categories } from '../data/products';
 
 const Home = () => {
-    const featuredProducts = products.slice(0, 4);
+    const [featuredProducts, setFeaturedProducts] = useState(products.slice(0, 4));
+
+    useEffect(() => {
+        const savedProducts = JSON.parse(localStorage.getItem("adminProducts"));
+        if (savedProducts && savedProducts.length > 0) {
+            setFeaturedProducts(savedProducts.slice(0, 4));
+        }
+    }, []);
 
     return (
         <div className="min-h-screen">

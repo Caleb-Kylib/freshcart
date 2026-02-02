@@ -8,6 +8,14 @@ const Products = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const categoryParam = searchParams.get('category');
     const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'All');
+    const [displayProducts, setDisplayProducts] = useState(products);
+
+    useEffect(() => {
+        const savedProducts = JSON.parse(localStorage.getItem("adminProducts"));
+        if (savedProducts && savedProducts.length > 0) {
+            setDisplayProducts(savedProducts);
+        }
+    }, []);
 
     useEffect(() => {
         if (categoryParam) {
@@ -27,8 +35,8 @@ const Products = () => {
     };
 
     const filteredProducts = selectedCategory === 'All'
-        ? products
-        : products.filter(p => p.category === selectedCategory);
+        ? displayProducts
+        : displayProducts.filter(p => p.category === selectedCategory);
 
     return (
         <div className="pt-24 pb-20 min-h-screen bg-gray-50">

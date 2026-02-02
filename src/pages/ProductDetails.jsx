@@ -6,7 +6,12 @@ import { useCart } from '../context/CartContext';
 
 const ProductDetails = () => {
     const { id } = useParams();
-    const product = products.find(p => p.id === parseInt(id));
+    const [allProducts, setAllProducts] = useState(() => {
+        const saved = JSON.parse(localStorage.getItem("adminProducts"));
+        return (saved && saved.length > 0) ? saved : products;
+    });
+
+    const product = allProducts.find(p => String(p.id) === String(id));
     const { addToCart } = useCart();
     const [quantity, setQuantity] = useState(1);
     const [added, setAdded] = useState(false);
