@@ -37,6 +37,7 @@ const Navbar = () => {
                     <Link to="/products" className={`font-medium hover:text-primary transition-colors ${location.pathname === '/products' ? 'text-primary' : 'text-gray-600'}`}>Shop</Link>
                     <Link to="/products?category=Fruits" className="font-medium text-gray-600 hover:text-primary transition-colors">Fruits</Link>
                     <Link to="/products?category=Vegetables" className="font-medium text-gray-600 hover:text-primary transition-colors">Vegetables</Link>
+                    <Link to="/admin" className="font-medium text-green-700 bg-green-50 px-4 py-1.5 rounded-full hover:bg-green-100 transition-colors border border-green-100">Admin</Link>
                 </div>
 
                 {/* Icons */}
