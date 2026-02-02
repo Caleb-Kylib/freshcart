@@ -122,13 +122,20 @@ const AdminProducts = () => {
                     <span className="font-black text-gray-900 text-lg">KES {Number(p.price).toLocaleString()}</span>
                   </td>
                   <td className="p-5">
-                    <div className="flex flex-col gap-1.5 min-w-[100px]">
-                      <span className={`text-sm font-bold ${p.stock < 10 ? 'text-red-500' : 'text-gray-500'}`}>
-                        {p.stock} {p.unit} Available
-                      </span>
-                      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="flex flex-col gap-1.5 min-w-[120px]">
+                      <div className="flex items-center justify-between">
+                        <span className={`text-sm font-black ${p.stock < 10 ? 'text-red-500' : 'text-gray-500'}`}>
+                          {p.stock} {p.unit}
+                        </span>
+                        {p.stock < 10 && (
+                          <span className="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-black uppercase rounded-lg animate-pulse">
+                            Low Stock
+                          </span>
+                        )}
+                      </div>
+                      <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
                         <div
-                          className={`h-full rounded-full transition-all duration-1000 ${p.stock < 10 ? 'bg-red-500' : 'bg-green-500'}`}
+                          className={`h-full rounded-full transition-all duration-1000 ${p.stock < 10 ? 'bg-gradient-to-r from-red-400 to-red-600' : p.stock < 20 ? 'bg-gradient-to-r from-orange-400 to-orange-500' : 'bg-gradient-to-r from-green-400 to-green-600'}`}
                           style={{ width: `${Math.min(100, (p.stock / 50) * 100)}%` }}
                         ></div>
                       </div>

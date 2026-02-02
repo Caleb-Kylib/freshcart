@@ -17,10 +17,12 @@ const ProductModal = ({
     stock: "",
     unit: "kg"
   });
+  const [preview, setPreview] = useState("");
 
   useEffect(() => {
     if (editingProduct) {
       setForm(editingProduct);
+      setPreview(""); // Clear local preview when editing a new product
     }
   }, [editingProduct]);
 
@@ -142,25 +144,42 @@ const ProductModal = ({
             {/* Right Column: Visuals & Desc */}
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Image URL</label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/..."
-                  value={form.image}
-                  onChange={(e) => setForm({ ...form, image: e.target.value })}
-                  className="w-full bg-gray-50 border-none px-4 py-3 rounded-xl focus:ring-2 focus:ring-green-500 outline-none text-xs font-mono"
-                  required
-                />
+                <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Product Image</label>
+                <div className="relative group">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setForm({ ...form, image: `/products/${file.name}` });
+                        // For preview only, we use URL.createObjectURL
+                        const url = URL.createObjectURL(file);
+                        setPreview(url);
+                      }
+                    }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  <div className="w-full bg-gray-50 border-2 border-dashed border-gray-200 px-4 py-3 rounded-2xl flex items-center justify-center gap-2 text-gray-500 group-hover:bg-gray-100 group-hover:border-green-300 transition-all">
+                    <Upload size={18} />
+                    <span className="text-sm font-bold">Upload Image</span>
+                  </div>
+                </div>
+                {form.image && (
+                  <p className="text-[10px] font-mono text-gray-400 mt-2 ml-1 truncate">
+                    Path: {form.image}
+                  </p>
+                )}
               </div>
 
               <div className="border-[3px] border-dashed border-gray-100 rounded-[2rem] aspect-square flex flex-col items-center justify-center p-4 bg-gray-50 overflow-hidden relative group">
-                {form.image ? (
+                {(preview || form.image) ? (
                   <img
-                    src={form.image}
+                    src={preview || form.image}
                     alt="Preview"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     onError={(e) => {
-                      e.target.src = "https://placehold.co/400x400?text=Invalid+Image+URL";
+                      e.target.src = "https://placehold.co/400x400?text=Image+Not+Found";
                     }}
                   />
                 ) : (
