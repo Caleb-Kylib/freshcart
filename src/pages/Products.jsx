@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
-import { products, categories } from '../data/products';
+import { useProducts } from '../context/ProductContext';
+import { categories } from '../data/products';
 import { Filter } from 'lucide-react';
 
 const Products = () => {
+    const { products } = useProducts();
     const [searchParams, setSearchParams] = useSearchParams();
     const categoryParam = searchParams.get('category');
     const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'All');
     const [displayProducts, setDisplayProducts] = useState(products);
 
     useEffect(() => {
-        const savedProducts = JSON.parse(localStorage.getItem("adminProducts"));
-        if (savedProducts && savedProducts.length > 0) {
-            setDisplayProducts(savedProducts);
-        }
-    }, []);
+        setDisplayProducts(products);
+    }, [products]);
 
     useEffect(() => {
         if (categoryParam) {

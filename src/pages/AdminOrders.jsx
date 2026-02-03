@@ -2,21 +2,14 @@ import { useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import { ClipboardList, ChevronDown, User, Phone, MapPin, Package } from "lucide-react";
 
+import { useOrders } from "../context/OrderContext";
+
 const AdminOrders = () => {
-    const [orders, setOrders] = useState([]);
+    const { orders, updateOrderStatus } = useOrders();
     const [filter, setFilter] = useState("All");
 
-    useEffect(() => {
-        const saved = JSON.parse(localStorage.getItem("adminOrders")) || [];
-        setOrders(saved);
-    }, []);
-
     const updateStatus = (orderId, newStatus) => {
-        const updated = orders.map(order =>
-            order.id === orderId ? { ...order, status: newStatus } : order
-        );
-        setOrders(updated);
-        localStorage.setItem("adminOrders", JSON.stringify(updated));
+        updateOrderStatus(orderId, newStatus);
     };
 
     const filteredOrders = filter === "All"
@@ -45,8 +38,8 @@ const AdminOrders = () => {
                         key={status}
                         onClick={() => setFilter(status)}
                         className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${filter === status
-                                ? "bg-green-600 text-white"
-                                : "bg-white text-gray-600 border border-gray-200 hover:border-green-500"
+                            ? "bg-green-600 text-white"
+                            : "bg-white text-gray-600 border border-gray-200 hover:border-green-500"
                             }`}
                     >
                         {status}

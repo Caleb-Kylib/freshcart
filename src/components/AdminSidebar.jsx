@@ -8,8 +8,11 @@ import {
   LogOut
 } from "lucide-react";
 
+import { useAuth } from "../context/AuthContext";
+
 const AdminSidebar = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const links = [
     { name: "Dashboard", path: "/admin", icon: <LayoutDashboard size={20} /> },
     { name: "Products", path: "/admin/products", icon: <ShoppingBag size={20} /> },
@@ -17,7 +20,7 @@ const AdminSidebar = () => {
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem("isAdminLoggedIn");
+    logout();
     navigate("/login");
   };
 

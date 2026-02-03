@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useOrders } from '../context/OrderContext';
+import { useProducts } from '../context/ProductContext';
 import { CheckCircle, Loader2 } from 'lucide-react';
 
 const Checkout = () => {
     const { cartItems, cartTotal, clearCart } = useCart();
+    const { user } = useAuth();
+    const { placeOrder } = useOrders();
+    const { updateStockAfterOrder } = useProducts();
     const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
-        name: '',
-        email: '',
+        name: user?.name || '',
+        email: user?.email || '',
         phone: '',
         address: '',
         city: 'Nairobi',
@@ -30,25 +37,25 @@ const Checkout = () => {
         setLoading(true);
 
         // Create Order Object
-        const newOrder = {
-            id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
-            customer: { ...formData },
+        const orderData = {
+            customer: {
+                ...formData,
+                id: user?.id || 'guest'
+            },
             items: [...cartItems],
             total: cartTotal,
-            status: 'Pending',
+            paymentMethod: 'M-Pesa',
             date: new Date().toLocaleString()
         };
 
-        // Save to localStorage for Admin
-        const existingOrders = JSON.parse(localStorage.getItem("adminOrders")) || [];
-        localStorage.setItem("adminOrders", JSON.stringify([newOrder, ...existingOrders]));
-
         // Simulate Payment Processing
         setTimeout(() => {
+            placeOrder(orderData);
+            updateStockAfterOrder(cartItems);
             setLoading(false);
             setSuccess(true);
             clearCart();
-        }, 2000); // 2 seconds delay
+        }, 2000);
     };
 
     if (success) {

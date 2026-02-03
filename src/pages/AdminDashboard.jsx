@@ -2,8 +2,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
 import { ShoppingCart, Package, TrendingUp, Plus, ClipboardList } from "lucide-react";
+import { useProducts } from "../context/ProductContext";
+import { useOrders } from "../context/OrderContext";
 
 const AdminDashboard = () => {
+  const { products } = useProducts();
+  const { orders } = useOrders();
   const [stats, setStats] = useState({
     products: 0,
     orders: 0,
@@ -13,9 +17,6 @@ const AdminDashboard = () => {
   });
 
   useEffect(() => {
-    const products = JSON.parse(localStorage.getItem("adminProducts")) || [];
-    const orders = JSON.parse(localStorage.getItem("adminOrders")) || [];
-
     // Revenue calculation
     const revenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
 
@@ -50,7 +51,7 @@ const AdminDashboard = () => {
       lowStockCount,
       bestSellers
     });
-  }, []);
+  }, [products, orders]);
 
   return (
     <AdminLayout>

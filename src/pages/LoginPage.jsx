@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { LogIn, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,29 +14,23 @@ const LoginPage = () => {
     e.preventDefault();
     setError("");
 
-    const storedUser = JSON.parse(localStorage.getItem("adminUser"));
-
-    if (
-      storedUser &&
-      storedUser.email === email &&
-      storedUser.password === password
-    ) {
-      localStorage.setItem("isAdminLoggedIn", "true");
-      navigate("/admin");
+    const result = login(email, password);
+    if (result.success) {
+      navigate("/");
     } else {
-      setError("Invalid email or password. Please try again.");
+      setError(result.message);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 pt-20">
       <div className="bg-white p-8 md:p-10 rounded-3xl shadow-xl w-full max-w-md border border-gray-100">
         <div className="flex flex-col items-center mb-10">
           <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-4 text-green-600">
             <LogIn size={32} />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Admin Login</h2>
-          <p className="text-gray-500 mt-2">Welcome back! Please enter your details.</p>
+          <h2 className="text-3xl font-bold text-gray-900">Sign In</h2>
+          <p className="text-gray-500 mt-2 text-center">Welcome back! Sign in to continue shopping.</p>
         </div>
 
         {error && (
@@ -51,7 +47,7 @@ const LoginPage = () => {
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input
                 type="email"
-                placeholder="admin@farmfresh.com"
+                placeholder="customer@example.com"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -75,14 +71,6 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
-              <input type="checkbox" className="rounded text-green-600 focus:ring-green-500" />
-              Remember me
-            </label>
-            <a href="#" className="text-green-600 font-semibold hover:underline">Forgot password?</a>
-          </div>
-
           <button
             type="submit"
             className="w-full bg-green-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-green-700 active:scale-[0.98] transition-all shadow-lg shadow-green-200"
@@ -92,19 +80,16 @@ const LoginPage = () => {
         </form>
 
         <p className="text-center text-sm mt-10 text-gray-500">
-          Don't have an admin account?{" "}
+          Don't have an account?{" "}
           <Link to="/signup" className="text-green-600 font-bold hover:underline">
             Sign up here
           </Link>
         </p>
 
-        {/* Guest Demo Credentials */}
-        <div className="mt-8 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-          <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-2">Demo Credentials</p>
-          <div className="flex justify-between text-xs text-gray-500">
-            <span>Email: <span className="text-gray-900 font-medium">admin@test.com</span></span>
-            <span>Pass: <span className="text-gray-900 font-medium">123456</span></span>
-          </div>
+        <div className="mt-8 pt-8 border-t border-gray-100 text-center">
+          <Link to="/admin/login" className="text-xs font-bold text-gray-400 hover:text-green-600 transition-colors uppercase tracking-widest">
+            Admin Portal Access
+          </Link>
         </div>
       </div>
     </div>

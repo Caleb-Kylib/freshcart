@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { X, Upload, Image as ImageIcon } from "lucide-react";
 
 const ProductModal = ({
-  products,
   onSave,
   setOpenModal,
   editingProduct,
@@ -36,16 +35,7 @@ const ProductModal = ({
       id: form.id || Date.now()
     };
 
-    let updatedProducts;
-    if (editingProduct) {
-      updatedProducts = products.map((p) =>
-        p.id === editingProduct.id ? productData : p
-      );
-    } else {
-      updatedProducts = [productData, ...products];
-    }
-
-    onSave(updatedProducts);
+    onSave(productData);
   };
 
   return (

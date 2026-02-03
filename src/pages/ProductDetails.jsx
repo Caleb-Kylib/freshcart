@@ -3,15 +3,13 @@ import { useParams, Link } from 'react-router-dom';
 import { Minus, Plus, ShoppingBag, ArrowLeft, Check } from 'lucide-react';
 import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
+import { useProducts } from '../context/ProductContext';
 
 const ProductDetails = () => {
     const { id } = useParams();
-    const [allProducts, setAllProducts] = useState(() => {
-        const saved = JSON.parse(localStorage.getItem("adminProducts"));
-        return (saved && saved.length > 0) ? saved : products;
-    });
+    const { products } = useProducts();
 
-    const product = allProducts.find(p => String(p.id) === String(id));
+    const product = products.find(p => String(p.id) === String(id));
     const { addToCart } = useCart();
     const [quantity, setQuantity] = useState(1);
     const [added, setAdded] = useState(false);

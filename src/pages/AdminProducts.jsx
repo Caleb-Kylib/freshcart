@@ -1,36 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import ProductModal from "../components/ProductModal";
 import { Plus, Edit, Trash2, Search, Package } from "lucide-react";
-import { products as initialProducts } from "../data/products";
+import { useProducts } from "../context/ProductContext";
 
 const AdminProducts = () => {
-  const [products, setProducts] = useState([]);
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const [openModal, setOpenModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Load initial data
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("adminProducts"));
-    if (saved && saved.length > 0) {
-      setProducts(saved);
-    } else {
-      const initialWithStock = initialProducts.map(p => ({
-        ...p,
-        stock: p.stock || 20, // Default stock if missing
-        description: p.description || "Fresh produce from farm.",
-        unit: p.unit || "kg"
-      }));
-      setProducts(initialWithStock);
-      localStorage.setItem("adminProducts", JSON.stringify(initialWithStock));
-    }
-  }, []);
-
   // Save/Update Handler
-  const handleSaveProduct = (updatedProducts) => {
-    setProducts(updatedProducts);
-    localStorage.setItem("adminProducts", JSON.stringify(updatedProducts));
+  const handleSaveProduct = (productData) => {
+    if (editingProduct) {
+      updateProduct(productData);
+    } else {
+      addProduct(productData);
+    }
     setOpenModal(false);
     setEditingProduct(null);
   };
@@ -38,9 +24,7 @@ const AdminProducts = () => {
   // Delete Handler
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      const updated = products.filter((p) => p.id !== id);
-      setProducts(updated);
-      localStorage.setItem("adminProducts", JSON.stringify(updated));
+      deleteProduct(id);
     }
   };
 
@@ -181,7 +165,6 @@ const AdminProducts = () => {
 
       {openModal && (
         <ProductModal
-          products={products}
           setOpenModal={setOpenModal}
           onSave={handleSaveProduct}
           editingProduct={editingProduct}

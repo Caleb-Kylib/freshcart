@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Menu, X, Search } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { ShoppingBag, Menu, X, Search, User, LogOut } from 'lucide-react';
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { cartCount } = useCart();
+    const { user, logout } = useAuth();
     const location = useLocation();
     const isAdminPath = location.pathname.startsWith('/admin');
 
@@ -39,19 +41,23 @@ const Navbar = () => {
                             <Link to="/" className={`font-medium hover:text-primary transition-colors ${location.pathname === '/' ? 'text-primary' : 'text-gray-600'}`}>Home</Link>
                             <Link to="/products" className={`font-medium hover:text-primary transition-colors ${location.pathname === '/products' ? 'text-primary' : 'text-gray-600'}`}>Shop</Link>
                             <Link to="/products?category=Fruits" className="font-medium text-gray-600 hover:text-primary transition-colors">Fruits</Link>
-                            <Link to="/products?category=Vegetables" className="font-medium text-gray-600 hover:text-primary transition-colors">Vegetables</Link>
+
+                            {user?.role === 'admin' ? (
+                                <Link to="/admin" className="font-medium text-green-700 bg-green-50 px-4 py-1.5 rounded-full hover:bg-green-100 transition-colors border border-green-100">Dashboard</Link>
+                            ) : (
+                                <Link to="/admin/login" className="font-medium text-gray-400 hover:text-primary transition-colors text-sm">Admin</Link>
+                            )}
                         </>
                     ) : (
-                        <span className="text-gray-400 font-bold uppercase tracking-widest text-sm">Management Console</span>
+                        <Link to="/" className="text-gray-400 font-bold uppercase tracking-widest text-sm hover:text-primary transition-all">Back to Site</Link>
                     )}
-                    <Link to="/admin" className="font-medium text-green-700 bg-green-50 px-4 py-1.5 rounded-full hover:bg-green-100 transition-colors border border-green-100">Admin</Link>
                 </div>
 
                 {/* Icons */}
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
                     {!isAdminPath && (
                         <>
-                            <button className="hidden md:block p-2 text-gray-600 hover:text-primary transition-colors">
+                            <button className="hidden sm:block p-2 text-gray-600 hover:text-primary transition-colors">
                                 <Search size={22} />
                             </button>
 
@@ -63,7 +69,33 @@ const Navbar = () => {
                                     </span>
                                 )}
                             </Link>
+
+                            <div className="h-6 w-[1px] bg-gray-200 mx-2 hidden sm:block"></div>
                         </>
+                    )}
+
+                    {user ? (
+                        <div className="flex items-center gap-3">
+                            <div className="hidden sm:flex flex-col items-end leading-none">
+                                <span className="text-sm font-bold text-gray-900">{user.name}</span>
+                                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-tighter">{user.role}</span>
+                            </div>
+                            <button
+                                onClick={logout}
+                                className="p-2 text-gray-400 hover:text-red-500 transition-colors bg-gray-50 rounded-xl"
+                                title="Logout"
+                            >
+                                <LogOut size={20} />
+                            </button>
+                        </div>
+                    ) : (
+                        <Link
+                            to="/login"
+                            className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-bold hover:bg-primary transition-all active:scale-95"
+                        >
+                            <User size={18} />
+                            <span className="hidden sm:inline">Sign In</span>
+                        </Link>
                     )}
 
                     <button
