@@ -29,6 +29,17 @@ export const ProductProvider = ({ children }) => {
         localStorage.setItem('adminProducts', JSON.stringify(products));
     }, [products]);
 
+    // Cross-tab sync
+    useEffect(() => {
+        const handleStorageChange = (e) => {
+            if (e.key === 'adminProducts') {
+                setProducts(JSON.parse(e.newValue || '[]'));
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
     const addProduct = (product) => {
         setProducts(prev => [product, ...prev]);
     };

@@ -11,15 +11,31 @@
 }
 
 @layer components {
+  @layer utilities {
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      /* IE and Edge */
+      scrollbar-width: none;
+      /* Firefox */
+    }
+  }
+
   .btn-primary {
     @apply bg-primary hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
   }
+
   .btn-secondary {
     @apply bg-white hover:bg-gray-100 text-primary border-2 border-primary font-semibold py-2 px-6 rounded-full transition-all duration-300;
   }
+
   .card {
     @apply bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-100;
   }
+
   .container-custom {
     @apply container mx-auto px-4 md:px-8 max-w-7xl;
   }

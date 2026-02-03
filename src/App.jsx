@@ -18,6 +18,7 @@ import AdminSignupPage from "./pages/AdminSignupPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminProducts from "./pages/AdminProducts";
 import AdminOrders from "./pages/AdminOrders";
+import AdminUsers from "./pages/AdminUsers";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 
@@ -87,6 +88,14 @@ function App() {
           element={
             <ProtectedRoute adminOnly={true}>
               <AdminOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminUsers />
             </ProtectedRoute>
           }
         />

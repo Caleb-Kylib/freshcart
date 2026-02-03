@@ -14,19 +14,31 @@ export const OrderProvider = ({ children }) => {
         localStorage.setItem('adminOrders', JSON.stringify(orders));
     }, [orders]);
 
+    // Cross-tab sync
+    useEffect(() => {
+        const handleStorageChange = (e) => {
+            if (e.key === 'adminOrders') {
+                setOrders(JSON.parse(e.newValue || '[]'));
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
     const placeOrder = (orderData) => {
         const newOrder = {
+            id: `ORD-${Math.floor(1000 + Math.random() * 9000)}-${Date.now().toString().slice(-4)}`,
             ...orderData,
-            id: `ORD-${Date.now()}`,
             createdAt: new Date().toISOString(),
-            status: 'Pending'
+            orderStatus: 'Pending',
+            paymentStatus: 'Paid' // Simulated success
         };
         setOrders(prev => [newOrder, ...prev]);
         return newOrder;
     };
 
     const updateOrderStatus = (orderId, newStatus) => {
-        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, orderStatus: newStatus } : o));
     };
 
     return (

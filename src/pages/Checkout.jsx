@@ -38,14 +38,14 @@ const Checkout = () => {
 
         // Create Order Object
         const orderData = {
-            customer: {
-                ...formData,
-                id: user?.id || 'guest'
-            },
+            customerId: user?.id || 'guest',
+            customerName: formData.name,
+            customerEmail: formData.email,
+            customerPhone: formData.phone,
+            customerAddress: `${formData.address}, ${formData.city}`,
             items: [...cartItems],
-            total: cartTotal,
-            paymentMethod: 'M-Pesa',
-            date: new Date().toLocaleString()
+            totalAmount: cartTotal,
+            paymentMethod: 'M-Pesa'
         };
 
         // Simulate Payment Processing

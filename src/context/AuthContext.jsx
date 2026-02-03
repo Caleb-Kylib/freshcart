@@ -5,10 +5,16 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(() => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
         const savedUser = localStorage.getItem('currentUser');
-        return savedUser ? JSON.parse(savedUser) : null;
-    });
+        if (savedUser) {
+            setUser(JSON.parse(savedUser));
+        }
+        setLoading(false);
+    }, []);
 
     const [users, setUsers] = useState(() => {
         const savedUsers = localStorage.getItem('users');
@@ -31,6 +37,20 @@ export const AuthProvider = ({ children }) => {
         }
     }, [user]);
 
+    // Cross-tab sync
+    useEffect(() => {
+        const handleStorageChange = (e) => {
+            if (e.key === 'users') {
+                setUsers(JSON.parse(e.newValue || '[]'));
+            }
+            if (e.key === 'currentUser') {
+                setUser(e.newValue ? JSON.parse(e.newValue) : null);
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
     const signup = (name, email, password, role = 'customer') => {
         const newUser = { id: Date.now().toString(), name, email, password, role };
         setUsers(prev => [...prev, newUser]);
@@ -47,11 +67,19 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
+        // Clear current session
         setUser(null);
+        localStorage.removeItem('currentUser');
+
+        // Optional: Call backend logout if needed
+        fetch('/api/logout', { method: 'POST' }).catch(() => { });
+
+        // Redirect to entry points
+        window.location.href = '/';
     };
 
     return (
-        <AuthContext.Provider value={{ user, users, signup, login, logout }}>
+        <AuthContext.Provider value={{ user, users, loading, signup, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

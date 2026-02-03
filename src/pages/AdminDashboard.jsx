@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
-import { ShoppingCart, Package, TrendingUp, Plus, ClipboardList } from "lucide-react";
+import { ShoppingCart, Package, TrendingUp, Plus, ClipboardList, Users, LogOut, User as UserIcon } from "lucide-react";
 import { useProducts } from "../context/ProductContext";
 import { useOrders } from "../context/OrderContext";
+import { useAuth } from "../context/AuthContext";
 
 const AdminDashboard = () => {
   const { products } = useProducts();
   const { orders } = useOrders();
+  const { users, user, logout } = useAuth();
   const [stats, setStats] = useState({
     products: 0,
     orders: 0,
+    users: 0,
     revenue: 0,
     lowStockCount: 0,
     bestSellers: []
@@ -18,7 +21,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     // Revenue calculation
-    const revenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+    const revenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
 
     // Low stock count
     const lowStockCount = products.filter(p => p.stock < 10).length;
@@ -47,22 +50,54 @@ const AdminDashboard = () => {
     setStats({
       products: products.length,
       orders: orders.length,
+      users: users.length,
       revenue: revenue,
       lowStockCount,
       bestSellers
     });
-  }, [products, orders]);
+  }, [products, orders, users]);
 
   return (
     <AdminLayout>
-      <div className="mb-10">
-        <h1 className="text-3xl font-black text-gray-900 leading-none">Admin Dashboard</h1>
-        <p className="text-gray-500 font-medium mt-2">Real-time insights for your business.</p>
+      <div className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div>
+          <h1 className="text-3xl font-black text-gray-900 leading-none">Admin Dashboard</h1>
+          <p className="text-gray-500 font-medium mt-2">Real-time insights for your business.</p>
+        </div>
+
+        {/* Admin Profile & Logout Section */}
+        <div className="bg-white p-4 pr-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-4 group hover:shadow-md transition-all">
+          <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
+            <UserIcon size={24} />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-black text-gray-900 leading-none mb-1">{user?.name || 'Administrator'}</p>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em]">Access Level: Admin</p>
+          </div>
+          <button
+            onClick={logout}
+            className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
+            title="Secure Logout"
+          >
+            <LogOut size={18} />
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+        {/* Total Users */}
+        <Link to="/admin/users" className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-indigo-50 transition-all duration-500">
+          <div className="p-4 bg-indigo-100 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform">
+            <Users size={24} />
+          </div>
+          <div>
+            <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">Users</h3>
+            <p className="text-2xl font-black text-gray-900">{stats.users}</p>
+          </div>
+        </Link>
+
         {/* Total Products */}
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-green-50 transition-all duration-500">
+        <Link to="/admin/products" className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-green-50 transition-all duration-500">
           <div className="p-4 bg-green-100 text-green-600 rounded-2xl group-hover:scale-110 transition-transform">
             <Package size={24} />
           </div>
@@ -70,10 +105,10 @@ const AdminDashboard = () => {
             <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">Products</h3>
             <p className="text-2xl font-black text-gray-900">{stats.products}</p>
           </div>
-        </div>
+        </Link>
 
         {/* Total Orders */}
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-blue-50 transition-all duration-500">
+        <Link to="/admin/orders" className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-blue-50 transition-all duration-500">
           <div className="p-4 bg-blue-100 text-blue-600 rounded-2xl group-hover:scale-110 transition-transform">
             <ShoppingCart size={24} />
           </div>
@@ -81,10 +116,10 @@ const AdminDashboard = () => {
             <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">Orders</h3>
             <p className="text-2xl font-black text-gray-900">{stats.orders}</p>
           </div>
-        </div>
+        </Link>
 
         {/* Total Revenue */}
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-orange-50 transition-all duration-500">
+        <Link to="/admin/orders" className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-orange-50 transition-all duration-500">
           <div className="p-4 bg-orange-100 text-orange-600 rounded-2xl group-hover:scale-110 transition-transform">
             <TrendingUp size={24} />
           </div>
@@ -92,10 +127,10 @@ const AdminDashboard = () => {
             <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">Revenue</h3>
             <p className="text-xl font-black text-gray-900 leading-tight">KES {stats.revenue.toLocaleString()}</p>
           </div>
-        </div>
+        </Link>
 
         {/* Low Stock Alerts */}
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-red-50 transition-all duration-500 border-l-4 border-l-red-500">
+        <Link to="/admin/products" className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-red-50 transition-all duration-500 border-l-4 border-l-red-500">
           <div className="p-4 bg-red-100 text-red-600 rounded-2xl group-hover:scale-110 transition-transform">
             <Package size={24} />
           </div>
@@ -103,7 +138,7 @@ const AdminDashboard = () => {
             <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest text-red-500">Low Stock</h3>
             <p className="text-2xl font-black text-red-600">{stats.lowStockCount}</p>
           </div>
-        </div>
+        </Link>
       </div>
 
       <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -127,7 +162,7 @@ const AdminDashboard = () => {
                   <div className="text-right">
                     <p className="text-sm font-black text-green-600">{product.quantity} Sold</p>
                     <div className="w-20 h-1.5 bg-gray-100 rounded-full mt-1.5 overflow-hidden">
-                      <div className="h-full bg-green-500 rounded-full" style={{ width: `${(product.quantity / stats.bestSellers[0].quantity) * 100}%` }}></div>
+                      <div className="h-full bg-green-500 rounded-full" style={{ width: `${(product.quantity / stats.bestSellers[0].quantity) * 100}% ` }}></div>
                     </div>
                   </div>
                 </div>
