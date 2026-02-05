@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { UserPlus, Mail, Lock, User, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const AdminSignupPage = () => {
     const navigate = useNavigate();
-    const { signup } = useAuth();
+    const { user, signup } = useAuth();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -13,6 +13,15 @@ const AdminSignupPage = () => {
         confirmPassword: "",
     });
     const [error, setError] = useState("");
+
+    // Redirect if already logged in as customer
+    useEffect(() => {
+        if (user && user.role !== 'admin') {
+            navigate('/', { replace: true });
+        } else if (user && user.role === 'admin') {
+            navigate('/admin', { replace: true });
+        }
+    }, [user, navigate]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

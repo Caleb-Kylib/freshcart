@@ -1,26 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ShieldCheck, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const AdminLoginPage = () => {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { user, login } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+
+    // Redirect if already logged in as customer
+    useEffect(() => {
+        if (user && user.role !== 'admin') {
+            navigate('/', { replace: true });
+        } else if (user && user.role === 'admin') {
+            navigate('/admin', { replace: true });
+        }
+    }, [user, navigate]);
 
     const handleLogin = (e) => {
         e.preventDefault();
         setError("");
 
-        const result = login(email, password);
+        const result = login(email, password, 'admin');
         if (result.success) {
-            if (result.user.role === 'admin') {
-                navigate("/admin");
-            } else {
-                setError("Access denied. This portal is for administrators only.");
-            }
+            navigate("/admin");
         } else {
             setError(result.message);
         }

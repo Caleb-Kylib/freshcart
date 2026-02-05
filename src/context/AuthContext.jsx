@@ -57,9 +57,12 @@ export const AuthProvider = ({ children }) => {
         return { success: true };
     };
 
-    const login = (email, password) => {
+    const login = (email, password, requiredRole = null) => {
         const foundUser = users.find(u => u.email === email && u.password === password);
         if (foundUser) {
+            if (requiredRole && foundUser.role !== requiredRole) {
+                return { success: false, message: `Access denied. This portal is for ${requiredRole}s only.` };
+            }
             setUser(foundUser);
             return { success: true, user: foundUser };
         }

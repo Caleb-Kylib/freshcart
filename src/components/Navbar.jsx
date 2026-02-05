@@ -43,11 +43,9 @@ const Navbar = () => {
                             <Link to="/products" className={`font-medium transition-colors ${location.pathname === '/products' ? 'text-primary' : (!isScrolled ? 'text-white hover:text-white/80' : 'text-gray-600 hover:text-primary')}`}>Shop</Link>
                             <Link to="/products?category=Fruits" className={`font-medium transition-colors ${!isScrolled ? 'text-white hover:text-white/80' : 'text-gray-600 hover:text-primary'}`}>Fruits</Link>
 
-                            {user?.role === 'admin' ? (
+                            {user?.role === 'admin' && (
                                 <Link to="/admin" className="font-bold text-green-700 bg-white shadow-sm px-4 py-1.5 rounded-full hover:bg-green-50 transition-all border border-green-100">Dashboard</Link>
-                            ) : !user ? (
-                                <Link to="/admin/login" className={`font-medium transition-colors text-sm ${!isScrolled ? 'text-white/70 hover:text-white' : 'text-gray-400 hover:text-primary'}`}>Admin</Link>
-                            ) : null}
+                            )}
                         </>
                     ) : (
                         <Link to="/" className="text-primary font-black uppercase tracking-[0.2em] text-[10px] hover:text-green-800 transition-all bg-green-50 px-3 py-1 rounded-lg border border-green-100">Back to Storefront</Link>
@@ -136,13 +134,9 @@ const Navbar = () => {
                         <Link to="/products?category=Vegetables" className="bg-gray-50 p-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-primary transition-colors">Vegetables</Link>
                     </div>
 
-                    {user?.role === 'admin' ? (
+                    {user?.role === 'admin' && (
                         <Link to="/admin" className="bg-green-600 text-white p-4 rounded-2xl text-center font-black uppercase tracking-widest text-xs shadow-lg shadow-green-100">
                             Go to Admin Dashboard
-                        </Link>
-                    ) : (
-                        <Link to="/admin/login" className="bg-gray-100 text-gray-400 p-4 rounded-2xl text-center font-bold text-[10px] uppercase tracking-widest">
-                            Staff / Admin Entrance
                         </Link>
                     )}
 
