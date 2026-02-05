@@ -86,11 +86,7 @@ const LoginPage = () => {
           </Link>
         </p>
 
-        <div className="mt-8 pt-8 border-t border-gray-100 text-center">
-          <Link to="/admin/login" className="text-xs font-bold text-gray-400 hover:text-green-600 transition-colors uppercase tracking-widest">
-            Admin Portal Access
-          </Link>
-        </div>
+
       </div>
     </div>
   );
