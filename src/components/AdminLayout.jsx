@@ -15,11 +15,10 @@ const AdminLayout = ({ children }) => {
         </div>
 
         {/* Main Content Area */}
-        <main className="flex-1 w-full flex flex-col min-w-0">
-          <div className="p-4 md:p-8 flex-1">
+        <main className="flex-1 w-full flex flex-col min-w-0 bg-gray-50/50">
+          <div className="p-4 md:p-10 flex-1">
             {children}
           </div>
-          <Footer />
         </main>
       </div>
     </div>

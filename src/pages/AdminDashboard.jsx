@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
-import { ShoppingCart, Package, TrendingUp, Plus, ClipboardList, Users, LogOut, User as UserIcon } from "lucide-react";
+import { ShoppingCart, Package, TrendingUp, Plus, ClipboardList, Users, AlertCircle } from "lucide-react";
 import { useProducts } from "../context/ProductContext";
 import { useOrders } from "../context/OrderContext";
 import { useAuth } from "../context/AuthContext";
@@ -9,7 +9,7 @@ import { useAuth } from "../context/AuthContext";
 const AdminDashboard = () => {
   const { products } = useProducts();
   const { orders } = useOrders();
-  const { users, user, logout } = useAuth();
+  const { users, user } = useAuth();
   const [stats, setStats] = useState({
     products: 0,
     orders: 0,
@@ -20,13 +20,8 @@ const AdminDashboard = () => {
   });
 
   useEffect(() => {
-    // Revenue calculation
     const revenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
-
-    // Low stock count
     const lowStockCount = products.filter(p => p.stock < 10).length;
-
-    // Best sellers calculation
     const productSales = {};
     orders.forEach(order => {
       order.items.forEach(item => {
@@ -59,140 +54,111 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout>
-      <div className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <h1 className="text-3xl font-black text-gray-900 leading-none">Admin Dashboard</h1>
-          <p className="text-gray-500 font-medium mt-2">Real-time insights for your business.</p>
+      {/* Header Section */}
+      <div className="relative mb-12 overflow-hidden rounded-[3rem] bg-emerald-900 p-10 text-white shadow-2xl">
+        <div className="relative z-10">
+          <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
+            Welcome back, <span className="text-emerald-400">{user?.name?.split(' ')[0] || 'Admin'}</span>!
+          </h1>
+          <p className="text-emerald-100/70 font-medium text-lg max-w-xl">
+            Here's what's happening with FreshCart Kenya today. All systems are operational and performing at peak efficiency.
+          </p>
         </div>
 
-        {/* Admin Profile & Logout Section */}
-        <div className="bg-white p-4 pr-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-4 group hover:shadow-md transition-all">
-          <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
-            <UserIcon size={24} />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-black text-gray-900 leading-none mb-1">{user?.name || 'Administrator'}</p>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em]">Access Level: Admin</p>
-          </div>
-          <button
-            onClick={logout}
-            className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
-            title="Secure Logout"
-          >
-            <LogOut size={18} />
-          </button>
-        </div>
+        {/* Abstract Background Shapes */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px]"></div>
+        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-400/10 rounded-full blur-[80px]"></div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-        {/* Total Users */}
-        <Link to="/admin/users" className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-indigo-50 transition-all duration-500">
-          <div className="p-4 bg-indigo-100 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform">
-            <Users size={24} />
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        {[
+          { label: "Total Revenue", value: `KES ${stats.revenue.toLocaleString()}`, sub: "+12% from last month", icon: <TrendingUp size={24} />, color: "bg-emerald-500", text: "text-emerald-600", light: "bg-emerald-50" },
+          { label: "Active Orders", value: stats.orders, sub: "Pending processing", icon: <ShoppingCart size={24} />, color: "bg-blue-500", text: "text-blue-600", light: "bg-blue-50" },
+          { label: "Store Inventory", value: stats.products, sub: "Items listed", icon: <Package size={24} />, color: "bg-orange-500", text: "text-orange-600", light: "bg-orange-50" },
+          { label: "Platform Users", value: stats.users, sub: "Registered accounts", icon: <Users size={24} />, color: "bg-indigo-500", text: "text-indigo-600", light: "bg-indigo-50" },
+        ].map((item, idx) => (
+          <div key={idx} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className={`p-4 ${item.light} ${item.text} rounded-2xl w-fit mb-6 group-hover:scale-110 transition-transform`}>
+              {item.icon}
+            </div>
+            <h3 className="text-gray-400 font-bold text-xs uppercase tracking-[0.15em] mb-2">{item.label}</h3>
+            <p className="text-3xl font-black text-gray-900 mb-2 tracking-tight">{item.value}</p>
+            <p className="text-xs font-bold text-gray-400 italic font-mono">{item.sub}</p>
           </div>
-          <div>
-            <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">Users</h3>
-            <p className="text-2xl font-black text-gray-900">{stats.users}</p>
-          </div>
-        </Link>
-
-        {/* Total Products */}
-        <Link to="/admin/products" className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-green-50 transition-all duration-500">
-          <div className="p-4 bg-green-100 text-green-600 rounded-2xl group-hover:scale-110 transition-transform">
-            <Package size={24} />
-          </div>
-          <div>
-            <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">Products</h3>
-            <p className="text-2xl font-black text-gray-900">{stats.products}</p>
-          </div>
-        </Link>
-
-        {/* Total Orders */}
-        <Link to="/admin/orders" className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-blue-50 transition-all duration-500">
-          <div className="p-4 bg-blue-100 text-blue-600 rounded-2xl group-hover:scale-110 transition-transform">
-            <ShoppingCart size={24} />
-          </div>
-          <div>
-            <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">Orders</h3>
-            <p className="text-2xl font-black text-gray-900">{stats.orders}</p>
-          </div>
-        </Link>
-
-        {/* Total Revenue */}
-        <Link to="/admin/orders" className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-orange-50 transition-all duration-500">
-          <div className="p-4 bg-orange-100 text-orange-600 rounded-2xl group-hover:scale-110 transition-transform">
-            <TrendingUp size={24} />
-          </div>
-          <div>
-            <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">Revenue</h3>
-            <p className="text-xl font-black text-gray-900 leading-tight">KES {stats.revenue.toLocaleString()}</p>
-          </div>
-        </Link>
-
-        {/* Low Stock Alerts */}
-        <Link to="/admin/products" className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center gap-5 group hover:shadow-xl hover:shadow-red-50 transition-all duration-500 border-l-4 border-l-red-500">
-          <div className="p-4 bg-red-100 text-red-600 rounded-2xl group-hover:scale-110 transition-transform">
-            <Package size={24} />
-          </div>
-          <div>
-            <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-widest text-red-500">Low Stock</h3>
-            <p className="text-2xl font-black text-red-600">{stats.lowStockCount}</p>
-          </div>
-        </Link>
+        ))}
       </div>
 
-      <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Best Sellers */}
-        <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-black text-gray-900">Best-Selling Products</h3>
-            <span className="px-4 py-1.5 bg-green-50 text-green-700 text-xs font-black rounded-full uppercase tracking-wider">Top 5</span>
+        <div className="lg:col-span-2 bg-white p-10 rounded-[3rem] shadow-sm border border-gray-100">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <h3 className="text-2xl font-black text-gray-900 tracking-tight">Best Selling Products</h3>
+              <p className="text-gray-400 text-sm font-medium mt-1">Based on recent sales data.</p>
+            </div>
+            <span className="px-5 py-2 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-full uppercase tracking-widest border border-emerald-100">Top Performers</span>
           </div>
-          <div className="space-y-4">
+
+          <div className="space-y-6">
             {stats.bestSellers.length > 0 ? (
               stats.bestSellers.map((product, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-2xl transition-all group">
-                  <div className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <div key={idx} className="flex items-center gap-6 p-5 hover:bg-emerald-50/30 rounded-3xl transition-all group border border-transparent hover:border-emerald-50">
+                  <div className="w-16 h-16 rounded-2xl bg-gray-100 overflow-hidden flex-shrink-0 shadow-inner">
+                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-gray-900 truncate">{product.name}</p>
-                    <p className="text-xs text-gray-500 font-medium">KES {product.price}</p>
+                    <p className="font-extrabold text-gray-900 text-lg mb-1 truncate">{product.name}</p>
+                    <p className="text-sm text-emerald-600 font-black">KES {product.price.toLocaleString()}</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-black text-green-600">{product.quantity} Sold</p>
-                    <div className="w-20 h-1.5 bg-gray-100 rounded-full mt-1.5 overflow-hidden">
-                      <div className="h-full bg-green-500 rounded-full" style={{ width: `${(product.quantity / stats.bestSellers[0].quantity) * 100}% ` }}></div>
+                  <div className="text-right flex flex-col items-end gap-2">
+                    <p className="text-sm font-black text-gray-900">{product.quantity} Sold</p>
+                    <div className="w-24 h-2 bg-gray-100 rounded-full mt-1.5 overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-500 rounded-full transition-all duration-1000"
+                        style={{ width: `${(product.quantity / stats.bestSellers[0].quantity) * 100}%` }}
+                      ></div>
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-10 text-gray-400 font-medium italic">
-                No sales data available yet
+              <div className="bg-gray-50 rounded-3xl py-12 text-center text-gray-400 font-bold border-2 border-dashed border-gray-100">
+                No orders discovered yet. Start selling to see stats!
               </div>
             )}
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-green-600 p-8 rounded-[2.5rem] shadow-xl shadow-green-100 text-white flex flex-col justify-between">
-          <div>
-            <h3 className="text-xl font-black mb-2">Management</h3>
-            <p className="text-green-100 text-sm font-medium">Quickly jump to your management console.</p>
+        {/* Action Sidebar */}
+        <div className="space-y-10">
+          {/* Quick Tasks */}
+          <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-gray-100">
+            <h3 className="text-xl font-black text-gray-900 mb-8 border-b border-gray-50 pb-4">Quick Management</h3>
+            <div className="space-y-4">
+              <Link to="/admin/products" className="flex items-center justify-between p-6 bg-emerald-50 hover:bg-emerald-500 hover:text-white rounded-[2rem] transition-all group border border-emerald-100/50">
+                <span className="font-bold">Add New Product</span>
+                <Plus size={20} className="group-hover:rotate-90 transition-transform" />
+              </Link>
+              <Link to="/admin/orders" className="flex items-center justify-between p-6 bg-blue-50 hover:bg-blue-500 hover:text-white rounded-[2rem] transition-all group border border-blue-100/50">
+                <span className="font-bold">Pending Orders</span>
+                <div className="bg-blue-200 group-hover:bg-blue-400 px-3 py-1 rounded-full text-[10px] font-black text-blue-700 group-hover:text-white transition-colors">
+                  {stats.orders}
+                </div>
+              </Link>
+            </div>
           </div>
-          <div className="space-y-3 mt-8">
-            <Link to="/admin/products" className="flex items-center justify-between p-5 bg-white/10 hover:bg-white/20 rounded-2xl transition-all group">
-              <span className="font-bold">Inventory</span>
-              <Plus size={20} className="group-hover:rotate-90 transition-transform" />
+
+          {/* Low Stock Watch */}
+          <div className="bg-rose-50 p-10 rounded-[3rem] border border-rose-100 shadow-sm shadow-rose-50">
+            <div className="flex items-center gap-3 mb-4 text-rose-600">
+              <AlertCircle size={24} />
+              <h3 className="text-xl font-black">Stock Alert</h3>
+            </div>
+            <p className="text-rose-700/70 text-sm font-medium mb-6"> {stats.lowStockCount} items are running dangerously low on stock.</p>
+            <Link to="/admin/products" className="block w-full text-center py-4 bg-rose-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-rose-200 hover:bg-rose-700 transition-all active:scale-[0.98]">
+              Restock Now
             </Link>
-            <Link to="/admin/orders" className="flex items-center justify-between p-5 bg-white/10 hover:bg-white/20 rounded-2xl transition-all group">
-              <span className="font-bold">Recent Orders</span>
-              <ClipboardList size={20} className="group-hover:scale-110 transition-transform" />
-            </Link>
-          </div>
-          <div className="mt-8 pt-8 border-t border-green-500/30">
-            <p className="text-[10px] uppercase font-black tracking-widest text-green-200 opacity-60">Status: System Online</p>
           </div>
         </div>
       </div>

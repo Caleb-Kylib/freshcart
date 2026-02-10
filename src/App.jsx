@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 
 // User pages
 import Navbar from "./components/Navbar";
@@ -21,7 +22,6 @@ import AdminOrders from "./pages/AdminOrders";
 import AdminUsers from "./pages/AdminUsers";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -30,43 +30,53 @@ const ScrollToTop = () => {
   return null;
 };
 
+const StorefrontLayout = () => {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) return null;
+
+  // Prevent admins from accessing storefront
+  if (user?.role === 'admin' && !location.pathname.startsWith('/admin')) {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen font-sans text-gray-800">
+      <Navbar />
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          } />
+          {/* Catch-all for unknown storefront routes */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
 function App() {
   return (
     <>
       <ScrollToTop />
 
       <Routes>
-        {/* User site layout */}
-        <Route
-          path="/*"
-          element={
-            <div className="flex flex-col min-h-screen font-sans text-gray-800">
-              <Navbar />
-              <main className="flex-grow">
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/products/:id" element={<ProductDetails />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/checkout" element={
-                    <ProtectedRoute>
-                      <Checkout />
-                    </ProtectedRoute>
-                  } />
-                </Routes>
-              </main>
-              <Footer />
-            </div>
-          }
-        />
-
-        {/* Auth pages */}
+        {/* Auth pages (Independent of Layouts) */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin/signup" element={<AdminSignupPage />} />
 
-        {/* Admin pages */}
+        {/* Admin Routes (Scoped under /admin) */}
         <Route
           path="/admin"
           element={
@@ -99,6 +109,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Storefront Catch-all (EVERYTHING ELSE) */}
+        <Route path="/*" element={<StorefrontLayout />} />
       </Routes>
     </>
   );
