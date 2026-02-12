@@ -18,6 +18,7 @@ const AdminSidebar = () => {
     { name: "Products", path: "/admin/products", icon: <ShoppingBag size={20} /> },
     { name: "Orders", path: "/admin/orders", icon: <ClipboardList size={20} /> },
     { name: "Users", path: "/admin/users", icon: <UsersIcon size={20} /> },
+    { name: "Reports", path: "/admin/reports", icon: <ClipboardList size={20} /> },
   ];
 
   const handleLogout = () => {

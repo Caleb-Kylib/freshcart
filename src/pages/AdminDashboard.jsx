@@ -65,9 +65,9 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-        {/* Abstract Background Shapes */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px]"></div>
-        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-400/10 rounded-full blur-[80px]"></div>
+        {/* Abstract Background Shapes - Pointer events none ensures they don't block clicks */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none select-none"></div>
+        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-400/10 rounded-full blur-[80px] pointer-events-none select-none"></div>
       </div>
 
       {/* Stats Grid */}
