@@ -106,6 +106,78 @@ export const products = [
         image: "https://images.unsplash.com/photo-1588879464627-c10ba12543e4?q=80&w=300&auto=format&fit=crop",
         description: "Fresh coriander leaves to deliver that distinct flavor to your meals.",
         unit: "bunch"
+    },
+    {
+        id: 13,
+        name: "Pineapple Mint Juice",
+        category: "Juices",
+        price: 450,
+        image: "https://images.unsplash.com/photo-1556881286-fc6915169721?q=80&w=300&auto=format&fit=crop",
+        description: "Refreshing pineapple juice with a hint of fresh mint.",
+        unit: "500ml"
+    },
+    {
+        id: 14,
+        name: "Wild Berries Blast",
+        category: "Juices",
+        price: 550,
+        image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=300&auto=format&fit=crop",
+        description: "A blend of raspberries, blueberries, and strawberries.",
+        unit: "500ml"
+    },
+    {
+        id: 15,
+        name: "Pure Mango Nectar",
+        category: "Juices",
+        price: 480,
+        image: "https://images.unsplash.com/photo-1546173159-315724a93c90?q=80&w=300&auto=format&fit=crop",
+        description: "Thick and sweet nectar made from ripe Ngowe mangoes.",
+        unit: "500ml"
+    },
+    {
+        id: 16,
+        name: "Cold Pressed Watermelon",
+        category: "Juices",
+        price: 400,
+        image: "https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?q=80&w=300&auto=format&fit=crop",
+        description: "Hydrating cold-pressed watermelon juice, perfect for hot days.",
+        unit: "500ml"
+    },
+    {
+        id: 17,
+        name: "Passion Fruit Delight",
+        category: "Juices",
+        price: 450,
+        image: "https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?q=80&w=300&auto=format&fit=crop",
+        description: "Tangy and aromatic fresh passion fruit juice.",
+        unit: "500ml"
+    },
+    {
+        id: 18,
+        name: "Apple & Ginger Zest",
+        category: "Juices",
+        price: 500,
+        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=300&auto=format&fit=crop",
+        description: "Crisp apple juice with a spicy ginger kick.",
+        unit: "500ml"
+    },
+    {
+        id: 19,
+        name: "Tropical Punch",
+        category: "Juices",
+        price: 520,
+        image: "https://images.unsplash.com/photo-1497551060073-4c5ab6435f12?q=80&w=300&auto=format&fit=crop",
+        description: "A vibrant mix of pineapple, passion, and orange juices.",
+        unit: "500ml"
+    },
+    {
+        id: 20,
+        name: "Beetroot & Carrot Detox",
+        category: "Juices",
+        price: 500,
+        image: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?q=80&w=300&auto=format&fit=crop",
+        description: "Healthy beet and carrot blend for a natural energy boost.",
+        unit: "500ml"
     }
 ];
 

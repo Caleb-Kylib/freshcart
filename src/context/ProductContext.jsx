@@ -8,9 +8,29 @@ export const useProducts = () => useContext(ProductContext);
 export const ProductProvider = ({ children }) => {
     const [products, setProducts] = useState(() => {
         const saved = localStorage.getItem('adminProducts');
+        let productsToUse = [];
+
         if (saved) {
-            const parsed = JSON.parse(saved);
-            if (parsed.length > 0) return parsed;
+            productsToUse = JSON.parse(saved);
+
+            // Merge new products from initialProducts that aren't in localStorage
+            const initialWithDefaults = initialProducts.map(p => ({
+                ...p,
+                stock: p.stock || 20,
+                description: p.description || "Fresh produce from farm.",
+                unit: p.unit || "kg",
+                soldCount: p.soldCount || 0
+            }));
+
+            const existingIds = new Set(productsToUse.map(p => p.id));
+            const newProducts = initialWithDefaults.filter(p => !existingIds.has(p.id));
+
+            if (newProducts.length > 0) {
+                productsToUse = [...productsToUse, ...newProducts];
+                localStorage.setItem('adminProducts', JSON.stringify(productsToUse));
+            }
+
+            return productsToUse;
         }
 
         // If nothing in localStorage, use initial data with default stock/desc
