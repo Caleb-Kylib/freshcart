@@ -10,31 +10,81 @@ const generateToken = (user) => {
   );
 };
 
+// Register new user
 exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
+  try {
+    const { name, email, password, role = "customer" } = req.body;
 
-  const exists = await User.findOne({ email });
-  if (exists) return res.status(400).json({ message: "User exists" });
+    // Validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Name, email, and password are required" });
+    }
 
-  const hashed = await bcrypt.hash(password, 10);
+    // Check if user exists
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(400).json({ message: "User already exists" });
 
-  const user = await User.create({
-    name,
-    email,
-    password: hashed
-  });
+    // Hash password with salt rounds
+    const hashed = await bcrypt.hash(password, 12);
 
-  res.json({ user, token: generateToken(user) });
+    // Create user
+    const user = await User.create({
+      name,
+      email,
+      password: hashed,
+      role
+    });
+
+    // Generate token
+    const token = generateToken(user);
+
+    // Return user without password
+    res.status(201).json({ 
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      },
+      token 
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
+// Login user
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
 
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) return res.status(400).json({ message: "Invalid credentials" });
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-  res.json({ user, token: generateToken(user) });
+    // Compare passwords
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(400).json({ message: "Invalid credentials" });
+
+    // Generate token
+    const token = generateToken(user);
+
+    // Return user without password
+    res.json({ 
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      },
+      token 
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
