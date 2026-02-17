@@ -1,0 +1,48 @@
+# 🔐 Environment variables
+.env
+.env.*
+!.env.example
+
+# 📦 Dependencies
+node_modules/
+
+# 🧾 Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 🏗 Build / Production
+dist/
+build/
+out/
+coverage/
+
+# 🗂 OS generated files
+.DS_Store
+Thumbs.db
+
+# 💻 Editor & IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 🧪 Testing
+.nyc_output
+coverage/
+
+# ⚙️ Runtime files
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# 🗄 Cache
+.cache/
+.tmp/
+.temp/
+
+

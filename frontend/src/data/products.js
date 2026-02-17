@@ -182,9 +182,9 @@ export const products = [
 ];
 
 export const categories = [
-    { name: "Fruits", image: "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=600&auto=format&fit=crop" },
-    { name: "Vegetables", image: "https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=600&auto=format&fit=crop" },
-    { name: "Juices", image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=600&auto=format&fit=crop" },
-    { name: "Herbs", image: "https://images.unsplash.com/photo-1629196914168-3a1595159047?q=80&w=600&auto=format&fit=crop" }
+    { name: "Fruits", image: "/products/mango.jpg" },
+    { name: "Vegetables", image: "/products/vegetables.jpg" },
+    { name: "Juices", image: "/products/mango-juice-featured-2.jpg" },
+    { name: "Herbs", image: "/products/herbs.jpg" }
 ];
 
