@@ -1,80 +1,106 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { products as initialProducts } from '../data/products';
+import { useAuth } from './AuthContext';
 
 const ProductContext = createContext();
 
 export const useProducts = () => useContext(ProductContext);
 
 export const ProductProvider = ({ children }) => {
-    const [products, setProducts] = useState(() => {
-        const saved = localStorage.getItem('adminProducts');
-        let productsToUse = [];
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const { token } = useAuth();
 
-        if (saved) {
-            productsToUse = JSON.parse(saved);
+    const API_URL = 'http://localhost:5000/api/products';
 
-            // Merge new products from initialProducts that aren't in localStorage
-            const initialWithDefaults = initialProducts.map(p => ({
-                ...p,
-                stock: p.stock || 20,
-                description: p.description || "Fresh produce from farm.",
-                unit: p.unit || "kg",
-                soldCount: p.soldCount || 0
-            }));
-
-            const existingIds = new Set(productsToUse.map(p => p.id));
-            const newProducts = initialWithDefaults.filter(p => !existingIds.has(p.id));
-
-            if (newProducts.length > 0) {
-                productsToUse = [...productsToUse, ...newProducts];
-                localStorage.setItem('adminProducts', JSON.stringify(productsToUse));
-            }
-
-            return productsToUse;
-        }
-
-        // If nothing in localStorage, use initial data with default stock/desc
-        const refinedInitial = initialProducts.map(p => ({
-            ...p,
-            stock: p.stock || 20,
-            description: p.description || "Fresh produce from farm.",
-            unit: p.unit || "kg",
-            soldCount: p.soldCount || 0
-        }));
-        localStorage.setItem('adminProducts', JSON.stringify(refinedInitial));
-        return refinedInitial;
-    });
-
+    // Fetch products from MongoDB on mount
     useEffect(() => {
-        localStorage.setItem('adminProducts', JSON.stringify(products));
-    }, [products]);
-
-    // Cross-tab sync
-    useEffect(() => {
-        const handleStorageChange = (e) => {
-            if (e.key === 'adminProducts') {
-                setProducts(JSON.parse(e.newValue || '[]'));
-            }
-        };
-        window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
+        fetchProducts();
     }, []);
 
-    const addProduct = (product) => {
-        setProducts(prev => [product, ...prev]);
+    const fetchProducts = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            // Backend returns { products, totalPages, currentPage }
+            setProducts(data.products || []);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const updateProduct = (updatedProduct) => {
-        setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
+    const addProduct = async (productData) => {
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(productData)
+            });
+            const newProduct = await response.json();
+            if (response.ok) {
+                setProducts(prev => [newProduct, ...prev]);
+                return { success: true };
+            } else {
+                throw new Error(newProduct.message || 'Failed to add product');
+            }
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
     };
 
-    const deleteProduct = (id) => {
-        setProducts(prev => prev.filter(p => p.id !== id));
+    const updateProduct = async (updatedData) => {
+        try {
+            const id = updatedData._id || updatedData.id;
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(updatedData)
+            });
+            const result = await response.json();
+            if (response.ok) {
+                setProducts(prev => prev.map(p => (p._id === id || p.id === id) ? result : p));
+                return { success: true };
+            } else {
+                throw new Error(result.message || 'Failed to update product');
+            }
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
     };
 
-    const updateStockAfterOrder = (items) => {
+    const deleteProduct = async (id) => {
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                setProducts(prev => prev.filter(p => (p._id !== id && p.id !== id)));
+                return { success: true };
+            } else {
+                const data = await response.json();
+                throw new Error(data.message || 'Failed to delete product');
+            }
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    };
+
+    const updateStockAfterOrder = async (items) => {
+        // This could be a backend batch update or handled by order creation in backend
+        // For now, we update local state to reflect the order
         setProducts(prev => prev.map(p => {
-            const itemInOrder = items.find(item => item.id === p.id);
+            const itemInOrder = items.find(item => (item._id === p._id || item.id === p.id));
             if (itemInOrder) {
                 return {
                     ...p,
@@ -89,10 +115,12 @@ export const ProductProvider = ({ children }) => {
     return (
         <ProductContext.Provider value={{
             products,
+            loading,
             addProduct,
             updateProduct,
             deleteProduct,
-            updateStockAfterOrder
+            updateStockAfterOrder,
+            fetchProducts
         }}>
             {children}
         </ProductContext.Provider>

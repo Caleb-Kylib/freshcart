@@ -20,8 +20,8 @@ exports.createOrder = async (req, res) => {
       }
 
       if (product.stock < item.quantity) {
-        return res.status(400).json({ 
-          message: `Insufficient stock for ${product.name}. Available: ${product.stock}` 
+        return res.status(400).json({
+          message: `Insufficient stock for ${product.name}. Available: ${product.stock}`
         });
       }
 
@@ -58,7 +58,21 @@ exports.getOrders = async (req, res) => {
       .populate("userId", "name email")
       .populate("items.productId")
       .sort({ createdAt: -1 });
-    
+
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get all orders (Admin only)
+exports.getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("userId", "name email")
+      .populate("items.productId")
+      .sort({ createdAt: -1 });
+
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -71,7 +85,7 @@ exports.getOrderById = async (req, res) => {
     const order = await Order.findById(req.params.id)
       .populate("userId", "name email phone")
       .populate("items.productId");
-    
+
     if (!order) return res.status(404).json({ message: "Order not found" });
 
     // Ensure user can only view their own order (unless admin)
@@ -92,7 +106,7 @@ exports.updateStatus = async (req, res) => {
 
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { 
+      {
         ...(orderStatus && { orderStatus }),
         ...(paymentStatus && { paymentStatus })
       },
@@ -100,7 +114,7 @@ exports.updateStatus = async (req, res) => {
     ).populate("userId");
 
     if (!order) return res.status(404).json({ message: "Order not found" });
-    
+
     res.json(order);
   } catch (error) {
     res.status(500).json({ message: error.message });

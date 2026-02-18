@@ -20,7 +20,7 @@ const SignupPage = () => {
     setError(""); // Clear error on change
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
 
     // Basic Validations
@@ -34,8 +34,12 @@ const SignupPage = () => {
       return;
     }
 
-    signup(formData.name, formData.email, formData.password, formData.role);
-    navigate("/login");
+    const result = await signup(formData.name, formData.email, formData.password, formData.role);
+    if (result.success) {
+      navigate("/login");
+    } else {
+      setError(result.message);
+    }
   };
 
   return (

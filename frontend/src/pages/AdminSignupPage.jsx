@@ -28,7 +28,7 @@ const AdminSignupPage = () => {
         setError("");
     };
 
-    const handleSignup = (e) => {
+    const handleSignup = async (e) => {
         e.preventDefault();
 
         if (formData.password !== formData.confirmPassword) {
@@ -42,8 +42,12 @@ const AdminSignupPage = () => {
         }
 
         // Specifically create an ADMIN role
-        signup(formData.name, formData.email, formData.password, "admin");
-        navigate("/admin/login");
+        const result = await signup(formData.name, formData.email, formData.password, "admin");
+        if (result.success) {
+            navigate("/admin/login");
+        } else {
+            setError(result.message);
+        }
     };
 
     return (

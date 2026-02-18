@@ -6,83 +6,73 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
+
+    const API_URL = 'http://localhost:5000/api/auth';
 
     useEffect(() => {
         const savedUser = localStorage.getItem('currentUser');
-        if (savedUser) {
+        if (savedUser && token) {
             setUser(JSON.parse(savedUser));
         }
         setLoading(false);
-    }, []);
+    }, [token]);
 
-    const [users, setUsers] = useState(() => {
-        const savedUsers = localStorage.getItem('users');
-        // Pre-seed an admin user for convenience
-        const initialUsers = savedUsers ? JSON.parse(savedUsers) : [
-            { id: '1', name: 'Admin User', email: 'admin@farmfresh.com', password: 'password', role: 'admin' }
-        ];
-        return initialUsers;
-    });
-
-    useEffect(() => {
-        localStorage.setItem('users', JSON.stringify(users));
-    }, [users]);
-
-    useEffect(() => {
-        if (user) {
-            localStorage.setItem('currentUser', JSON.stringify(user));
-        } else {
-            localStorage.removeItem('currentUser');
+    const signup = async (name, email, password, role = 'customer') => {
+        try {
+            const response = await fetch(`${API_URL}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password, role })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Signup failed');
+            
+            setUser(data.user);
+            setToken(data.token);
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            return { success: true };
+        } catch (error) {
+            return { success: false, message: error.message };
         }
-    }, [user]);
-
-    // Cross-tab sync
-    useEffect(() => {
-        const handleStorageChange = (e) => {
-            if (e.key === 'users') {
-                setUsers(JSON.parse(e.newValue || '[]'));
-            }
-            if (e.key === 'currentUser') {
-                setUser(e.newValue ? JSON.parse(e.newValue) : null);
-            }
-        };
-        window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
-    }, []);
-
-    const signup = (name, email, password, role = 'customer') => {
-        const newUser = { id: Date.now().toString(), name, email, password, role };
-        setUsers(prev => [...prev, newUser]);
-        return { success: true };
     };
 
-    const login = (email, password, requiredRole = null) => {
-        const foundUser = users.find(u => u.email === email && u.password === password);
-        if (foundUser) {
-            if (requiredRole && foundUser.role !== requiredRole) {
+    const login = async (email, password, requiredRole = null) => {
+        try {
+            const response = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Login failed');
+
+            if (requiredRole && data.user.role !== requiredRole) {
                 return { success: false, message: `Access denied. This portal is for ${requiredRole}s only.` };
             }
-            setUser(foundUser);
-            return { success: true, user: foundUser };
+
+            setUser(data.user);
+            setToken(data.token);
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            return { success: true, user: data.user };
+        } catch (error) {
+            return { success: false, message: error.message };
         }
-        return { success: false, message: 'Invalid email or password' };
     };
 
     const logout = () => {
-        // Clear current session
         setUser(null);
+        setToken(null);
+        localStorage.removeItem('token');
         localStorage.removeItem('currentUser');
-
-        // Optional: Call backend logout if needed
-        fetch('/api/logout', { method: 'POST' }).catch(() => { });
-
-        // Redirect to entry points
         window.location.href = '/';
     };
 
     return (
-        <AuthContext.Provider value={{ user, users, loading, signup, login, logout }}>
+        <AuthContext.Provider value={{ user, token, loading, signup, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
