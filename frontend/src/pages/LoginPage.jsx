@@ -10,11 +10,11 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
-    const result = login(email, password);
+    const result = await login(email, password);
     if (result.success) {
       navigate("/");
     } else {

@@ -19,11 +19,11 @@ const AdminLoginPage = () => {
         }
     }, [user, navigate]);
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         setError("");
 
-        const result = login(email, password, 'admin');
+        const result = await login(email, password, 'admin');
         if (result.success) {
             navigate("/admin");
         } else {
