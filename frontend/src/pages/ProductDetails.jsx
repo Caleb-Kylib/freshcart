@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Minus, Plus, ShoppingBag, ArrowLeft, Check } from 'lucide-react';
-import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
 import { useProducts } from '../context/ProductContext';
 
@@ -9,7 +8,7 @@ const ProductDetails = () => {
     const { id } = useParams();
     const { products } = useProducts();
 
-    const product = products.find(p => String(p.id) === String(id));
+    const product = products.find(p => String(p._id || p.id) === String(id));
     const { addToCart } = useCart();
     const [quantity, setQuantity] = useState(1);
     const [added, setAdded] = useState(false);

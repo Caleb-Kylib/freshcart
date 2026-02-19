@@ -60,7 +60,7 @@ const ProductCarousel = ({ products, title }) => {
                 >
                     {products.map((product) => (
                         <div
-                            key={product.id}
+                            key={product._id || product.id}
                             className="flex-shrink-0"
                             style={{ width: `calc(${100 / itemsPerScreen}% - ${(24 * (itemsPerScreen - 1)) / itemsPerScreen}px)` }}
                         >
@@ -92,8 +92,8 @@ const ProductCarousel = ({ products, title }) => {
                         key={idx}
                         onClick={() => setCurrentIndex(idx * itemsPerScreen)}
                         className={`w-2 h-2 rounded-full transition-all ${Math.floor(effectiveIndex / itemsPerScreen) === idx
-                                ? 'bg-primary w-6'
-                                : 'bg-gray-300 hover:bg-gray-400'
+                            ? 'bg-primary w-6'
+                            : 'bg-gray-300 hover:bg-gray-400'
                             }`}
                     />
                 ))}

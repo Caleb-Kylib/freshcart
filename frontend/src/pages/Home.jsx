@@ -3,17 +3,25 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Truck, ShieldCheck, Leaf, Package, ShoppingCart, MapPin, Tag, Sparkles, Mail } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import ProductCarousel from '../components/ProductCarousel';
-import { products, categories } from '../data/products';
+import { useProducts } from '../context/ProductContext';
+import { categories } from '../data/products';
 
 const Home = () => {
-    const [featuredProducts, setFeaturedProducts] = useState(products.slice(0, 4));
+    const { products, loading } = useProducts();
+    const [bestSellers, setBestSellers] = useState([]);
+    const [newArrivals, setNewArrivals] = useState([]);
 
     useEffect(() => {
-        const savedProducts = JSON.parse(localStorage.getItem("adminProducts"));
-        if (savedProducts && savedProducts.length > 0) {
-            setFeaturedProducts(savedProducts.slice(0, 4));
+        if (products && products.length > 0) {
+            // Sort by soldCount for Best Sellers
+            const sortedBySales = [...products].sort((a, b) => (b.soldCount || 0) - (a.soldCount || 0));
+            setBestSellers(sortedBySales.slice(0, 4));
+
+            // Sort by createdAt for New Arrivals (newest first)
+            const sortedByNew = [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setNewArrivals(sortedByNew.slice(0, 8));
         }
-    }, []);
+    }, [products]);
 
     return (
         <div className="min-h-screen">
@@ -42,7 +50,7 @@ const Home = () => {
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Link to="/products" className="btn-primary text-center">Shop Now</Link>
-                            <Link to="/products?category=Offers" className="btn-secondary text-white border-white hover:bg-white hover:text-green-800 text-center">View Offers</Link>
+                            <Link to="/products?category=Juices" className="btn-secondary text-white border-white hover:bg-white hover:text-green-800 text-center">View Juices</Link>
                         </div>
                     </div>
                 </div>
@@ -115,15 +123,17 @@ const Home = () => {
             </section>
 
             {/* New Arrivals Carousel */}
-            <section className="py-16 bg-gray-50">
-                <div className="container-custom">
-                    <div className="flex items-center gap-2 mb-8">
-                        <Sparkles className="text-yellow-500" />
-                        <h2 className="text-3xl font-bold text-gray-900">New Arrivals</h2>
+            {newArrivals.length > 0 && (
+                <section className="py-16 bg-gray-50">
+                    <div className="container-custom">
+                        <div className="flex items-center gap-2 mb-8">
+                            <Sparkles className="text-yellow-500" />
+                            <h2 className="text-3xl font-bold text-gray-900">New Arrivals</h2>
+                        </div>
+                        <ProductCarousel products={newArrivals} />
                     </div>
-                    <ProductCarousel products={products.slice(0, 8)} />
-                </div>
-            </section>
+                </section>
+            )}
 
             {/* Categories */}
             <section className="py-20 bg-light">
@@ -190,25 +200,27 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Featured Products */}
-            <section className="py-20 bg-white">
-                <div className="container-custom">
-                    <div className="text-center max-w-2xl mx-auto mb-16">
-                        <h2 className="text-3xl font-bold mb-4 text-gray-900">Our Best Sellers</h2>
-                        <p className="text-gray-500">Hand-picked favorites that our customers love. Freshness guaranteed in every bite.</p>
-                    </div>
+            {/* Featured Products (Best Sellers) */}
+            {bestSellers.length > 0 && (
+                <section className="py-20 bg-white">
+                    <div className="container-custom">
+                        <div className="text-center max-w-2xl mx-auto mb-16">
+                            <h2 className="text-3xl font-bold mb-4 text-gray-900">Our Best Sellers</h2>
+                            <p className="text-gray-500">Hand-picked favorites that our customers love. Freshness guaranteed in every bite.</p>
+                        </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {featuredProducts.map((product) => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
-                    </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {bestSellers.map((product) => (
+                                <ProductCard key={product._id || product.id} product={product} />
+                            ))}
+                        </div>
 
-                    <div className="mt-12 text-center">
-                        <Link to="/products" className="btn-secondary inline-block">Shop All Products</Link>
+                        <div className="mt-12 text-center">
+                            <Link to="/products" className="btn-secondary inline-block">Shop All Products</Link>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
 
             {/* Partner Farms */}
             <section className="py-16 bg-stone-50">
