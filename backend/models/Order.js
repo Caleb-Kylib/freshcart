@@ -13,17 +13,18 @@ const orderSchema = new mongoose.Schema(
       }
     ],
     totalAmount: Number,
-    orderStatus: { 
-      type: String, 
+    orderStatus: {
+      type: String,
       enum: ["Pending", "Processing", "Shipped", "Delivered"],
-      default: "Pending" 
+      default: "Pending"
     },
-    paymentStatus: { 
-      type: String, 
+    paymentStatus: {
+      type: String,
       enum: ["Pending", "Paid", "Failed"],
-      default: "Pending" 
+      default: "Pending"
     },
-    shippingAddress: String
+    shippingAddress: String,
+    customerPhone: String
   },
   { timestamps: true }
 );

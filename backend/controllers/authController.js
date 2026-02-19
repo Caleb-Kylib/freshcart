@@ -39,14 +39,14 @@ exports.register = async (req, res) => {
     const token = generateToken(user);
 
     // Return user without password
-    res.status(201).json({ 
+    res.status(201).json({
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role
       },
-      token 
+      token
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -75,15 +75,24 @@ exports.login = async (req, res) => {
     const token = generateToken(user);
 
     // Return user without password
-    res.json({ 
+    res.json({
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role
       },
-      token 
+      token
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// Get all users (Admin only)
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, "-password");
+    res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
