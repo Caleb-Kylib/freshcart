@@ -1,10 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, Truck, ShieldCheck, Leaf, Package, ShoppingCart, MapPin, Tag, Sparkles, Mail } from 'lucide-react';
+import { ArrowRight, Star, Truck, ShieldCheck, Leaf, Package, ShoppingCart, MapPin, Tag, Sparkles, Mail, ChevronDown, Plus, Minus } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import ProductCarousel from '../components/ProductCarousel';
 import { useProducts } from '../context/ProductContext';
 import { categories } from '../data/products';
+
+const FAQItem = ({ question, answer }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div className={`group border-b border-emerald-100 transition-all duration-300 ${isOpen ? 'bg-emerald-50/30' : 'hover:bg-emerald-50/10'}`}>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
+            >
+                <span className={`text-lg font-bold transition-colors ${isOpen ? 'text-emerald-700' : 'text-gray-800'}`}>
+                    {question}
+                </span>
+                <div className={`p-2 rounded-full transition-all duration-500 ${isOpen ? 'bg-emerald-600 text-white rotate-180' : 'bg-emerald-100 text-emerald-600'}`}>
+                    <ChevronDown size={20} />
+                </div>
+            </button>
+            <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                <div className="p-6 pt-0 text-gray-600 font-medium leading-relaxed">
+                    {answer}
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const Home = () => {
     const { products, loading } = useProducts();
@@ -22,6 +47,25 @@ const Home = () => {
             setNewArrivals(sortedByNew.slice(0, 8));
         }
     }, [products]);
+
+    const faqs = [
+        {
+            question: "How fast is the delivery in Nairobi?",
+            answer: "We offer same-day delivery for all orders placed before 12:00 PM. Orders placed later are delivered the following morning. We cover Kilimani, Westlands, Karen, and most major residential areas."
+        },
+        {
+            question: "Are your products strictly organic?",
+            answer: "Yes! We source directly from certified local farmers who use sustainable and organic farming practices. Every item is hand-picked and quality-checked before being packed."
+        },
+        {
+            question: "What payment methods do you accept?",
+            answer: "Currently, we prioritize M-Pesa for its convenience and speed. You can pay directly during checkout using our integrated M-Pesa prompt."
+        },
+        {
+            question: "Can I return fresh produce if I'm not satisfied?",
+            answer: "Absolutely. We have a 'Freshness Guarantee'. If any item doesn't meet your expectations upon delivery, you can return it immediately with the rider for a full refund or replacement."
+        }
+    ];
 
     return (
         <div className="min-h-screen">
@@ -221,6 +265,25 @@ const Home = () => {
                     </div>
                 </section>
             )}
+
+            {/* FAQ Section */}
+            <section className="py-24 bg-white">
+                <div className="container-custom">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-16">
+                            <span className="text-emerald-600 font-black text-xs uppercase tracking-[0.3em] mb-4 block">Help Center</span>
+                            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight italic">Frequently Asked Questions</h2>
+                            <p className="text-gray-500 mt-4 text-lg">Everything you need to know about FreshCart deliveries and quality.</p>
+                        </div>
+
+                        <div className="bg-white rounded-[3rem] overflow-hidden shadow-2xl shadow-emerald-100 border border-emerald-50">
+                            {faqs.map((faq, idx) => (
+                                <FAQItem key={idx} question={faq.question} answer={faq.answer} />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* Partner Farms */}
             <section className="py-16 bg-stone-50">
