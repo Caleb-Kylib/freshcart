@@ -22,14 +22,14 @@ const CartItem = ({ item }) => {
             {/* Quantity */}
             <div className="flex items-center border border-gray-200 rounded-full px-3 py-1 bg-white">
                 <button
-                    onClick={() => updateQuantity(item.id, -1)}
+                    onClick={() => updateQuantity(item._id || item.id, -1)}
                     className="p-1 hover:text-red-500 transition-colors"
                 >
                     <Minus size={16} />
                 </button>
                 <span className="mx-3 font-semibold text-gray-800">{item.quantity}</span>
                 <button
-                    onClick={() => updateQuantity(item.id, 1)}
+                    onClick={() => updateQuantity(item._id || item.id, 1)}
                     className="p-1 hover:text-green-500 transition-colors"
                 >
                     <Plus size={16} />
@@ -40,7 +40,7 @@ const CartItem = ({ item }) => {
             <div className="flex items-center gap-6">
                 <span className="font-bold text-gray-900 w-24 text-right">KES {item.price * item.quantity}</span>
                 <button
-                    onClick={() => removeFromCart(item.id)}
+                    onClick={() => removeFromCart(item._id || item.id)}
                     className="p-2 text-gray-400 hover:text-red-500 transition-colors bg-gray-50 rounded-full hover:bg-red-50"
                 >
                     <Trash2 size={20} />
