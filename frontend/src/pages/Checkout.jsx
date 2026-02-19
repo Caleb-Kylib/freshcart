@@ -32,30 +32,40 @@ const Checkout = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
 
-        // Create Order Object
+        // Create Order Object in format backend expects
         const orderData = {
-            customerId: user?.id || 'guest',
-            customerName: formData.name,
-            customerEmail: formData.email,
+            items: cartItems.map(item => ({
+                productId: item._id || item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                image: item.image
+            })),
+            shippingAddress: `${formData.address}, ${formData.city}`,
             customerPhone: formData.phone,
-            customerAddress: `${formData.address}, ${formData.city}`,
-            items: [...cartItems],
             totalAmount: cartTotal,
             paymentMethod: 'M-Pesa'
         };
 
-        // Simulate Payment Processing
-        setTimeout(() => {
-            placeOrder(orderData);
-            updateStockAfterOrder(cartItems);
+        try {
+            const result = await placeOrder(orderData);
+            if (result.success) {
+                updateStockAfterOrder(cartItems);
+                setSuccess(true);
+                clearCart();
+            } else {
+                alert(result.message || "Failed to place order");
+            }
+        } catch (error) {
+            console.error("Checkout error:", error);
+            alert("An unexpected error occurred. Please check your connection.");
+        } finally {
             setLoading(false);
-            setSuccess(true);
-            clearCart();
-        }, 2000);
+        }
     };
 
     if (success) {

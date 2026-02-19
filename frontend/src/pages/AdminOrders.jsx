@@ -13,9 +13,11 @@ const AdminOrders = () => {
         updateOrderStatus(orderId, newStatus);
     };
 
+    const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
     const filteredOrders = filter === "All"
-        ? orders
-        : orders.filter(o => o.orderStatus === filter);
+        ? sortedOrders
+        : sortedOrders.filter(o => o.orderStatus === filter);
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -71,12 +73,12 @@ const AdminOrders = () => {
             <div className="space-y-6">
                 {filteredOrders.length > 0 ? (
                     filteredOrders.map((order) => (
-                        <div key={order.id} className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                        <div key={order._id} className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
                             {/* Order Header */}
                             <div className="p-5 bg-gray-50/50 border-b border-gray-100 flex flex-wrap justify-between items-center gap-4">
                                 <div className="flex items-center gap-4">
                                     <div className="bg-white px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-black text-gray-900 shadow-sm uppercase tracking-tighter">
-                                        #{order.id.split('-')[1]}
+                                        #{order._id.slice(-6).toUpperCase()}
                                     </div>
                                     <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400">
                                         <Calendar size={14} />
@@ -89,7 +91,7 @@ const AdminOrders = () => {
                                     </span>
                                     <select
                                         value={order.orderStatus}
-                                        onChange={(e) => updateStatus(order.id, e.target.value)}
+                                        onChange={(e) => updateStatus(order._id, e.target.value)}
                                         className="text-xs font-bold text-gray-700 bg-white border border-gray-200 rounded-xl px-3 py-1.5 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition-all cursor-pointer shadow-sm"
                                     >
                                         {statuses.filter(s => s !== "All").map(s => (
@@ -109,8 +111,8 @@ const AdminOrders = () => {
                                                 <User size={16} />
                                             </div>
                                             <div>
-                                                <div className="text-sm font-bold text-gray-900 leading-none mb-1">{order.customerName}</div>
-                                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">ID: {order.customerId}</div>
+                                                <div className="text-sm font-bold text-gray-900 leading-none mb-1">{order.userId?.name || 'Customer'}</div>
+                                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">ID: {order.userId?._id?.slice(-8) || 'N/A'}</div>
                                             </div>
                                         </div>
                                         <div className="flex items-start gap-3">
@@ -118,9 +120,9 @@ const AdminOrders = () => {
                                                 <MapPin size={16} />
                                             </div>
                                             <div className="text-xs text-gray-600 leading-relaxed font-medium">
-                                                {order.customerAddress}<br />
+                                                {order.shippingAddress}<br />
                                                 <span className="flex items-center gap-1.5 mt-1">
-                                                    <Phone size={12} /> {order.customerPhone}
+                                                    <Phone size={12} /> {order.customerPhone || 'No Phone'}
                                                 </span>
                                             </div>
                                         </div>
