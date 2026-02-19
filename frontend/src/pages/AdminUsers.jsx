@@ -70,7 +70,7 @@ const AdminUsers = () => {
                         <tbody className="divide-y divide-gray-100">
                             {filteredUsers.length > 0 ? (
                                 filteredUsers.map((user) => (
-                                    <tr key={user.id} className="hover:bg-gray-50/50 transition-colors">
+                                    <tr key={user._id || user.id} className="hover:bg-gray-50/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${user.role === 'admin' ? 'bg-indigo-100 text-indigo-600' : 'bg-green-100 text-green-600'
@@ -79,7 +79,7 @@ const AdminUsers = () => {
                                                 </div>
                                                 <div>
                                                     <div className="text-sm font-bold text-gray-900">{user.name}</div>
-                                                    <div className="text-xs text-gray-400">ID: {user.id}</div>
+                                                    <div className="text-xs text-gray-400">ID: {user._id || user.id}</div>
                                                 </div>
                                             </div>
                                         </td>
@@ -93,8 +93,8 @@ const AdminUsers = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${user.role === 'admin'
-                                                    ? 'bg-indigo-50 text-indigo-600'
-                                                    : 'bg-emerald-50 text-emerald-600'
+                                                ? 'bg-indigo-50 text-indigo-600'
+                                                : 'bg-emerald-50 text-emerald-600'
                                                 }`}>
                                                 {user.role === 'admin' ? <Shield size={12} /> : <User size={12} />}
                                                 {user.role}

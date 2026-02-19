@@ -7,6 +7,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token'));
+    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const API_URL = 'http://localhost:5000/api/auth';
@@ -19,6 +20,29 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, [token]);
 
+    // Fetch users if logged in as admin
+    useEffect(() => {
+        if (user?.role === 'admin' && token) {
+            fetchUsers();
+        } else {
+            setUsers([]);
+        }
+    }, [user, token]);
+
+    const fetchUsers = async () => {
+        try {
+            const response = await fetch(`${API_URL}/users`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setUsers(data);
+            }
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    };
+
     const signup = async (name, email, password, role = 'customer') => {
         try {
             const response = await fetch(`${API_URL}/register`, {
@@ -28,7 +52,7 @@ export const AuthProvider = ({ children }) => {
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || 'Signup failed');
-            
+
             setUser(data.user);
             setToken(data.token);
             localStorage.setItem('token', data.token);
@@ -66,13 +90,14 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setUser(null);
         setToken(null);
+        setUsers([]);
         localStorage.removeItem('token');
         localStorage.removeItem('currentUser');
         window.location.href = '/';
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, loading, signup, login, logout }}>
+        <AuthContext.Provider value={{ user, token, users, loading, signup, login, logout, fetchUsers }}>
             {children}
         </AuthContext.Provider>
     );

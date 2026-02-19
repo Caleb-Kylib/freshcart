@@ -29,7 +29,7 @@ const ProductCard = ({ product }) => {
                 <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             </div>
 
-            <Link to={`/products/${product.id}`} className="flex-1 p-5 flex flex-col">
+            <Link to={`/products/${product._id || product.id}`} className="flex-1 p-5 flex flex-col">
                 <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">{product.category}</p>
                 <h3 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-primary transition-colors line-clamp-2">{product.name}</h3>
                 <div className="mt-auto flex items-center justify-between">

@@ -33,6 +33,10 @@ const Products = () => {
         }
     };
 
+    // Combine default categories with any new ones from the database
+    const dynamicCategories = [...new Set(products.map(p => p.category))];
+    const allCategories = [...new Set([...categories.map(c => c.name), ...dynamicCategories])];
+
     const filteredProducts = selectedCategory === 'All'
         ? displayProducts
         : displayProducts.filter(p => p.category === selectedCategory);
@@ -52,13 +56,13 @@ const Products = () => {
                         >
                             All Items
                         </button>
-                        {categories.map(cat => (
+                        {allCategories.map(cat => (
                             <button
-                                key={cat.name}
-                                onClick={() => handleCategoryChange(cat.name)}
-                                className={`px-4 py-2 rounded-md font-medium text-sm whitespace-nowrap transition-colors ${selectedCategory === cat.name ? 'bg-primary text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+                                key={cat}
+                                onClick={() => handleCategoryChange(cat)}
+                                className={`px-4 py-2 rounded-md font-medium text-sm whitespace-nowrap transition-colors ${selectedCategory === cat ? 'bg-primary text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
                             >
-                                {cat.name}
+                                {cat}
                             </button>
                         ))}
                     </div>
@@ -72,7 +76,7 @@ const Products = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                         {filteredProducts.map(product => (
-                            <ProductCard key={product.id} product={product} />
+                            <ProductCard key={product._id || product.id} product={product} />
                         ))}
                     </div>
                 )}

@@ -10,69 +10,106 @@ const Cart = () => {
     if (cartItems.length === 0) {
         return (
             <div className="pt-32 pb-20 min-h-screen bg-gray-50 flex flex-col items-center justify-center text-center px-4">
-                <div className="bg-white p-6 rounded-full shadow-sm mb-6">
-                    <ShoppingBag size={48} className="text-gray-300" />
+                <div className="w-24 h-24 bg-white rounded-3xl shadow-xl flex items-center justify-center mb-8 border border-gray-100 scale-110">
+                    <ShoppingBag size={48} className="text-emerald-500" />
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
-                <p className="text-gray-500 mb-8 max-w-md">Looks like you haven't added any fresh groceries to your cart yet.</p>
-                <Link to="/products" className="btn-primary">Start Shopping</Link>
+                <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Your cart is empty</h2>
+                <p className="text-gray-500 mb-10 max-w-md font-medium leading-relaxed">
+                    Explore our farm-fresh selection and start filling your kitchen with quality groceries.
+                </p>
+                <Link
+                    to="/products"
+                    className="bg-emerald-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-[0.98]"
+                >
+                    Discover Products
+                </Link>
             </div>
         );
     }
 
     return (
-        <div className="pt-32 pb-20 min-h-screen bg-gray-50">
+        <div className="pt-32 pb-20 min-h-screen bg-[#FDFDFD]">
             <div className="container-custom">
-                <h1 className="text-3xl font-bold mb-8 text-gray-900">Your Shopping Cart</h1>
+                <div className="flex items-center justify-between mb-12">
+                    <div>
+                        <h1 className="text-4xl font-black text-gray-900 tracking-tight">Shopping Cart</h1>
+                        <p className="text-gray-500 font-medium mt-1">Check your items and proceed to checkout.</p>
+                    </div>
+                    <button
+                        onClick={clearCart}
+                        className="text-sm font-bold text-rose-500 hover:text-rose-700 transition-colors flex items-center gap-2"
+                    >
+                        Clear All Items
+                    </button>
+                </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Cart Items */}
-                    <div className="lg:col-span-2 space-y-4">
-                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-                                <h2 className="font-semibold text-gray-700">Items ({cartItems.length})</h2>
-                                <button onClick={clearCart} className="text-sm text-red-500 hover:text-red-700 font-medium">Clear Cart</button>
-                            </div>
-
-                            <div>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                    {/* Cart Items List */}
+                    <div className="lg:col-span-8">
+                        <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 overflow-hidden">
+                            <div className="space-y-0">
                                 {cartItems.map(item => (
-                                    <CartItem key={item.id} item={item} />
+                                    <CartItem key={item._id || item.id} item={item} />
                                 ))}
                             </div>
                         </div>
 
-                        <Link to="/products" className="inline-flex items-center text-gray-500 hover:text-primary mt-4 font-medium transition-colors">
-                            <ArrowLeft size={18} className="mr-2" /> Continue Shopping
-                        </Link>
+                        <div className="mt-10">
+                            <Link
+                                to="/products"
+                                className="inline-flex items-center text-gray-900 font-bold hover:text-emerald-600 group transition-all"
+                            >
+                                <ArrowLeft size={18} className="mr-3 group-hover:-translate-x-1 transition-transform" />
+                                Continue Shopping
+                            </Link>
+                        </div>
                     </div>
 
-                    {/* Summary */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-32">
-                            <h2 className="font-bold text-xl mb-6 text-gray-900">Order Summary</h2>
+                    {/* Order Summary Sidebar */}
+                    <div className="lg:col-span-4">
+                        <div className="bg-white rounded-[2.5rem] p-10 shadow-xl shadow-gray-200/40 border border-gray-100 sticky top-32">
+                            <h2 className="text-2xl font-black text-gray-900 mb-8 border-b border-gray-50 pb-4">Order Summary</h2>
 
-                            <div className="space-y-4 mb-6">
-                                <div className="flex justify-between text-gray-600">
+                            <div className="space-y-6 mb-10">
+                                <div className="flex justify-between text-gray-500 font-medium">
                                     <span>Subtotal</span>
-                                    <span>KES {cartTotal}</span>
+                                    <span className="text-gray-900 font-bold">KES {cartTotal.toLocaleString()}</span>
                                 </div>
-                                <div className="flex justify-between text-gray-600">
-                                    <span>Delivery Fee</span>
-                                    <span className="text-green-600 font-medium">Free</span>
+                                <div className="flex justify-between text-gray-500 font-medium">
+                                    <span>Service Fee</span>
+                                    <span className="text-emerald-600 font-black">Free</span>
                                 </div>
-                                <div className="border-t border-gray-100 pt-4 flex justify-between items-center">
-                                    <span className="font-bold text-gray-900 text-lg">Total</span>
-                                    <span className="font-bold text-primary text-2xl">KES {cartTotal}</span>
+                                <div className="flex justify-between text-gray-500 font-medium">
+                                    <span>Tax</span>
+                                    <span className="text-gray-900 font-bold">KES 0</span>
+                                </div>
+
+                                <div className="pt-6 border-t border-gray-50 flex justify-between items-end">
+                                    <div>
+                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Estimated Total</p>
+                                        <span className="text-3xl font-black text-emerald-600 tracking-tight">KES {cartTotal.toLocaleString()}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <Link to="/checkout" className="w-full btn-primary flex justify-center py-4 rounded-xl">
+                            <Link
+                                to="/checkout"
+                                className="w-full bg-emerald-600 text-white font-black py-5 rounded-[1.5rem] flex items-center justify-center gap-3 hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-200 active:scale-[0.98]"
+                            >
                                 Proceed to Checkout
                             </Link>
 
-                            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400">
-                                <span className="bg-gray-100 px-2 py-1 rounded">Secure Checkout</span>
-                                <span className="bg-gray-100 px-2 py-1 rounded">M-Pesa Only</span>
+                            <div className="mt-10 pt-8 border-t border-gray-50">
+                                <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-4 text-center">Payment Methods</p>
+                                <div className="flex justify-center items-center gap-6 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-default">
+                                    {/* M-PESA Placeholder visual */}
+                                    <div className="flex items-center gap-1">
+                                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                                        <span className="text-[11px] font-bold text-gray-900">M-PESA SECURE</span>
+                                    </div>
+                                    <div className="w-px h-4 bg-gray-200"></div>
+                                    <span className="text-[11px] font-bold text-gray-900 uppercase">Cash on Delivery</span>
+                                </div>
                             </div>
                         </div>
                     </div>

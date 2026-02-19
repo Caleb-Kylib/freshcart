@@ -1,19 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, Truck, ShieldCheck, Leaf, Package, ShoppingCart, MapPin, Tag, Sparkles, Mail } from 'lucide-react';
+import { ArrowRight, Star, Truck, ShieldCheck, Leaf, Package, ShoppingCart, MapPin, Tag, Sparkles, Mail, ChevronDown, Plus, Minus } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import ProductCarousel from '../components/ProductCarousel';
-import { products, categories } from '../data/products';
+import { useProducts } from '../context/ProductContext';
+import { categories } from '../data/products';
+
+const FAQItem = ({ question, answer }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div className={`group border-b border-emerald-100 transition-all duration-300 ${isOpen ? 'bg-emerald-50/30' : 'hover:bg-emerald-50/10'}`}>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
+            >
+                <span className={`text-lg font-bold transition-colors ${isOpen ? 'text-emerald-700' : 'text-gray-800'}`}>
+                    {question}
+                </span>
+                <div className={`p-2 rounded-full transition-all duration-500 ${isOpen ? 'bg-emerald-600 text-white rotate-180' : 'bg-emerald-100 text-emerald-600'}`}>
+                    <ChevronDown size={20} />
+                </div>
+            </button>
+            <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                <div className="p-6 pt-0 text-gray-600 font-medium leading-relaxed">
+                    {answer}
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const Home = () => {
-    const [featuredProducts, setFeaturedProducts] = useState(products.slice(0, 4));
+    const { products, loading } = useProducts();
+    const [bestSellers, setBestSellers] = useState([]);
+    const [newArrivals, setNewArrivals] = useState([]);
 
     useEffect(() => {
-        const savedProducts = JSON.parse(localStorage.getItem("adminProducts"));
-        if (savedProducts && savedProducts.length > 0) {
-            setFeaturedProducts(savedProducts.slice(0, 4));
+        if (products && products.length > 0) {
+            // Sort by soldCount for Best Sellers
+            const sortedBySales = [...products].sort((a, b) => (b.soldCount || 0) - (a.soldCount || 0));
+            setBestSellers(sortedBySales.slice(0, 4));
+
+            // Sort by createdAt for New Arrivals (newest first)
+            const sortedByNew = [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setNewArrivals(sortedByNew.slice(0, 8));
         }
-    }, []);
+    }, [products]);
+
+    const faqs = [
+        {
+            question: "How fast is the delivery in Nairobi?",
+            answer: "We offer same-day delivery for all orders placed before 12:00 PM. Orders placed later are delivered the following morning. We cover Kilimani, Westlands, Karen, and most major residential areas."
+        },
+        {
+            question: "Are your products strictly organic?",
+            answer: "Yes! We source directly from certified local farmers who use sustainable and organic farming practices. Every item is hand-picked and quality-checked before being packed."
+        },
+        {
+            question: "What payment methods do you accept?",
+            answer: "Currently, we prioritize M-Pesa for its convenience and speed. You can pay directly during checkout using our integrated M-Pesa prompt."
+        },
+        {
+            question: "Can I return fresh produce if I'm not satisfied?",
+            answer: "Absolutely. We have a 'Freshness Guarantee'. If any item doesn't meet your expectations upon delivery, you can return it immediately with the rider for a full refund or replacement."
+        }
+    ];
 
     return (
         <div className="min-h-screen">
@@ -42,7 +94,7 @@ const Home = () => {
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Link to="/products" className="btn-primary text-center">Shop Now</Link>
-                            <Link to="/products?category=Offers" className="btn-secondary text-white border-white hover:bg-white hover:text-green-800 text-center">View Offers</Link>
+                            <Link to="/products?category=Juices" className="btn-secondary text-white border-white hover:bg-white hover:text-green-800 text-center">View Juices</Link>
                         </div>
                     </div>
                 </div>
@@ -115,15 +167,17 @@ const Home = () => {
             </section>
 
             {/* New Arrivals Carousel */}
-            <section className="py-16 bg-gray-50">
-                <div className="container-custom">
-                    <div className="flex items-center gap-2 mb-8">
-                        <Sparkles className="text-yellow-500" />
-                        <h2 className="text-3xl font-bold text-gray-900">New Arrivals</h2>
+            {newArrivals.length > 0 && (
+                <section className="py-16 bg-gray-50">
+                    <div className="container-custom">
+                        <div className="flex items-center gap-2 mb-8">
+                            <Sparkles className="text-yellow-500" />
+                            <h2 className="text-3xl font-bold text-gray-900">New Arrivals</h2>
+                        </div>
+                        <ProductCarousel products={newArrivals} />
                     </div>
-                    <ProductCarousel products={products.slice(0, 8)} />
-                </div>
-            </section>
+                </section>
+            )}
 
             {/* Categories */}
             <section className="py-20 bg-light">
@@ -190,22 +244,43 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Featured Products */}
-            <section className="py-20 bg-white">
+            {/* Featured Products (Best Sellers) */}
+            {bestSellers.length > 0 && (
+                <section className="py-20 bg-white">
+                    <div className="container-custom">
+                        <div className="text-center max-w-2xl mx-auto mb-16">
+                            <h2 className="text-3xl font-bold mb-4 text-gray-900">Our Best Sellers</h2>
+                            <p className="text-gray-500">Hand-picked favorites that our customers love. Freshness guaranteed in every bite.</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {bestSellers.map((product) => (
+                                <ProductCard key={product._id || product.id} product={product} />
+                            ))}
+                        </div>
+
+                        <div className="mt-12 text-center">
+                            <Link to="/products" className="btn-secondary inline-block">Shop All Products</Link>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* FAQ Section */}
+            <section className="py-24 bg-white">
                 <div className="container-custom">
-                    <div className="text-center max-w-2xl mx-auto mb-16">
-                        <h2 className="text-3xl font-bold mb-4 text-gray-900">Our Best Sellers</h2>
-                        <p className="text-gray-500">Hand-picked favorites that our customers love. Freshness guaranteed in every bite.</p>
-                    </div>
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-16">
+                            <span className="text-emerald-600 font-black text-xs uppercase tracking-[0.3em] mb-4 block">Help Center</span>
+                            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight italic">Frequently Asked Questions</h2>
+                            <p className="text-gray-500 mt-4 text-lg">Everything you need to know about FreshCart deliveries and quality.</p>
+                        </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {featuredProducts.map((product) => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
-                    </div>
-
-                    <div className="mt-12 text-center">
-                        <Link to="/products" className="btn-secondary inline-block">Shop All Products</Link>
+                        <div className="bg-white rounded-[3rem] overflow-hidden shadow-2xl shadow-emerald-100 border border-emerald-50">
+                            {faqs.map((faq, idx) => (
+                                <FAQItem key={idx} question={faq.question} answer={faq.answer} />
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>

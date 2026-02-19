@@ -4,7 +4,7 @@ const Product = require("../models/Product");
 // Create new order
 exports.createOrder = async (req, res) => {
   try {
-    const { items, shippingAddress, totalAmount } = req.body;
+    const { items, shippingAddress, totalAmount, customerPhone } = req.body;
     const userId = req.user.id;
 
     // Validation
@@ -37,6 +37,7 @@ exports.createOrder = async (req, res) => {
       items,
       totalAmount,
       shippingAddress,
+      customerPhone,
       orderStatus: "Pending",
       paymentStatus: "Pending"
     });
