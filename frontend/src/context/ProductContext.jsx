@@ -8,6 +8,7 @@ export const useProducts = () => useContext(ProductContext);
 export const ProductProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const { token } = useAuth();
 
     const API_URL = 'http://localhost:5000/api/products';
@@ -20,12 +21,20 @@ export const ProductProvider = ({ children }) => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
+            setError(null);
             const response = await fetch(API_URL);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Server error fetching products');
+            }
             const data = await response.json();
             // Backend returns { products, totalPages, currentPage }
             setProducts(data.products || []);
         } catch (error) {
             console.error('Error fetching products:', error);
+            setError(error.message === 'Failed to fetch'
+                ? 'Cannot connect to backend server. Please ensure the backend is running on port 5000.'
+                : error.message);
         } finally {
             setLoading(false);
         }
@@ -116,6 +125,7 @@ export const ProductProvider = ({ children }) => {
         <ProductContext.Provider value={{
             products,
             loading,
+            error,
             addProduct,
             updateProduct,
             deleteProduct,
