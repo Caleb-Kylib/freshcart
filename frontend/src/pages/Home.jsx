@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, Truck, ShieldCheck, Leaf, Package, ShoppingCart, MapPin, Tag, Sparkles, Mail, ChevronDown, Plus, Minus } from 'lucide-react';
+import { ArrowRight, Star, Truck, ShieldCheck, Leaf, Package, ShoppingCart, MapPin, Tag, Sparkles, Mail, ChevronDown, Plus, Minus, AlertCircle } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import ProductCarousel from '../components/ProductCarousel';
 import { useProducts } from '../context/ProductContext';
@@ -32,7 +32,7 @@ const FAQItem = ({ question, answer }) => {
 };
 
 const Home = () => {
-    const { products, loading } = useProducts();
+    const { products, loading, error } = useProducts();
     const [bestSellers, setBestSellers] = useState([]);
     const [newArrivals, setNewArrivals] = useState([]);
 
@@ -165,6 +165,20 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Error Message */}
+            {error && (
+                <div className="container-custom mt-8">
+                    <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-[2rem] flex flex-col items-center text-center gap-4">
+                        <AlertCircle className="w-12 h-12 text-red-500" />
+                        <div>
+                            <h3 className="text-xl font-bold mb-1">Connection Issue</h3>
+                            <p className="font-medium">{error}</p>
+                            <p className="text-sm mt-3 opacity-70 italic font-mono">Tip: Check if your MongoDB Atlas IP Whitelist includes your current IP address.</p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* New Arrivals Carousel */}
             {newArrivals.length > 0 && (

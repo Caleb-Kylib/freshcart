@@ -11,7 +11,7 @@ export const ProductProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const { token } = useAuth();
 
-    const API_URL = 'http://localhost:5000/api/products';
+    const API_URL = '/api/products';
 
     // Fetch products from MongoDB on mount
     useEffect(() => {
