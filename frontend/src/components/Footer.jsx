@@ -38,7 +38,8 @@ const Footer = () => {
                 <div>
                     <h4 className="text-lg font-semibold mb-6">Categories</h4>
                     <ul className="space-y-4">
-                        <li><Link to="/products?category=Juices" className="text-gray-400 hover:text-white transition-colors">Juices & Smoothies</Link></li>
+                        <li><Link to="/products?category=Juices" className="text-gray-400 hover:text-white transition-colors">Fresh Juices</Link></li>
+                        <li><Link to="/products?category=Smoothies" className="text-gray-400 hover:text-white transition-colors">Smoothies</Link></li>
                         <li><Link to="/products?category=Herbs" className="text-gray-400 hover:text-white transition-colors">Fresh Herbs</Link></li>
                         <li><Link to="/products" className="text-gray-400 hover:text-white transition-colors">Organic Specials</Link></li>
                         <li><Link to="/cart" className="text-gray-400 hover:text-white transition-colors">Cart</Link></li>

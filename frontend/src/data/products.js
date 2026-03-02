@@ -47,7 +47,7 @@ export const products = [
     {
         id: 6,
         name: "Green Smoothie",
-        category: "Juices",
+        category: "Smoothies",
         price: 450,
         image: "https://images.unsplash.com/photo-1610970881699-44a5587cabec?q=80&w=300&auto=format&fit=crop",
         description: "Detox green smoothie with spinach, apple, kale, and lemon.",
@@ -185,6 +185,7 @@ export const categories = [
     { name: "Fruits", image: "/products/mango.jpg" },
     { name: "Vegetables", image: "/products/vegetables.jpg" },
     { name: "Juices", image: "/products/mango-juice-featured-2.jpg" },
+    { name: "Smoothies", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=600&auto=format&fit=crop" },
     { name: "Herbs", image: "/products/herbs.jpg" }
 ];
 

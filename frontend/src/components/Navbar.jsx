@@ -56,6 +56,7 @@ const Navbar = () => {
                             { name: 'Shop', path: '/products' },
                             { name: 'Fruits', path: '/products?category=Fruits' },
                             { name: 'Vegetables', path: '/products?category=Vegetables' },
+                            { name: 'Smoothies', path: '/products?category=Smoothies' },
                         ].map((link) => (
                             <Link
                                 key={link.name}
