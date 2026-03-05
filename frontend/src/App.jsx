@@ -10,6 +10,8 @@ import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 // Admin pages
 import LoginPage from "./pages/LoginPage";
@@ -52,6 +54,8 @@ const StorefrontLayout = () => {
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/products/:id" element={<Navigate to="/product/:id" replace />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/checkout" element={
             <ProtectedRoute>
               <Checkout />

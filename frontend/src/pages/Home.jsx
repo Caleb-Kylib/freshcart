@@ -358,6 +358,66 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* Blog Section */}
+            <section className="py-24 bg-white">
+                <div className="container-custom">
+                    <div className="flex justify-between items-end mb-12">
+                        <div>
+                            <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Wellness Corner</span>
+                            <h2 className="text-3xl md:text-4xl font-black text-gray-900">Latest from our Blog</h2>
+                        </div>
+                        <Link to="/blog" className="text-primary font-bold flex items-center gap-2 hover:gap-3 transition-all group">
+                            Explore all articles <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                            {
+                                id: 1,
+                                title: "The Benefits of Organic Produce: Why It Matters",
+                                excerpt: "Discover why switching to organic fruits and vegetables can significantly improve your well-being.",
+                                image: "/products/vegetables.jpg",
+                                date: "Mar 5, 2026"
+                            },
+                            {
+                                id: 2,
+                                title: "Top 5 Superfoods for Better Heart Health",
+                                excerpt: "Learn which five superfoods are scientifically proven to support cardiovascular health.",
+                                image: "/products/Blueberries.jpg",
+                                date: "Mar 4, 2026"
+                            },
+                            {
+                                id: 3,
+                                title: "Maintaining a Balanced Diet in a Busy Lifestyle",
+                                excerpt: "Actionable advice on how to eat healthily even when you're short on time.",
+                                image: "/products/berry-blast.jpg",
+                                date: "Mar 3, 2026"
+                            }
+                        ].map((post) => (
+                            <Link key={post.id} to={`/blog/${post.id}`} className="group block">
+                                <div className="relative h-64 rounded-3xl overflow-hidden mb-6 shadow-lg shadow-emerald-50">
+                                    <img
+                                        src={post.image}
+                                        alt={post.title}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    />
+                                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-gray-900 border border-gray-100">
+                                        {post.date}
+                                    </div>
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors leading-tight">
+                                    {post.title}
+                                </h3>
+                                <p className="text-gray-500 text-sm line-clamp-2 leading-relaxed">
+                                    {post.excerpt}
+                                </p>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
             {/* Testimonials */}
             <section className="py-20 bg-green-50">
                 <div className="container-custom">
