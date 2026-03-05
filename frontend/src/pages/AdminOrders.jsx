@@ -6,8 +6,6 @@ import {
     User,
     Phone,
     MapPin,
-    Package,
-    CreditCard,
     Calendar,
     Eye,
     Printer,
@@ -221,6 +219,7 @@ const AdminOrders = () => {
                                     <div className="flex items-center gap-2">
                                         <button
                                             type="button"
+                                            onClick={() => alert(`View order details for #${order._id.slice(-6).toUpperCase()}`)}
                                             className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-gray-200 text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
                                             aria-label="View order"
                                         >
@@ -228,6 +227,7 @@ const AdminOrders = () => {
                                         </button>
                                         <button
                                             type="button"
+                                            onClick={() => alert(`Print order #${order._id.slice(-6).toUpperCase()}`)}
                                             className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-gray-200 text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
                                             aria-label="Print order"
                                         >
@@ -235,6 +235,7 @@ const AdminOrders = () => {
                                         </button>
                                         <button
                                             type="button"
+                                            onClick={() => alert(`Edit order #${order._id.slice(-6).toUpperCase()}`)}
                                             className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-gray-200 text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
                                             aria-label="Edit order"
                                         >
@@ -242,6 +243,11 @@ const AdminOrders = () => {
                                         </button>
                                         <button
                                             type="button"
+                                            onClick={() => {
+                                                if (window.confirm(`Are you sure you want to cancel order #${order._id.slice(-6).toUpperCase()}?`)) {
+                                                    updateStatus(order._id, "Cancelled");
+                                                }
+                                            }}
                                             className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-rose-100 text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors"
                                             aria-label="Cancel order"
                                         >
