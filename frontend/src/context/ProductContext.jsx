@@ -7,6 +7,7 @@ export const useProducts = () => useContext(ProductContext);
 
 export const ProductProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
+    const [featuredProducts, setFeaturedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { token } = useAuth();
@@ -16,6 +17,7 @@ export const ProductProvider = ({ children }) => {
     // Fetch products from MongoDB on mount
     useEffect(() => {
         fetchProducts();
+        fetchFeaturedProducts();
     }, []);
 
     const fetchProducts = async () => {
@@ -55,6 +57,18 @@ export const ProductProvider = ({ children }) => {
                 : error.message);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchFeaturedProducts = async () => {
+        try {
+            const response = await fetch(`${API_URL}/featured`);
+            if (response.ok) {
+                const data = await response.json();
+                setFeaturedProducts(data || []);
+            }
+        } catch (error) {
+            console.error('Error fetching featured products:', error);
         }
     };
 
@@ -142,13 +156,15 @@ export const ProductProvider = ({ children }) => {
     return (
         <ProductContext.Provider value={{
             products,
+            featuredProducts,
             loading,
             error,
             addProduct,
             updateProduct,
             deleteProduct,
             updateStockAfterOrder,
-            fetchProducts
+            fetchProducts,
+            fetchFeaturedProducts
         }}>
             {children}
         </ProductContext.Provider>

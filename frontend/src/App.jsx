@@ -49,7 +49,8 @@ const StorefrontLayout = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
-          <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/products/:id" element={<Navigate to="/product/:id" replace />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={
             <ProtectedRoute>
