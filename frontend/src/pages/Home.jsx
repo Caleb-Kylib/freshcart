@@ -4,6 +4,7 @@ import { ArrowRight, Star, Truck, ShieldCheck, Leaf, Package, ShoppingCart, MapP
 import ProductCard from '../components/ProductCard';
 import ProductCarousel from '../components/ProductCarousel';
 import { useProducts } from '../context/ProductContext';
+import { useCart } from '../context/CartContext';
 import { categories } from '../data/products';
 
 const FAQItem = ({ question, answer }) => {
@@ -33,8 +34,46 @@ const FAQItem = ({ question, answer }) => {
 
 const Home = () => {
     const { products, loading, error } = useProducts();
+    const { addToCart, addItemsToCart } = useCart();
     const [bestSellers, setBestSellers] = useState([]);
     const [newArrivals, setNewArrivals] = useState([]);
+
+    const handleAddRecipeBundle = async () => {
+        // Find matching products or use mock data if not found
+        const bundleItems = [
+            { name: 'Blueberries', price: 450, image: '/products/Blueberries.jpg' },
+            { name: 'Strawberries', price: 350, image: '/products/strawberries.jpg' },
+            { name: 'Greek Yogurt', price: 600, image: '/products/yogurt.jpg' },
+            { name: 'Raw Honey', price: 850, image: '/products/honey.jpg' },
+            { name: 'Chia Seeds', price: 400, image: '/products/chiaseeds.jpg' },
+            { name: 'Rolled Oats', price: 550, image: '/products/oats.jpg' }
+        ];
+
+        const productsToAdd = bundleItems.map(item => ({
+            product: products.find(p => p.name.includes(item.name)) || { ...item, _id: `bundle-${item.name.toLowerCase()}` },
+            quantity: 1
+        }));
+
+        await addItemsToCart(productsToAdd);
+        alert('Recipe bundle added to your cart!');
+    };
+
+    const handleAddBundle = async (bundle) => {
+        // Mock a few products for the bundle
+        const productsToAdd = [
+            {
+                product: {
+                    _id: `bundle-${bundle.name.toLowerCase().replace(/\s+/g, '-')}`,
+                    name: bundle.name,
+                    price: parseInt(bundle.price.replace(',', '')),
+                    image: bundle.image
+                },
+                quantity: 1
+            }
+        ];
+        await addItemsToCart(productsToAdd);
+        alert(`${bundle.name} added to your cart!`);
+    };
 
     useEffect(() => {
         if (products && products.length > 0) {
@@ -100,85 +139,6 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Features Banner */}
-            <section className="bg-white py-12 border-b border-gray-100">
-                <div className="container-custom grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-                    <div className="flex items-center gap-4 justify-center md:justify-start p-4 hover:shadow-lg rounded-xl transition-shadow cursor-default">
-                        <div className="bg-green-100 p-4 rounded-full text-primary">
-                            <Truck size={32} />
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-lg">Fast Delivery</h3>
-                            <p className="text-gray-500">Same day delivery in Nairobi</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-4 justify-center md:justify-start p-4 hover:shadow-lg rounded-xl transition-shadow cursor-default">
-                        <div className="bg-green-100 p-4 rounded-full text-primary">
-                            <ShieldCheck size={32} />
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-lg">Quality Guarantee</h3>
-                            <p className="text-gray-500">100% money back guarantee</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-4 justify-center md:justify-start p-4 hover:shadow-lg rounded-xl transition-shadow cursor-default">
-                        <div className="bg-green-100 p-4 rounded-full text-primary">
-                            <Leaf size={32} />
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-lg">Organic & Fresh</h3>
-                            <p className="text-gray-500">Sourced directly from farmers</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* How to Order */}
-            <section className="py-16 bg-white border-b border-gray-100">
-                <div className="container-custom">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
-                        <p className="text-gray-500">Get your fresh groceries in 3 simple steps</p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center relative connection-line">
-                        <div className="relative z-10">
-                            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
-                                <Package size={40} />
-                            </div>
-                            <h3 className="text-xl font-bold mb-3">1. Browse Products</h3>
-                            <p className="text-gray-500">Explore our wide range of fresh organic produce and add to cart.</p>
-                        </div>
-                        <div className="relative z-10">
-                            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
-                                <ShoppingCart size={40} />
-                            </div>
-                            <h3 className="text-xl font-bold mb-3">2. Place Order</h3>
-                            <p className="text-gray-500">Confirm your items and choose your preferred payment method.</p>
-                        </div>
-                        <div className="relative z-10">
-                            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
-                                <Truck size={40} />
-                            </div>
-                            <h3 className="text-xl font-bold mb-3">3. Fast Delivery</h3>
-                            <p className="text-gray-500">We deliver your fresh groceries right to your doorstep.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Error Message */}
-            {error && (
-                <div className="container-custom mt-8">
-                    <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-[2rem] flex flex-col items-center text-center gap-4">
-                        <AlertCircle className="w-12 h-12 text-red-500" />
-                        <div>
-                            <h3 className="text-xl font-bold mb-1">Connection Issue</h3>
-                            <p className="font-medium">{error}</p>
-                            <p className="text-sm mt-3 opacity-70 italic font-mono">Tip: Check if your MongoDB Atlas IP Whitelist includes your current IP address.</p>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* New Arrivals Carousel */}
             {newArrivals.length > 0 && (
@@ -219,6 +179,142 @@ const Home = () => {
                 </div>
             </section>
 
+
+
+            {/* Recipe Spotlight */}
+            <section className="py-24 bg-white overflow-hidden">
+                <div className="container-custom">
+                    <div className="bg-emerald-900 rounded-[4rem] overflow-hidden shadow-2xl relative">
+                        <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
+                            <div className="absolute top-[-10%] right-[-10%] w-[120%] h-[120%] bg-white blur-[120px] rounded-full"></div>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
+                            <div className="p-12 md:p-20 text-white relative z-10">
+                                <span className="bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 py-1 px-4 rounded-full text-xs font-bold mb-6 inline-block uppercase tracking-[0.2em] backdrop-blur-sm">
+                                    Recipe of the Week
+                                </span>
+                                <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">
+                                    Morning Energy <br />
+                                    <span className="text-emerald-400 italic">Berry Blast Bowl</span>
+                                </h2>
+                                <p className="text-emerald-100 text-lg mb-10 max-w-lg leading-relaxed">
+                                    Start your day with a powerful punch of antioxidants and fiber. This refreshing bowl uses the freshest berries from our seasonal harvest.
+                                </p>
+
+                                <div className="space-y-6 mb-12">
+                                    <h4 className="font-bold flex items-center gap-2 text-emerald-200 uppercase tracking-widest text-sm">
+                                        <Package size={18} /> Ingredients in this box:
+                                    </h4>
+                                    <ul className="grid grid-cols-2 gap-4">
+                                        {['Organic Blueberries', 'Fresh Strawberries', 'Greek Yogurt', 'Raw Honey', 'Organic Chia Seeds', 'Rolled Oats'].map((item, i) => (
+                                            <li key={i} className="flex items-center gap-3 text-emerald-50/80 font-medium">
+                                                <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <button
+                                    onClick={handleAddRecipeBundle}
+                                    className="group flex items-center gap-4 bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-black px-10 py-5 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
+                                >
+                                    Add Bundle to Cart <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+                                </button>
+                            </div>
+                            <div className="h-full min-h-[500px] relative">
+                                <img
+                                    src="/products/berry-blast.jpg"
+                                    alt="Berry Blast Bowl"
+                                    className="absolute inset-0 w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-1000"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-r lg:bg-gradient-to-l from-transparent via-transparent to-emerald-900 lg:w-1/3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Error Message */}
+            {error && (
+                <div className="container-custom mt-8">
+                    <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-[2rem] flex flex-col items-center text-center gap-4">
+                        <AlertCircle className="w-12 h-12 text-red-500" />
+                        <div>
+                            <h3 className="text-xl font-bold mb-1">Connection Issue</h3>
+                            <p className="font-medium">{error}</p>
+                            <p className="text-sm mt-3 opacity-70 italic font-mono">Tip: Check if your MongoDB Atlas IP Whitelist includes your current IP address.</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Sustainability & Impact Counter */}
+            <section className="py-20 bg-emerald-50/50">
+                <div className="container-custom">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                        <div className="p-8 rounded-[3rem] bg-white shadow-xl shadow-emerald-100/50 border border-emerald-50 transform hover:-translate-y-2 transition-all duration-300">
+                            <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-emerald-600">
+                                <Leaf size={32} />
+                            </div>
+                            <h3 className="text-4xl font-black text-emerald-900 mb-2">50+</h3>
+                            <p className="text-emerald-700 font-bold uppercase tracking-widest text-xs">Local Farmers Supported</p>
+                        </div>
+                        <div className="p-8 rounded-[3rem] bg-white shadow-xl shadow-emerald-100/50 border border-emerald-50 transform hover:-translate-y-2 transition-all duration-300">
+                            <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-emerald-600">
+                                <ShieldCheck size={32} />
+                            </div>
+                            <h3 className="text-4xl font-black text-emerald-900 mb-2">0%</h3>
+                            <p className="text-emerald-700 font-bold uppercase tracking-widest text-xs">Plastic Packaging Goal</p>
+                        </div>
+                        <div className="p-8 rounded-[3rem] bg-white shadow-xl shadow-emerald-100/50 border border-emerald-50 transform hover:-translate-y-2 transition-all duration-300">
+                            <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-emerald-600">
+                                <Star size={32} />
+                            </div>
+                            <h3 className="text-4xl font-black text-emerald-900 mb-2">100%</h3>
+                            <p className="text-emerald-700 font-bold uppercase tracking-widest text-xs">Organic Certified</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+
+            {/* Features Banner */}
+            <section className="bg-white py-12 border-b border-gray-100">
+                <div className="container-custom grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                    <div className="flex items-center gap-4 justify-center md:justify-start p-4 hover:shadow-lg rounded-xl transition-shadow cursor-default">
+                        <div className="bg-green-100 p-4 rounded-full text-primary">
+                            <Truck size={32} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg">Fast Delivery</h3>
+                            <p className="text-gray-500">Same day delivery in Nairobi</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4 justify-center md:justify-start p-4 hover:shadow-lg rounded-xl transition-shadow cursor-default">
+                        <div className="bg-green-100 p-4 rounded-full text-primary">
+                            <ShieldCheck size={32} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg">Quality Guarantee</h3>
+                            <p className="text-gray-500">100% money back guarantee</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4 justify-center md:justify-start p-4 hover:shadow-lg rounded-xl transition-shadow cursor-default">
+                        <div className="bg-green-100 p-4 rounded-full text-primary">
+                            <Leaf size={32} />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg">Organic & Fresh</h3>
+                            <p className="text-gray-500">Sourced directly from farmers</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
             {/* Seasonal Offers */}
             <section className="py-16 bg-emerald-900 text-white relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10">
@@ -258,6 +354,72 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* Curated Bundles */}
+            <section className="py-24 bg-gray-50">
+                <div className="container-custom">
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                        <div className="max-w-xl">
+                            <span className="text-primary font-black text-xs uppercase tracking-[0.3em] mb-4 block">Quick Shopping</span>
+                            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight">Curated Lifestyle Bundles</h2>
+                        </div>
+                        <p className="text-gray-500 font-medium max-w-sm">Hand-picked combinations for specific health goals and household needs.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                        {[
+                            {
+                                name: "Detox Smoothie Box",
+                                price: "2,450",
+                                items: "12 Items",
+                                image: "/products/gingershots.jpg",
+                                tag: "Bestseller"
+                            },
+                            {
+                                name: "Family Veggie Staple",
+                                price: "3,800",
+                                items: "18 Items",
+                                image: "/products/vegetables.jpg",
+                                tag: "Value"
+                            },
+                            {
+                                name: "Fruit Fiesta Pack",
+                                price: "1,950",
+                                items: "10 Items",
+                                image: "/products/wildberries.jpg",
+                                tag: "Seasonal"
+                            }
+                        ].map((bundle, i) => (
+                            <div key={i} className="group bg-white rounded-[3rem] p-4 shadow-xl shadow-gray-200/50 border border-gray-100 hover:border-primary/20 transition-all duration-500">
+                                <div className="relative h-72 rounded-[2.5rem] overflow-hidden mb-8">
+                                    <img src={bundle.image} alt={bundle.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                    <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-primary shadow-lg border border-white">
+                                        {bundle.tag}
+                                    </div>
+                                </div>
+                                <div className="px-6 pb-6">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <h3 className="text-2xl font-black text-gray-900 leading-tight">{bundle.name}</h3>
+                                        <div className="text-right">
+                                            <span className="text-[10px] font-black uppercase text-gray-400 block mb-1">KES</span>
+                                            <span className="text-2xl font-black text-primary">{bundle.price}</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-500 text-sm font-bold mb-8 flex items-center gap-2">
+                                        <Package size={16} className="text-primary" /> {bundle.items} included
+                                    </p>
+                                    <button
+                                        onClick={() => handleAddBundle(bundle)}
+                                        className="w-full bg-gray-900 text-white font-black py-5 rounded-[1.5rem] hover:bg-primary transition-all shadow-lg active:scale-95"
+                                    >
+                                        Add Bundle to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
             {/* Featured Products (Best Sellers) */}
             {bestSellers.length > 0 && (
                 <section className="py-20 bg-white">
@@ -279,6 +441,93 @@ const Home = () => {
                     </div>
                 </section>
             )}
+
+
+            {/* How to Order */}
+            <section className="py-16 bg-white border-b border-gray-100">
+                <div className="container-custom">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
+                        <p className="text-gray-500">Get your fresh groceries in 3 simple steps</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center relative connection-line">
+                        <div className="relative z-10">
+                            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
+                                <Package size={40} />
+                            </div>
+                            <h3 className="text-xl font-bold mb-3">1. Browse Products</h3>
+                            <p className="text-gray-500">Explore our wide range of fresh organic produce and add to cart.</p>
+                        </div>
+                        <div className="relative z-10">
+                            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
+                                <ShoppingCart size={40} />
+                            </div>
+                            <h3 className="text-xl font-bold mb-3">2. Place Order</h3>
+                            <p className="text-gray-500">Confirm your items and choose your preferred payment method.</p>
+                        </div>
+                        <div className="relative z-10">
+                            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
+                                <Truck size={40} />
+                            </div>
+                            <h3 className="text-xl font-bold mb-3">3. Fast Delivery</h3>
+                            <p className="text-gray-500">We deliver your fresh groceries right to your doorstep.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Farm-to-Table Timeline */}
+            <section className="py-24 bg-white relative overflow-hidden">
+                <div className="container-custom relative z-10">
+                    <div className="text-center max-w-3xl mx-auto mb-20">
+                        <span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-6 inline-block">Our Journey</span>
+                        <h2 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tight">Farm to Table Sourcing</h2>
+                        <p className="text-gray-500 mt-6 text-lg font-medium leading-relaxed">We've spent years perfecting our logistics to ensure your food is literally harvested and delivered within hours.</p>
+                    </div>
+
+                    <div className="relative">
+                        {/* Connecting Line (Desktop) */}
+                        <div className="hidden lg:block absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-emerald-100 via-emerald-400 to-emerald-100 -translate-y-1/2"></div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                            {[
+                                {
+                                    time: "06:00 AM",
+                                    title: "Daily Harvest",
+                                    desc: "Our farmers harvest the freshest produce at the crack of dawn when nutrients are at their peak.",
+                                    icon: <Leaf size={40} />,
+                                    color: "bg-emerald-500"
+                                },
+                                {
+                                    time: "09:00 AM",
+                                    title: "Quality Check",
+                                    desc: "Every item is hand-inspected at our Nairobi hub. If it's not perfect, it doesn't leave.",
+                                    icon: <ShieldCheck size={40} />,
+                                    color: "bg-emerald-600"
+                                },
+                                {
+                                    time: "01:00 PM",
+                                    title: "Prime Delivery",
+                                    desc: "Our fleet of eco-friendly bikes delivers your order directly to your kitchen door.",
+                                    icon: <Truck size={40} />,
+                                    color: "bg-emerald-700"
+                                }
+                            ].map((step, i) => (
+                                <div key={i} className="relative group text-center flex flex-col items-center">
+                                    <div className={`w-24 h-24 ${step.color} text-white rounded-[2rem] flex items-center justify-center mb-8 shadow-2xl relative z-10 transform group-hover:rotate-12 transition-transform duration-500 shadow-emerald-200`}>
+                                        {step.icon}
+                                    </div>
+                                    <div className="bg-emerald-50 text-emerald-700 px-4 py-1 rounded-full text-[10px] font-black mb-4 uppercase tracking-[0.2em]">
+                                        {step.time}
+                                    </div>
+                                    <h3 className="text-2xl font-black text-gray-900 mb-4">{step.title}</h3>
+                                    <p className="text-gray-500 font-medium leading-relaxed max-w-xs">{step.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* FAQ Section */}
             <section className="py-24 bg-white">
@@ -444,6 +693,38 @@ const Home = () => {
                 </div>
             </section>
 
+
+            {/* Community Gallery */}
+            <section className="py-24 bg-gray-900 text-white overflow-hidden">
+                <div className="container-custom">
+                    <div className="text-center max-w-2xl mx-auto mb-20">
+                        <span className="text-primary font-black text-xs uppercase tracking-[0.3em] mb-4 block">#FreshCartKenya</span>
+                        <h2 className="text-4xl md:text-5xl font-black mb-6">Join Our Fresh Community</h2>
+                        <p className="text-gray-400 font-medium leading-relaxed">Tag us on Instagram for a chance to be featured and win weekly shopping vouchers.</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 h-[600px]">
+                        {[
+                            { img: "/products/strawberryjuice.jpg", span: "row-span-2 col-span-2" },
+                            { img: "/products/mango.jpg", span: "row-span-1 col-span-1" },
+                            { img: "/products/cloves.jpg", span: "row-span-1 col-span-2" },
+                            { img: "/products/lettuce.jpg", span: "row-span-1 col-span-1" },
+                            { img: "/products/passionjuice.jpg", span: "row-span-1 col-span-1" },
+                            { img: "/products/dragonfruit.jpg", span: "row-span-1 col-span-2" }
+                        ].map((item, i) => (
+                            <div key={i} className={`relative overflow-hidden group rounded-[2rem] ${item.span}`}>
+                                <img src={item.img} alt="Community Member" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-125" />
+                                <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-sm">
+                                    <div className="text-center flex flex-col items-center">
+                                        <Star size={32} className="text-white animate-bounce" />
+                                        <p className="font-black text-sm uppercase tracking-widest mt-2">View Post</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
 
             {/* Newsletter Signup */}
             <section className="py-20 bg-emerald-900 text-white">
