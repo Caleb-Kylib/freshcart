@@ -23,13 +23,31 @@ export const ProductProvider = ({ children }) => {
             setLoading(true);
             setError(null);
             const response = await fetch(API_URL);
+            
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Server error fetching products');
+                let errorMessage = 'Server error fetching products';
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                } catch (e) {
+                    // If not JSON, use status text
+                    errorMessage = `Error ${response.status}: ${response.statusText || 'Internal Server Error'}`;
+                }
+                throw new Error(errorMessage);
             }
-            const data = await response.json();
-            // Backend returns { products, totalPages, currentPage }
-            setProducts(data.products || []);
+
+            const text = await response.text();
+            if (!text) {
+                throw new Error('Server returned an empty response.');
+            }
+
+            try {
+                const data = JSON.parse(text);
+                setProducts(data.products || []);
+            } catch (e) {
+                console.error('JSON Parse Error:', e, 'Raw content:', text);
+                throw new Error('Server returned invalid data format.');
+            }
         } catch (error) {
             console.error('Error fetching products:', error);
             setError(error.message === 'Failed to fetch'
