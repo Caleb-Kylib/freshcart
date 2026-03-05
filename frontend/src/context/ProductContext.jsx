@@ -8,9 +8,10 @@ export const useProducts = () => useContext(ProductContext);
 export const ProductProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const { token } = useAuth();
 
-    const API_URL = 'http://localhost:5000/api/products';
+    const API_URL = '/api/products';
 
     // Fetch products from MongoDB on mount
     useEffect(() => {
@@ -20,12 +21,38 @@ export const ProductProvider = ({ children }) => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
+            setError(null);
             const response = await fetch(API_URL);
-            const data = await response.json();
-            // Backend returns { products, totalPages, currentPage }
-            setProducts(data.products || []);
+            
+            if (!response.ok) {
+                let errorMessage = 'Server error fetching products';
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                } catch (e) {
+                    // If not JSON, use status text
+                    errorMessage = `Error ${response.status}: ${response.statusText || 'Internal Server Error'}`;
+                }
+                throw new Error(errorMessage);
+            }
+
+            const text = await response.text();
+            if (!text) {
+                throw new Error('Server returned an empty response.');
+            }
+
+            try {
+                const data = JSON.parse(text);
+                setProducts(data.products || []);
+            } catch (e) {
+                console.error('JSON Parse Error:', e, 'Raw content:', text);
+                throw new Error('Server returned invalid data format.');
+            }
         } catch (error) {
             console.error('Error fetching products:', error);
+            setError(error.message === 'Failed to fetch'
+                ? 'Cannot connect to backend server. Please ensure the backend is running on port 5000.'
+                : error.message);
         } finally {
             setLoading(false);
         }
@@ -116,6 +143,7 @@ export const ProductProvider = ({ children }) => {
         <ProductContext.Provider value={{
             products,
             loading,
+            error,
             addProduct,
             updateProduct,
             deleteProduct,

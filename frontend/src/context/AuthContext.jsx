@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const API_URL = 'http://localhost:5000/api/auth';
+    const API_URL = '/api/auth';
 
     useEffect(() => {
         const savedUser = localStorage.getItem('currentUser');
@@ -59,7 +59,10 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('currentUser', JSON.stringify(data.user));
             return { success: true };
         } catch (error) {
-            return { success: false, message: error.message };
+            const message = error.message === 'Failed to fetch'
+                ? 'Cannot reach the server. Make sure the backend is running (e.g. npm run dev in the backend folder).'
+                : error.message;
+            return { success: false, message };
         }
     };
 
@@ -83,7 +86,10 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('currentUser', JSON.stringify(data.user));
             return { success: true, user: data.user };
         } catch (error) {
-            return { success: false, message: error.message };
+            const message = error.message === 'Failed to fetch'
+                ? 'Cannot reach the server. Make sure the backend is running (e.g. npm run dev in the backend folder).'
+                : error.message;
+            return { success: false, message };
         }
     };
 

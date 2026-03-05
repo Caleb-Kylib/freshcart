@@ -10,7 +10,7 @@ export const OrderProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const { token, user } = useAuth();
 
-    const API_URL = 'http://localhost:5000/api/orders';
+    const API_URL = '/api/orders';
 
     useEffect(() => {
         if (token && user) {
