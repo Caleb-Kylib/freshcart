@@ -140,7 +140,86 @@ const Home = () => {
             </section>
 
 
-            {/* New Arrivals Carousel */}
+            {/* About Platform Section */}
+            <section className="py-24 bg-white overflow-hidden">
+                <div className="container-custom">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        {/* Left: Image Container */}
+                        <div className="relative group order-2 lg:order-1">
+                            <div className="absolute -top-6 -left-6 w-32 h-32 bg-emerald-100 rounded-full blur-3xl group-hover:bg-emerald-200 transition-all duration-700"></div>
+                            <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-emerald-100/50 rounded-full blur-2xl group-hover:bg-emerald-200/40 transition-all duration-700"></div>
+
+                            <div className="relative rounded-[3rem] overflow-hidden shadow-2xl transform rotate-1 group-hover:rotate-0 transition-transform duration-700">
+                                <img
+                                    src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=2574&auto=format&fit=crop"
+                                    alt="Fresh Produce Nairobi"
+                                    className="w-full h-[600px] object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 via-transparent to-transparent"></div>
+
+                                <div className="absolute bottom-8 left-8 right-8 bg-white/95 backdrop-blur-md p-6 rounded-3xl shadow-2xl flex items-center gap-4 border border-white/50">
+                                    <div className="w-14 h-14 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-200">
+                                        <Leaf size={28} />
+                                    </div>
+                                    <div>
+                                        <p className="font-black text-gray-900 text-lg leading-tight">100% Farm Fresh</p>
+                                        <p className="text-sm font-medium text-gray-500">Harvested & Delivered Daily</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right: Text Content */}
+                        <div className="relative z-10 order-1 lg:order-2">
+                            <span className="bg-emerald-100 text-emerald-800 font-black text-xs uppercase tracking-[0.3em] mb-6 px-5 py-2 rounded-full inline-block shadow-sm">
+                                About FreshCart Kenya
+                            </span>
+                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.1] mb-6">
+                                Supplying Health <br />
+                                <span className="text-emerald-600 italic">to Your Home</span>
+                            </h2>
+                            <h3 className="text-xl md:text-2xl font-bold text-gray-700 mb-8 leading-relaxed border-l-4 border-emerald-500 pl-6">
+                                Buy Fruits & Veggies From Our Online Grocery Delivery in Nairobi
+                            </h3>
+
+                            <div className="space-y-6 text-gray-600">
+                                <p className="text-lg leading-relaxed">
+                                    Our grocery delivery in Nairobi services indulges you in the vibrant flavours and nutritional goodness of our exquisite selection of fruits and vegetables at <span className="font-bold text-gray-900">FreshCart Kenya</span>. From succulent seasonal fruits bursting with sweetness to crisp, farm-fresh vegetables teeming with vitamins and minerals, our products embody the essence of wholesome goodness.
+                                </p>
+                                <p className="text-lg leading-relaxed">
+                                    Sourced directly from local farmers who share our dedication to quality and sustainability, each item in our inventory is handpicked at the peak of freshness to ensure unparalleled taste and nutritional value. Whether you’re craving the juiciest of oranges, the crunchiest of carrots, or the richest of avocados, we have a bounty of nature’s finest offerings waiting to elevate your culinary adventures.
+                                </p>
+                                <p className="text-lg leading-relaxed font-bold text-emerald-900 italic">
+                                    Explore our diverse range of fruits and veggies and discover the joy of nourishing your body with the freshest produce Nairobi has to offer.
+                                </p>
+                            </div>
+
+                            <div className="mt-12 flex flex-wrap items-center gap-8">
+                                <Link to="/products" className="group flex items-center gap-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black px-10 py-5 rounded-2xl transition-all shadow-xl shadow-emerald-200 active:scale-95">
+                                    Shop the Harvest <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+                                </Link>
+
+                                <div className="flex items-center gap-4">
+                                    <div className="flex -space-x-3">
+                                        {[22, 34, 45, 67].map((id) => (
+                                            <div key={id} className="w-12 h-12 rounded-full border-4 border-white overflow-hidden bg-gray-200 shadow-xl">
+                                                <img src={`https://randomuser.me/api/portraits/thumb/men/${id}.jpg`} alt="User" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-black text-gray-900 leading-none mb-1">2.4k+ Reviews</p>
+                                        <div className="flex text-yellow-500">
+                                            {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {newArrivals.length > 0 && (
                 <section className="py-16 bg-gray-50">
                     <div className="container-custom">
@@ -225,7 +304,7 @@ const Home = () => {
                             </div>
                             <div className="h-full min-h-[500px] relative">
                                 <img
-                                    src="/products/berry-blast.jpg"
+                                    src="/products/recipe.jpg"
                                     alt="Berry Blast Bowl"
                                     className="absolute inset-0 w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-1000"
                                 />
