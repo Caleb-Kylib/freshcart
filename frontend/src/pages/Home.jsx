@@ -233,24 +233,44 @@ const Home = () => {
             )}
 
             {/* Categories */}
-            <section className="py-20 bg-light">
+            <section className="py-24 bg-gray-50/50">
                 <div className="container-custom">
-                    <div className="flex justify-between items-end mb-12">
-                        <div>
-                            <h2 className="text-3xl font-bold mb-3 text-gray-900">Shop by Category</h2>
-                            <p className="text-gray-500">Explore our wide range of fresh produce</p>
-                        </div>
-                        <Link to="/products" className="text-primary font-semibold flex items-center gap-1 hover:gap-2 transition-all">
-                            View All <ArrowRight size={20} />
-                        </Link>
+                    <div className="text-center max-w-3xl mx-auto mb-16">
+                        <span className="bg-primary/10 text-primary font-black text-xs uppercase tracking-[0.3em] mb-4 px-5 py-2 rounded-full inline-block shadow-sm">
+                            Our Collections
+                        </span>
+                        <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight mt-4">Shop by Category</h2>
+                        <p className="text-gray-500 mt-4 text-lg">Indulge in our handpicked selections of fresh produce, delivered straight from the farm.</p>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                         {categories.map((cat, index) => (
-                            <Link to={`/products?category=${cat.name}`} key={index} className="group relative overflow-hidden rounded-2xl h-64 md:h-80 shadow-md">
-                                <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
-                                    <h3 className="text-white text-xl font-bold group-hover:text-primary-light transition-colors">{cat.name}</h3>
+                            <Link
+                                to={`/products?category=${cat.name}`}
+                                key={index}
+                                className="group relative h-[450px] overflow-hidden rounded-[2.5rem] shadow-xl shadow-gray-200/50 transition-all duration-700 hover:-translate-y-2"
+                            >
+                                <img
+                                    src={cat.image}
+                                    alt={cat.name}
+                                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-900/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity"></div>
+
+                                <div className="absolute inset-0 p-10 flex flex-col justify-end">
+                                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                        <h3 className="text-white text-3xl font-black mb-3 group-hover:text-primary-light transition-colors">{cat.name}</h3>
+                                        <p className="text-gray-300 font-medium mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100 italic">
+                                            {cat.description || "Discover our premium selection."}
+                                        </p>
+                                        <div className="flex items-center gap-2 text-primary-light font-black uppercase tracking-widest text-xs opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200">
+                                            Explore Now <ArrowRight size={16} />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="absolute top-8 right-8 w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-white border border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-500 transform hover:scale-110">
+                                    <Plus size={24} />
                                 </div>
                             </Link>
                         ))}
