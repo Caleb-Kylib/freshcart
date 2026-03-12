@@ -37,25 +37,25 @@ const Home = () => {
     const { addToCart, addItemsToCart } = useCart();
     const [bestSellers, setBestSellers] = useState([]);
     const [newArrivals, setNewArrivals] = useState([]);
+    const [fruitBaskets, setFruitBaskets] = useState([]);
 
     const handleAddRecipeBundle = async () => {
         // Find matching products or use mock data if not found
         const bundleItems = [
-            { name: 'Blueberries', price: 450, image: '/products/Blueberries.jpg' },
-            { name: 'Strawberries', price: 350, image: '/products/strawberries.jpg' },
-            { name: 'Greek Yogurt', price: 600, image: '/products/yogurt.jpg' },
+            { name: 'Organic Ginger', price: 200, image: '/products/ginger.jpg' },
+            { name: 'Farm Lemons', price: 150, image: '/products/lemons.jpg' },
             { name: 'Raw Honey', price: 850, image: '/products/honey.jpg' },
-            { name: 'Chia Seeds', price: 400, image: '/products/chiaseeds.jpg' },
-            { name: 'Rolled Oats', price: 550, image: '/products/oats.jpg' }
+            { name: 'Fresh Turmeric', price: 180, image: '/products/turmeric.jpg' },
+            { name: 'Cayenne Powder', price: 120, image: '/products/cayenne.jpg' }
         ];
 
         const productsToAdd = bundleItems.map(item => ({
-            product: products.find(p => p.name.includes(item.name)) || { ...item, _id: `bundle-${item.name.toLowerCase()}` },
+            product: products.find(p => p.name.includes(item.name)) || { ...item, _id: `bundle-${item.name.toLowerCase().replace(/\s+/g, '-')}` },
             quantity: 1
         }));
 
         await addItemsToCart(productsToAdd);
-        alert('Recipe bundle added to your cart!');
+        alert('Immunity Shot Bundle added to your cart!');
     };
 
     const handleAddBundle = async (bundle) => {
@@ -84,6 +84,10 @@ const Home = () => {
             // Sort by createdAt for New Arrivals (newest first)
             const sortedByNew = [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setNewArrivals(sortedByNew.slice(0, 8));
+
+            // Filter for Fruit Baskets or Lifestyle Bundles
+            const baskets = products.filter(p => p.category === 'Fruit Baskets' || p.category === 'Lifestyle Bundles');
+            setFruitBaskets(baskets.length > 0 ? baskets.slice(0, 3) : []);
         }
     }, [products]);
 
@@ -290,25 +294,32 @@ const Home = () => {
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
                             <div className="p-12 md:p-20 text-white relative z-10">
-                                <span className="bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 py-1 px-4 rounded-full text-xs font-bold mb-6 inline-block uppercase tracking-[0.2em] backdrop-blur-sm">
-                                    Recipe of the Week
+                                <span className="bg-amber-400/20 text-amber-300 border border-amber-400/30 py-2 px-6 rounded-full text-xs font-black mb-6 inline-block uppercase tracking-[0.3em] backdrop-blur-md">
+                                    Wellness Recipe of the Week
                                 </span>
                                 <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">
-                                    Morning Energy <br />
-                                    <span className="text-emerald-400 italic">Berry Blast Bowl</span>
+                                    Immunity Power <br />
+                                    <span className="text-amber-400 italic">Zesty Ginger Shots</span>
                                 </h2>
-                                <p className="text-emerald-100 text-lg mb-10 max-w-lg leading-relaxed">
-                                    Start your day with a powerful punch of antioxidants and fiber. This refreshing bowl uses the freshest berries from our seasonal harvest.
+                                <p className="text-emerald-100 text-lg mb-10 max-w-lg leading-relaxed font-medium">
+                                    Your natural daily shield. This high-potency tonic kickstarts your metabolism, aids digestion, and keeps your immune system at its peak.
                                 </p>
 
-                                <div className="space-y-6 mb-12">
-                                    <h4 className="font-bold flex items-center gap-2 text-emerald-200 uppercase tracking-widest text-sm">
-                                        <Package size={18} /> Ingredients in this box:
+                                <div className="space-y-8 mb-12">
+                                    <h4 className="font-black flex items-center gap-3 text-amber-200 uppercase tracking-[0.2em] text-xs">
+                                        <Package size={20} /> The Immunity Box Ingredients:
                                     </h4>
-                                    <ul className="grid grid-cols-2 gap-4">
-                                        {['Organic Blueberries', 'Fresh Strawberries', 'Greek Yogurt', 'Raw Honey', 'Organic Chia Seeds', 'Rolled Oats'].map((item, i) => (
-                                            <li key={i} className="flex items-center gap-3 text-emerald-50/80 font-medium">
-                                                <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                                    <ul className="grid grid-cols-2 gap-y-4 gap-x-8">
+                                        {[
+                                            'Organic Ginger Root',
+                                            'Farm-Fresh Lemons',
+                                            'Premium Raw Honey',
+                                            'Fresh Turmeric Root',
+                                            'Pinch of Cayenne',
+                                            'Organic Oranges'
+                                        ].map((item, i) => (
+                                            <li key={i} className="flex items-center gap-3 text-emerald-50/90 font-bold group">
+                                                <div className="w-2 h-2 bg-amber-400 rounded-full group-hover:scale-150 transition-transform"></div>
                                                 {item}
                                             </li>
                                         ))}
@@ -317,18 +328,23 @@ const Home = () => {
 
                                 <button
                                     onClick={handleAddRecipeBundle}
-                                    className="group flex items-center gap-4 bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-black px-10 py-5 rounded-2xl transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
+                                    className="group flex items-center gap-6 bg-amber-400 hover:bg-white text-emerald-950 font-black px-12 py-6 rounded-3xl transition-all shadow-2xl shadow-amber-500/30 active:scale-95 text-lg"
                                 >
-                                    Add Bundle to Cart <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+                                    Get the Recipe Box <ArrowRight className="group-hover:translate-x-3 transition-transform" />
                                 </button>
                             </div>
-                            <div className="h-full min-h-[500px] relative">
+                            <div className="h-full min-h-[600px] relative">
                                 <img
-                                    src="/products/recipe.jpg"
-                                    alt="Berry Blast Bowl"
-                                    className="absolute inset-0 w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-1000"
+                                    src="/products/gingershots.jpg"
+                                    alt="Ginger Immunity Shots"
+                                    className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[2000ms]"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-r lg:bg-gradient-to-l from-transparent via-transparent to-emerald-900 lg:w-1/3"></div>
+                                <div className="absolute inset-0 bg-gradient-to-r lg:bg-gradient-to-l from-transparent via-transparent to-emerald-900 lg:w-1/2"></div>
+
+                                <div className="absolute top-10 right-10 bg-white/10 backdrop-blur-xl p-8 rounded-[3rem] border border-white/20 hidden xl:block">
+                                    <p className="text-amber-400 font-black text-4xl mb-1">100%</p>
+                                    <p className="text-white font-bold text-sm uppercase tracking-widest">Natural Energizer</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -453,68 +469,53 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Curated Bundles */}
+            {/* Fruit Baskets Section */}
             <section className="py-24 bg-gray-50">
                 <div className="container-custom">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
                         <div className="max-w-xl">
                             <span className="text-primary font-black text-xs uppercase tracking-[0.3em] mb-4 block">Quick Shopping</span>
-                            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight">Curated Lifestyle Bundles</h2>
+                            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight">Fresh Fruit Baskets</h2>
                         </div>
                         <p className="text-gray-500 font-medium max-w-sm">Hand-picked combinations for specific health goals and household needs.</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                        {[
-                            {
-                                name: "Detox Smoothie Box",
-                                price: "2,450",
-                                items: "12 Items",
-                                image: "/products/gingershots.jpg",
-                                tag: "Bestseller"
-                            },
-                            {
-                                name: "Family Veggie Staple",
-                                price: "3,800",
-                                items: "18 Items",
-                                image: "/products/vegetables.jpg",
-                                tag: "Value"
-                            },
-                            {
-                                name: "Fruit Fiesta Pack",
-                                price: "1,950",
-                                items: "10 Items",
-                                image: "/products/wildberries.jpg",
-                                tag: "Seasonal"
-                            }
-                        ].map((bundle, i) => (
-                            <div key={i} className="group bg-white rounded-[3rem] p-4 shadow-xl shadow-gray-200/50 border border-gray-100 hover:border-primary/20 transition-all duration-500">
-                                <div className="relative h-72 rounded-[2.5rem] overflow-hidden mb-8">
-                                    <img src={bundle.image} alt={bundle.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                    <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-primary shadow-lg border border-white">
-                                        {bundle.tag}
-                                    </div>
-                                </div>
-                                <div className="px-6 pb-6">
-                                    <div className="flex justify-between items-start mb-4">
-                                        <h3 className="text-2xl font-black text-gray-900 leading-tight">{bundle.name}</h3>
-                                        <div className="text-right">
-                                            <span className="text-[10px] font-black uppercase text-gray-400 block mb-1">KES</span>
-                                            <span className="text-2xl font-black text-primary">{bundle.price}</span>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-500 text-sm font-bold mb-8 flex items-center gap-2">
-                                        <Package size={16} className="text-primary" /> {bundle.items} included
-                                    </p>
-                                    <button
-                                        onClick={() => handleAddBundle(bundle)}
-                                        className="w-full bg-gray-900 text-white font-black py-5 rounded-[1.5rem] hover:bg-primary transition-all shadow-lg active:scale-95"
-                                    >
-                                        Add Bundle to Cart
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                        {fruitBaskets.length > 0 ? (
+                            fruitBaskets.map((product) => (
+                                <ProductCard key={product._id || product.id} product={product} />
+                            ))
+                        ) : (
+                            // Fallback if no baskets found in products list
+                            [
+                                {
+                                    name: "Detox Smoothie Box",
+                                    price: "2,450",
+                                    unit: "box",
+                                    image: "/products/gingershots.jpg",
+                                    category: "Lifestyle Bundles",
+                                    _id: "basket-1"
+                                },
+                                {
+                                    name: "Family Veggie Staple",
+                                    price: "3,800",
+                                    unit: "box",
+                                    image: "/products/vegetables.jpg",
+                                    category: "Lifestyle Bundles",
+                                    _id: "basket-2"
+                                },
+                                {
+                                    name: "Fruit Fiesta Pack",
+                                    price: "1,950",
+                                    unit: "box",
+                                    image: "/products/wildberries.jpg",
+                                    category: "Lifestyle Bundles",
+                                    _id: "basket-3"
+                                }
+                            ].map((product) => (
+                                <ProductCard key={product._id} product={product} />
+                            ))
+                        )}
                     </div>
                 </div>
             </section>

@@ -37,9 +37,21 @@ const Products = () => {
     const dynamicCategories = [...new Set(products.map(p => p.category))];
     const allCategories = [...new Set([...categories.map(c => c.name), ...dynamicCategories])];
 
-    const filteredProducts = selectedCategory === 'All'
-        ? displayProducts
-        : displayProducts.filter(p => p.category === selectedCategory);
+    // Memoized filtered and shuffled products
+    const filteredProducts = React.useMemo(() => {
+        let result = selectedCategory === 'All'
+            ? [...products]
+            : products.filter(p => p.category === selectedCategory);
+
+        if (selectedCategory === 'All') {
+            // Fisher-Yates shuffle
+            for (let i = result.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [result[i], result[j]] = [result[j], result[i]];
+            }
+        }
+        return result;
+    }, [products, selectedCategory]);
 
     return (
         <div className="pt-24 pb-20 min-h-screen bg-gray-50">

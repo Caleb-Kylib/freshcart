@@ -204,6 +204,7 @@ export const categories = [
     { name: "Vegetables", image: "/products/vegetables.jpg", description: "Farm fresh organic greens" },
     { name: "Juices", image: "/products/mango-juice-featured-2.jpg", description: "100% pure cold-pressed" },
     { name: "Fruit Baskets", image: "/products/fruit-basket.jpg", description: "Curated gift & home sets" },
+    { name: "Lifestyle Bundles", image: "/products/gingershots.jpg", description: "Healthy lifestyle combinations" },
     { name: "Smoothies", image: "/products/smoothies.jpg", description: "Nutrient-packed energy boosts" },
     { name: "Herbs", image: "/products/herbs.jpg", description: "Aromatic culinary essentials" }
 ];
