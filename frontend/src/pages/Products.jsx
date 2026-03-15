@@ -10,7 +10,7 @@ const Products = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const categoryParam = searchParams.get('category');
     const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'All');
-    const [displayProducts, setDisplayProducts] = useState(products);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         setDisplayProducts(products);
@@ -39,32 +39,64 @@ const Products = () => {
 
     // Memoized filtered and shuffled products
     const filteredProducts = React.useMemo(() => {
-        let result = selectedCategory === 'All'
-            ? [...products]
-            : products.filter(p => p.category === selectedCategory);
+        let result = products;
 
-        if (selectedCategory === 'All') {
-            // Fisher-Yates shuffle
+        // Apply Category Filter
+        if (selectedCategory !== 'All') {
+            result = result.filter(p => p.category.toLowerCase() === selectedCategory.toLowerCase());
+        }
+
+        // Apply Search Filter
+        if (searchTerm) {
+            result = result.filter(p =>
+                p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                p.category.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        // Apply Shuffle ONLY for 'All' items without active search
+        if (selectedCategory === 'All' && !searchTerm) {
+            result = [...result]; // Clone to avoid mutation
             for (let i = result.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [result[i], result[j]] = [result[j], result[i]];
             }
         }
         return result;
-    }, [products, selectedCategory]);
+    }, [products, selectedCategory, searchTerm]);
 
     return (
         <div className="pt-24 pb-20 min-h-screen bg-gray-50">
             <div className="container-custom">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                    <div>
-                        <h1 className="text-4xl font-bold text-gray-900 mb-2">Our Products</h1>
-                        <p className="text-gray-500">Fresh from the farm to your table</p>
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-8">
+                    <div className="max-w-xl">
+                        <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">Our Harvest</h1>
+                        <p className="text-gray-500 text-lg font-medium">Sustainably grown, hand-picked, and delivered with love from the farm to your table.</p>
                     </div>
-                    <div className="flex bg-white p-1 rounded-lg border border-gray-200 overflow-x-auto max-w-full no-scrollbar">
+
+                    {/* Search Bar */}
+                    <div className="w-full lg:w-96 relative group">
+                        <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Search fruits, smoothies..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-14 pr-6 py-5 bg-white border-2 border-transparent rounded-[2rem] shadow-xl shadow-gray-200/50 focus:border-primary focus:ring-0 outline-none transition-all font-bold text-gray-800"
+                        />
+                    </div>
+                </div>
+
+                {/* Filters */}
+                <div className="mb-12 flex items-center gap-4">
+                    <div className="flex bg-white p-2 rounded-[1.5rem] shadow-lg shadow-gray-100 border border-gray-100 overflow-x-auto max-w-full no-scrollbar">
                         <button
                             onClick={() => handleCategoryChange('All')}
-                            className={`px-4 py-2 rounded-md font-medium text-sm whitespace-nowrap transition-colors ${selectedCategory === 'All' ? 'bg-primary text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+                            className={`px-8 py-3 rounded-xl font-black text-sm whitespace-nowrap transition-all duration-300 ${selectedCategory === 'All' ? 'bg-primary text-white shadow-xl shadow-emerald-200' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}`}
                         >
                             All Items
                         </button>
@@ -72,7 +104,7 @@ const Products = () => {
                             <button
                                 key={cat}
                                 onClick={() => handleCategoryChange(cat)}
-                                className={`px-4 py-2 rounded-md font-medium text-sm whitespace-nowrap transition-colors ${selectedCategory === cat ? 'bg-primary text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+                                className={`px-8 py-3 rounded-xl font-black text-sm whitespace-nowrap transition-all duration-300 ${selectedCategory === cat ? 'bg-primary text-white shadow-xl shadow-emerald-200' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}`}
                             >
                                 {cat}
                             </button>

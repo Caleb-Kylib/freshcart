@@ -20,29 +20,39 @@ const Contact = () => {
         {
             icon: <MapPin size={24} />,
             title: "Location",
-            details: "Karen Shopping Centre",
+            details: "The Well Mall, Karen",
             subDetails: "Nairobi, Kenya",
             color: "bg-orange-50 text-orange-600"
         }
     ];
 
     return (
-        <div className="pt-32 pb-20 min-h-screen bg-gray-50/50">
-            <div className="container-custom">
-                {/* Header Section */}
-                <div className="max-w-3xl mx-auto text-center mb-20 animate-in fade-in slide-in-from-top-4 duration-700">
-                    <span className="bg-primary/10 text-primary font-black text-xs uppercase tracking-[0.3em] mb-6 px-6 py-2.5 rounded-full inline-block shadow-sm">
+        <div className="min-h-screen bg-gray-50/50">
+            {/* Hero Banner Section */}
+            <div className="relative py-32 px-4 mb-20 overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=2574&auto=format&fit=crop"
+                        alt="Contact Us Banner"
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+                </div>
+                <div className="container-custom relative z-10 text-center animate-in fade-in slide-in-from-top-4 duration-700">
+                    <span className="bg-primary/20 text-primary-light border border-primary/30 py-1.5 px-4 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 inline-block backdrop-blur-md">
                         Get In Touch
                     </span>
-                    <h1 className="text-5xl md:text-7xl font-black text-gray-900 leading-[1.1] mb-8">
+                    <h1 className="text-5xl md:text-7xl font-black text-white leading-[1.1] mb-8">
                         We'd Love to <br />
                         <span className="text-primary italic">Hear from You</span>
                     </h1>
-                    <p className="text-xl text-gray-500 font-medium leading-relaxed">
+                    <p className="max-w-3xl mx-auto text-xl text-gray-200 font-medium leading-relaxed">
                         Have questions about our fresh produce or delivery zones? Our team is here to help you bring the farm to your table.
                     </p>
                 </div>
+            </div>
 
+            <div className="container-custom pb-20">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-20">
                     {/* Contact Info Cards */}
                     <div className="lg:col-span-1 space-y-6">
@@ -141,8 +151,8 @@ const Contact = () => {
                 {/* Google Maps Embed */}
                 <div className="rounded-[3rem] overflow-hidden shadow-2xl shadow-gray-200 border-8 border-white bg-white h-[600px] relative animate-in fade-in slide-in-from-bottom-4 duration-1000">
                     <iframe
-                        title="FreshCart Location Karen"
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m12!1m3!1d15954.898625905182!2d36.702917025816!3d-1.332306000000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1b4020a67115%3A0xc3f34538e1b1d643!2sKaren%20Shopping%20Centre!5e0!3m2!1sen!2ske!4v1710529000000!5m2!1sen!2ske"
+                        title="FreshCart Location - The Well Mall Karen"
+                        src="https://maps.app.goo.gl/d9J9SYhZcNxmafdR7"
                         className="w-full h-full border-0 grayscale-[0.2] hover:grayscale-0 transition-all duration-1000"
                         allowFullScreen=""
                         loading="lazy"
@@ -157,7 +167,7 @@ const Contact = () => {
                             </div>
                             <div>
                                 <h4 className="font-black text-xl text-gray-900 leading-tight">Visit Our Hub</h4>
-                                <p className="text-gray-500 font-bold text-sm mt-1">Karen Shopping Centre, Nairobi</p>
+                                <p className="text-gray-500 font-bold text-sm mt-1">The Well Mall, Karen, Nairobi</p>
                             </div>
                         </div>
                         <div className="mt-8 pt-6 border-t border-gray-100 grid grid-cols-2 gap-4">

@@ -36,11 +36,25 @@ const Blog = () => {
     return (
         <div className="bg-gray-50 min-h-screen pb-12">
             {/* Hero Section */}
-            <div className="bg-green-600 text-white py-20 px-4">
-                <div className="max-w-7xl mx-auto text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-6">FreshCart Wellness Blog</h1>
-                    <p className="text-xl max-w-2xl mx-auto opacity-90">
-                        Insights, tips, and inspiration for a healthier, fresher lifestyle.
+            <div className="relative py-32 px-4 overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2574&auto=format&fit=crop"
+                        alt="Wellness Blog Banner"
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+                </div>
+                <div className="max-w-7xl mx-auto text-center relative z-10">
+                    <span className="bg-primary/20 text-primary-light border border-primary/30 py-1.5 px-4 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 inline-block backdrop-blur-md">
+                        FreshCart Wellness
+                    </span>
+                    <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
+                        Insights for a <br />
+                        <span className="text-primary italic">Healhier You</span>
+                    </h1>
+                    <p className="text-xl max-w-2xl mx-auto text-gray-200 font-medium leading-relaxed">
+                        Expert nutrition tips, seasonal recipes, and lifestyle guides to help you thrive on nature's finest.
                     </p>
                 </div>
             </div>
