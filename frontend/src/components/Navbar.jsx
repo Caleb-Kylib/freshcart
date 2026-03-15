@@ -58,6 +58,7 @@ const Navbar = () => {
                             { name: 'Vegetables', path: '/products?category=Vegetables' },
                             { name: 'Smoothies', path: '/products?category=Smoothies' },
                             { name: 'Blog', path: '/blog' },
+                            { name: 'Contact', path: '/contact' },
                         ].map((link) => (
                             <Link
                                 key={link.name}
@@ -135,6 +136,7 @@ const Navbar = () => {
                             { name: 'Product Catalog', path: '/products' },
                             { name: 'Wellness Blog', path: '/blog' },
                             { name: 'Member Cart', path: '/cart' },
+                            { name: 'Contact Us', path: '/contact' },
                         ].map((link) => (
                             <Link
                                 key={link.name}
