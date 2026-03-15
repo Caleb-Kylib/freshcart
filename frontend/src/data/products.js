@@ -178,14 +178,34 @@ export const products = [
         image: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?q=80&w=300&auto=format&fit=crop",
         description: "Healthy beet and carrot blend for a natural energy boost.",
         unit: "500ml"
+    },
+    {
+        id: 21,
+        name: "Deluxe Fruit Basket",
+        category: "Fruit Baskets",
+        price: 2500,
+        image: "https://images.unsplash.com/photo-1590779033100-9f60502a6a3d?q=80&w=300&auto=format&fit=crop",
+        description: "A premium selection of seasonal fruits, beautifully presented.",
+        unit: "basket"
+    },
+    {
+        id: 22,
+        name: "Small Wellness Basket",
+        category: "Fruit Baskets",
+        price: 1500,
+        image: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=300&auto=format&fit=crop",
+        description: "Perfect for a healthy gift or weekly home supply.",
+        unit: "basket"
     }
 ];
 
 export const categories = [
-    { name: "Fruits", image: "/products/mango.jpg" },
-    { name: "Vegetables", image: "/products/vegetables.jpg" },
-    { name: "Juices", image: "/products/mango-juice-featured-2.jpg" },
-    { name: "Smoothies", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=600&auto=format&fit=crop" },
-    { name: "Herbs", image: "/products/herbs.jpg" }
+    { name: "Fruits", image: "/products/mango.jpg", description: "Sweet & juicy seasonal picks" },
+    { name: "Vegetables", image: "/products/vegetables.jpg", description: "Farm fresh organic greens" },
+    { name: "Juices", image: "/products/mango-juice-featured-2.jpg", description: "100% pure cold-pressed" },
+    { name: "Fruit Baskets", image: "/products/fruit-basket.jpg", description: "Curated gift & home sets" },
+    { name: "Lifestyle Bundles", image: "/products/gingershots.jpg", description: "Healthy lifestyle combinations" },
+    { name: "Smoothies", image: "/products/smoothies.jpg", description: "Nutrient-packed energy boosts" },
+    { name: "Herbs", image: "/products/herbs.jpg", description: "Aromatic culinary essentials" }
 ];
 

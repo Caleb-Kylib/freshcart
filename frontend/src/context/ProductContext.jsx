@@ -7,6 +7,7 @@ export const useProducts = () => useContext(ProductContext);
 
 export const ProductProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
+    const [featuredProducts, setFeaturedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { token } = useAuth();
@@ -16,24 +17,23 @@ export const ProductProvider = ({ children }) => {
     // Fetch products from MongoDB on mount
     useEffect(() => {
         fetchProducts();
+        fetchFeaturedProducts();
     }, []);
 
     const fetchProducts = async () => {
         try {
             setLoading(true);
             setError(null);
+
+            // Try fetching from API
             const response = await fetch(API_URL);
-            
+
             if (!response.ok) {
-                let errorMessage = 'Server error fetching products';
-                try {
-                    const errorData = await response.json();
-                    errorMessage = errorData.message || errorMessage;
-                } catch (e) {
-                    // If not JSON, use status text
-                    errorMessage = `Error ${response.status}: ${response.statusText || 'Internal Server Error'}`;
-                }
-                throw new Error(errorMessage);
+                // If API fails, fall back to local data
+                console.warn('Backend API failed, falling back to local data');
+                const localProducts = (await import('../data/products')).products;
+                setProducts(localProducts || []);
+                return;
             }
 
             const text = await response.text();
@@ -43,18 +43,43 @@ export const ProductProvider = ({ children }) => {
 
             try {
                 const data = JSON.parse(text);
-                setProducts(data.products || []);
+                const apiProducts = data.products || [];
+
+                // If API returns no products, use local data
+                if (apiProducts.length === 0) {
+                    const localProducts = (await import('../data/products')).products;
+                    setProducts(localProducts || []);
+                } else {
+                    setProducts(apiProducts);
+                }
             } catch (e) {
                 console.error('JSON Parse Error:', e, 'Raw content:', text);
                 throw new Error('Server returned invalid data format.');
             }
         } catch (error) {
-            console.error('Error fetching products:', error);
-            setError(error.message === 'Failed to fetch'
-                ? 'Cannot connect to backend server. Please ensure the backend is running on port 5000.'
-                : error.message);
+            console.error('Error fetching products, using local fallback:', error);
+            try {
+                const localProducts = (await import('../data/products')).products;
+                setProducts(localProducts || []);
+            } catch (fallbackError) {
+                setError(error.message === 'Failed to fetch'
+                    ? 'Cannot connect to backend server and local fallback failed.'
+                    : error.message);
+            }
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchFeaturedProducts = async () => {
+        try {
+            const response = await fetch(`${API_URL}/featured`);
+            if (response.ok) {
+                const data = await response.json();
+                setFeaturedProducts(data || []);
+            }
+        } catch (error) {
+            console.error('Error fetching featured products:', error);
         }
     };
 
@@ -142,13 +167,15 @@ export const ProductProvider = ({ children }) => {
     return (
         <ProductContext.Provider value={{
             products,
+            featuredProducts,
             loading,
             error,
             addProduct,
             updateProduct,
             deleteProduct,
             updateStockAfterOrder,
-            fetchProducts
+            fetchProducts,
+            fetchFeaturedProducts
         }}>
             {children}
         </ProductContext.Provider>

@@ -14,8 +14,10 @@ export const CartProvider = ({ children }) => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }, [cartItems]);
 
-    const addToCart = (product, quantity = 1) => {
+    const addToCart = async (product, quantity = 1) => {
         const productId = product._id || product.id;
+
+        // Update local state first for immediate feedback
         setCartItems(prev => {
             const existing = prev.find(item => (item._id || item.id) === productId);
             if (existing) {
@@ -27,6 +29,36 @@ export const CartProvider = ({ children }) => {
             }
             return [...prev, { ...product, quantity }];
         });
+
+        // Sync with backend if logged in
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                await fetch('/api/cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        productId,
+                        quantity,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image
+                    })
+                });
+            } catch (error) {
+                console.error('Error syncing cart with backend:', error);
+            }
+        }
+    };
+
+    const addItemsToCart = async (productsToAdd) => {
+        // Iterate through products and add them
+        for (const item of productsToAdd) {
+            await addToCart(item.product, item.quantity || 1);
+        }
     };
 
     const removeFromCart = (id) => {
@@ -56,6 +88,7 @@ export const CartProvider = ({ children }) => {
         <CartContext.Provider value={{
             cartItems,
             addToCart,
+            addItemsToCart,
             removeFromCart,
             updateQuantity,
             clearCart,
