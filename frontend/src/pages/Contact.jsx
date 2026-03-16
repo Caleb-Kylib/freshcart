@@ -152,9 +152,9 @@ const Contact = () => {
                 <div className="rounded-[3rem] overflow-hidden shadow-2xl shadow-gray-200 border-8 border-white bg-white h-[600px] relative animate-in fade-in slide-in-from-bottom-4 duration-1000">
                     <iframe
                         title="FreshCart Location - The Well Mall Karen"
-                        src="https://maps.app.goo.gl/d9J9SYhZcNxmafdR7"
+                        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3988.7260628831878!2d36.7542429!3d-1.3407058!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1b62c19b0ce5%3A0x60c7f4b55111af03!2sTHE%20WELL%20KAREN!5e0!3m2!1sen!2ske!4v1773645624123!5m2!1sen!2ske"
                         className="w-full h-full border-0 grayscale-[0.2] hover:grayscale-0 transition-all duration-1000"
-                        allowFullScreen=""
+                        allowFullScreen
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
                     ></iframe>
