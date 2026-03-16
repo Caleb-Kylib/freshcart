@@ -39,7 +39,7 @@ const Contact = () => {
                     <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
                 </div>
                 <div className="container-custom relative z-10 text-center animate-in fade-in slide-in-from-top-4 duration-700">
-                    <span className="bg-primary/20 text-primary-light border border-primary/30 py-1.5 px-4 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 inline-block backdrop-blur-md">
+                    <span className="bg-emerald-600 text-white border-2 border-emerald-400 py-3 px-10 rounded-full text-xs font-black uppercase tracking-[0.4em] mb-10 inline-block shadow-[0_20px_50px_rgba(5,150,105,0.4)]">
                         Get In Touch
                     </span>
                     <h1 className="text-5xl md:text-7xl font-black text-white leading-[1.1] mb-8">
@@ -152,9 +152,9 @@ const Contact = () => {
                 <div className="rounded-[3rem] overflow-hidden shadow-2xl shadow-gray-200 border-8 border-white bg-white h-[600px] relative animate-in fade-in slide-in-from-bottom-4 duration-1000">
                     <iframe
                         title="FreshCart Location - The Well Mall Karen"
-                        src="https://maps.app.goo.gl/d9J9SYhZcNxmafdR7"
+                        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3988.7260628831878!2d36.7542429!3d-1.3407058!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1b62c19b0ce5%3A0x60c7f4b55111af03!2sTHE%20WELL%20KAREN!5e0!3m2!1sen!2ske!4v1773645624123!5m2!1sen!2ske"
                         className="w-full h-full border-0 grayscale-[0.2] hover:grayscale-0 transition-all duration-1000"
-                        allowFullScreen=""
+                        allowFullScreen
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
                     ></iframe>
@@ -167,6 +167,7 @@ const Contact = () => {
                             </div>
                             <div>
                                 <h4 className="font-black text-xl text-gray-900 leading-tight">Visit Our Hub</h4>
+                                <p className="text-gray-500 font-bold text-sm mt-1">2nd Floor, Shop No. 200</p>
                                 <p className="text-gray-500 font-bold text-sm mt-1">The Well Mall, Karen, Nairobi</p>
                             </div>
                         </div>

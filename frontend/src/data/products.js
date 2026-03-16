@@ -182,7 +182,7 @@ export const products = [
     {
         id: 21,
         name: "Deluxe Fruit Basket",
-        category: "Fruit Baskets",
+        category: "Lifestyle Bundles",
         price: 2500,
         image: "https://images.unsplash.com/photo-1590779033100-9f60502a6a3d?q=80&w=300&auto=format&fit=crop",
         description: "A premium selection of seasonal fruits, beautifully presented.",
@@ -191,7 +191,7 @@ export const products = [
     {
         id: 22,
         name: "Small Wellness Basket",
-        category: "Fruit Baskets",
+        category: "Lifestyle Bundles",
         price: 1500,
         image: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=300&auto=format&fit=crop",
         description: "Perfect for a healthy gift or weekly home supply.",
@@ -203,7 +203,6 @@ export const categories = [
     { name: "Fruits", image: "/products/mango.jpg", description: "Sweet & juicy seasonal picks" },
     { name: "Vegetables", image: "/products/vegetables.jpg", description: "Farm fresh organic greens" },
     { name: "Juices", image: "/products/mango-juice-featured-2.jpg", description: "100% pure cold-pressed" },
-    { name: "Fruit Baskets", image: "/products/fruit-basket.jpg", description: "Curated gift & home sets" },
     { name: "Lifestyle Bundles", image: "/products/gingershots.jpg", description: "Healthy lifestyle combinations" },
     { name: "Smoothies", image: "/products/smoothies.jpg", description: "Nutrient-packed energy boosts" },
     { name: "Herbs", image: "/products/herbs.jpg", description: "Aromatic culinary essentials" }
