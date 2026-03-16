@@ -85,9 +85,9 @@ const Home = () => {
             const sortedByNew = [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setNewArrivals(sortedByNew.slice(0, 8));
 
-            // Filter for Fruit Baskets or Lifestyle Bundles
-            const baskets = products.filter(p => p.category === 'Fruit Baskets' || p.category === 'Lifestyle Bundles');
-            setFruitBaskets(baskets.length > 0 ? baskets.slice(0, 3) : []);
+            // Filter for Lifestyle Bundles ONLY (User request: remove fruit baskets from this section)
+            const bundles = products.filter(p => p.category === 'Lifestyle Bundles');
+            setFruitBaskets(bundles.length > 0 ? bundles.slice(0, 3) : []);
         }
     }, [products]);
 
@@ -264,11 +264,11 @@ const Home = () => {
                                 <div className="absolute inset-0 p-10 flex flex-col justify-end">
                                     <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                                         <h3 className="text-white text-3xl font-black mb-3 group-hover:text-primary-light transition-colors">{cat.name}</h3>
-                                        <p className="text-gray-300 font-medium mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100 italic">
+                                        <p className="text-gray-200 font-bold mb-8 transition-opacity duration-700 italic">
                                             {cat.description || "Discover our premium selection."}
                                         </p>
-                                        <div className="flex items-center gap-2 text-primary-light font-black uppercase tracking-widest text-xs opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200">
-                                            Explore Now <ArrowRight size={16} />
+                                        <div className="flex items-center gap-3 bg-white text-gray-900 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95">
+                                            Explore Now <ArrowRight size={16} className="text-primary" />
                                         </div>
                                     </div>
                                 </div>
@@ -474,8 +474,8 @@ const Home = () => {
                 <div className="container-custom">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
                         <div className="max-w-xl">
-                            <span className="text-primary font-black text-xs uppercase tracking-[0.3em] mb-4 block">Quick Shopping</span>
-                            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight">Fresh Fruit Baskets</h2>
+                            <span className="text-emerald-600 font-black text-xs uppercase tracking-[0.3em] mb-4 block">Premium Packs</span>
+                            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight uppercase">Lifestyle Bundles</h2>
                         </div>
                         <p className="text-gray-500 font-medium max-w-sm">Hand-picked combinations for specific health goals and household needs.</p>
                     </div>
@@ -627,10 +627,10 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section >
 
             {/* FAQ Section */}
-            <section className="py-24 bg-white">
+            < section className="py-24 bg-white" >
                 <div className="container-custom">
                     <div className="max-w-4xl mx-auto">
                         <div className="text-center mb-16">
@@ -646,10 +646,10 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section >
 
             {/* Partner Farms */}
-            <section className="py-16 bg-stone-50">
+            < section className="py-16 bg-stone-50" >
                 <div className="container-custom">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Partner Farms</h2>
@@ -663,10 +663,10 @@ const Home = () => {
                         ))}
                     </div>
                 </div>
-            </section>
+            </section >
 
             {/* Delivery Areas */}
-            <section className="py-16 bg-white">
+            < section className="py-16 bg-white" >
                 <div className="container-custom">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                         <div>
@@ -705,10 +705,10 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section >
 
             {/* Blog Section */}
-            <section className="py-24 bg-white">
+            < section className="py-24 bg-white" >
                 <div className="container-custom">
                     <div className="flex justify-between items-end mb-12">
                         <div>
@@ -765,10 +765,10 @@ const Home = () => {
                         ))}
                     </div>
                 </div>
-            </section>
+            </section >
 
             {/* Testimonials */}
-            <section className="py-20 bg-green-50">
+            < section className="py-20 bg-green-50" >
                 <div className="container-custom">
                     <h2 className="text-3xl font-bold text-center mb-16 text-gray-900">What Our Customers Say</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -791,11 +791,11 @@ const Home = () => {
                         ))}
                     </div>
                 </div>
-            </section>
+            </section >
 
 
             {/* Community Gallery */}
-            <section className="py-24 bg-gray-900 text-white overflow-hidden">
+            < section className="py-24 bg-gray-900 text-white overflow-hidden" >
                 <div className="container-custom">
                     <div className="text-center max-w-2xl mx-auto mb-20">
                         <span className="text-primary font-black text-xs uppercase tracking-[0.3em] mb-4 block">#FreshCartKenya</span>
@@ -824,10 +824,10 @@ const Home = () => {
                         ))}
                     </div>
                 </div>
-            </section>
+            </section >
 
             {/* Newsletter Signup */}
-            <section className="py-20 bg-emerald-900 text-white">
+            < section className="py-20 bg-emerald-900 text-white" >
                 <div className="container-custom text-center max-w-3xl mx-auto">
                     <div className="bg-emerald-800/50 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                         <Mail size={32} />
@@ -846,7 +846,7 @@ const Home = () => {
                     </div>
                     <p className="text-xs text-emerald-400 mt-4">We respect your privacy. Unsubscribe at any time.</p>
                 </div>
-            </section>
+            </section >
         </div >
     );
 };

@@ -59,15 +59,20 @@ const Navbar = () => {
                             { name: 'Smoothies', path: '/products?category=Smoothies' },
                             { name: 'Blog', path: '/blog' },
                             { name: 'Contact', path: '/contact' },
-                        ].map((link) => (
-                            <Link
-                                key={link.name}
-                                to={link.path}
-                                className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 hover:scale-105 ${location.pathname === link.path ? 'bg-primary text-white shadow-md' : `${textColor} hover:bg-primary/5 hover:text-primary`}`}
-                            >
-                                {link.name}
-                            </Link>
-                        ))}
+                        ].map((link) => {
+                            const isActive = location.pathname + location.search === link.path ||
+                                (link.path === '/products' && location.pathname === '/products' && !location.search);
+
+                            return (
+                                <Link
+                                    key={link.name}
+                                    to={link.path}
+                                    className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 hover:scale-105 ${isActive ? 'bg-primary text-white shadow-md' : `${textColor} hover:bg-primary/5 hover:text-primary`}`}
+                                >
+                                    {link.name}
+                                </Link>
+                            );
+                        })}
                     </div>
                 )}
 
@@ -134,8 +139,10 @@ const Navbar = () => {
                         {[
                             { name: 'Home', path: '/' },
                             { name: 'Product Catalog', path: '/products' },
+                            { name: 'Fruits', path: '/products?category=Fruits' },
+                            { name: 'Vegetables', path: '/products?category=Vegetables' },
+                            { name: 'Smoothies', path: '/products?category=Smoothies' },
                             { name: 'Wellness Blog', path: '/blog' },
-                            { name: 'Member Cart', path: '/cart' },
                             { name: 'Contact Us', path: '/contact' },
                         ].map((link) => (
                             <Link

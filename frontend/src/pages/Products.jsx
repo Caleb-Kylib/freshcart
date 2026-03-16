@@ -13,8 +13,8 @@ const Products = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        setDisplayProducts(products);
-    }, [products]);
+        window.scrollTo(0, 0);
+    }, [selectedCategory]);
 
     useEffect(() => {
         if (categoryParam) {

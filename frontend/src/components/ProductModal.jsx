@@ -88,7 +88,6 @@ const ProductModal = ({
                     <option value="Smoothies">Smoothies</option>
                     <option value="Herbs">Herbs</option>
                     <option value="Lifestyle Bundles">Lifestyle Bundles</option>
-                    <option value="Fruit Baskets">Fruit Baskets</option>
                   </select>
                 </div>
                 <div>
