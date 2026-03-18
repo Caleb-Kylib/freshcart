@@ -25,8 +25,8 @@ export const ProductProvider = ({ children }) => {
             setLoading(true);
             setError(null);
 
-            // Try fetching from API
-            const response = await fetch(API_URL);
+            // Try fetching from API with a high limit to get all products for the client-side filtering
+            const response = await fetch(`${API_URL}?limit=1000`);
 
             if (!response.ok) {
                 // If API fails, fall back to local data

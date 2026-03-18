@@ -20,6 +20,7 @@ const Checkout = () => {
         address: '',
         city: 'Nairobi',
     });
+    const [paymentMethod, setPaymentMethod] = useState('Pesapal'); // Default to Pesapal
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
@@ -48,15 +49,21 @@ const Checkout = () => {
             shippingAddress: `${formData.address}, ${formData.city}`,
             customerPhone: formData.phone,
             totalAmount: cartTotal,
-            paymentMethod: 'M-Pesa'
+            paymentMethod: paymentMethod
         };
 
         try {
             const result = await placeOrder(orderData);
             if (result.success) {
                 updateStockAfterOrder(cartItems);
-                setSuccess(true);
                 clearCart();
+                
+                if (paymentMethod === 'Pesapal' && result.redirect_url) {
+                    // Redirect to Pesapal iframe/payment page
+                    window.location.href = result.redirect_url;
+                } else {
+                    setSuccess(true);
+                }
             } else {
                 alert(result.message || "Failed to place order");
             }
@@ -78,7 +85,9 @@ const Checkout = () => {
                     <h2 className="text-3xl font-bold text-gray-900 mb-4">Order Confirmed!</h2>
                     <p className="text-gray-600 mb-8">
                         Thank you, {formData.name}. We have received your order.
-                        You will receive an M-Pesa prompt on <b>{formData.phone}</b> shortly to complete payment.
+                        {paymentMethod === 'M-Pesa' ? 
+                            <span> You will receive an M-Pesa prompt on <b>{formData.phone}</b> shortly to complete payment.</span> : 
+                            <span> You will be redirected to complete your payment...</span>}
                     </p>
                     <button onClick={() => navigate('/')} className="btn-primary w-full">
                         Back to Home
@@ -199,13 +208,39 @@ const Checkout = () => {
                             </div>
 
                             <div className="mt-8">
-                                <div className="bg-green-50 p-4 rounded-xl flex items-center gap-4 mb-6 border border-green-100">
-                                    <div className="w-12 h-8 bg-white rounded border border-gray-200 flex items-center justify-center font-bold italic text-green-600">
-                                        M-Pesa
-                                    </div>
-                                    <p className="text-xs text-green-800">
-                                        A payment request will be sent to the phone number provided above.
-                                    </p>
+                                <div className="space-y-3 mb-6">
+                                    <label className="flex items-center gap-3 p-4 border rounded-xl cursor-pointer transition-all hover:bg-gray-50 bg-white">
+                                        <input
+                                            type="radio"
+                                            name="paymentMethod"
+                                            value="Pesapal"
+                                            checked={paymentMethod === 'Pesapal'}
+                                            onChange={(e) => setPaymentMethod(e.target.value)}
+                                            className="w-5 h-5 text-primary focus:ring-primary"
+                                        />
+                                        <div className="flex-1">
+                                            <span className="block font-bold text-gray-900">Secure Online Payment</span>
+                                            <span className="block text-xs text-gray-500">M-Pesa, Airtel Money, Visa, Mastercard</span>
+                                        </div>
+                                        <div className="flex gap-1 items-center">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1 rounded">Pesapal</span>
+                                        </div>
+                                    </label>
+
+                                    <label className="flex items-center gap-3 p-4 border rounded-xl cursor-pointer transition-all hover:bg-gray-50 bg-white">
+                                        <input
+                                            type="radio"
+                                            name="paymentMethod"
+                                            value="M-Pesa"
+                                            checked={paymentMethod === 'M-Pesa'}
+                                            onChange={(e) => setPaymentMethod(e.target.value)}
+                                            className="w-5 h-5 text-primary focus:ring-primary"
+                                        />
+                                        <div className="flex-1">
+                                            <span className="block font-bold text-gray-900">M-Pesa Prompt</span>
+                                            <span className="block text-xs text-gray-500">Pay directly on your phone</span>
+                                        </div>
+                                    </label>
                                 </div>
 
                                 <button

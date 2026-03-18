@@ -38,6 +38,7 @@ const Home = () => {
     const [bestSellers, setBestSellers] = useState([]);
     const [newArrivals, setNewArrivals] = useState([]);
     const [fruitBaskets, setFruitBaskets] = useState([]);
+    const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
     const handleAddRecipeBundle = async () => {
         // Find matching products or use mock data if not found
@@ -90,6 +91,35 @@ const Home = () => {
             setFruitBaskets(bundles.length > 0 ? bundles.slice(0, 3) : []);
         }
     }, [products]);
+
+    useEffect(() => {
+        const calculateTimeLeft = () => {
+            const now = new Date();
+            // Target: Next Sunday 23:59:59
+            const sunday = new Date();
+            const daysUntilSunday = now.getDay() === 0 ? 0 : 7 - now.getDay();
+            sunday.setDate(now.getDate() + daysUntilSunday);
+            sunday.setHours(23, 59, 59, 999);
+
+            const difference = sunday.getTime() - now.getTime();
+            
+            if (difference > 0) {
+                return {
+                    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                    minutes: Math.floor((difference / 1000 / 60) % 60),
+                    seconds: Math.floor((difference / 1000) % 60)
+                };
+            }
+            return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+        };
+
+        const timer = setInterval(() => {
+            setTimeLeft(calculateTimeLeft());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
 
     const faqs = [
         {
@@ -442,17 +472,21 @@ const Home = () => {
                         <h2 className="text-4xl font-bold mb-4">Weekend Super Sale!</h2>
                         <p className="text-emerald-100 text-lg mb-6">Get up to 30% off on all organic vegetables and fresh juices. Offer valid until Sunday.</p>
                         <div className="flex gap-4">
-                            <div className="bg-white/10 backdrop-blur-sm p-3 rounded-lg text-center min-w-[80px]">
-                                <span className="block text-2xl font-bold">02</span>
-                                <span className="text-xs text-emerald-200 uppercase">Days</span>
+                            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl text-center min-w-[90px] border border-white/5">
+                                <span className="block text-3xl font-black">{String(timeLeft.days).padStart(2, '0')}</span>
+                                <span className="text-[10px] text-emerald-200 uppercase font-black tracking-widest">Days</span>
                             </div>
-                            <div className="bg-white/10 backdrop-blur-sm p-3 rounded-lg text-center min-w-[80px]">
-                                <span className="block text-2xl font-bold">14</span>
-                                <span className="text-xs text-emerald-200 uppercase">Hours</span>
+                            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl text-center min-w-[90px] border border-white/5">
+                                <span className="block text-3xl font-black">{String(timeLeft.hours).padStart(2, '0')}</span>
+                                <span className="text-[10px] text-emerald-200 uppercase font-black tracking-widest">Hours</span>
                             </div>
-                            <div className="bg-white/10 backdrop-blur-sm p-3 rounded-lg text-center min-w-[80px]">
-                                <span className="block text-2xl font-bold">35</span>
-                                <span className="text-xs text-emerald-200 uppercase">Mins</span>
+                            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl text-center min-w-[90px] border border-white/5">
+                                <span className="block text-3xl font-black">{String(timeLeft.minutes).padStart(2, '0')}</span>
+                                <span className="text-[10px] text-emerald-200 uppercase font-black tracking-widest">Mins</span>
+                            </div>
+                            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl text-center min-w-[90px] border border-white/5">
+                                <span className="block text-3xl font-black text-yellow-400">{String(timeLeft.seconds).padStart(2, '0')}</span>
+                                <span className="text-[10px] text-emerald-200 uppercase font-black tracking-widest">Secs</span>
                             </div>
                         </div>
                     </div>
