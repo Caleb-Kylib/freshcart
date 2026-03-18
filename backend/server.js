@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const path = require("path");
 const cors = require("cors");
 const connectDB = require("./config.js/db");
 
@@ -9,16 +10,21 @@ const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 
-// Load environment variables
-dotenv.config();
+// Load environment variables from backend/.env
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 // Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Middleware – allow frontend dev server and same-origin
+const corsOptions = {
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Health Check Route

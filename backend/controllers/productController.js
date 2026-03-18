@@ -23,6 +23,18 @@ exports.getProducts = async (req, res) => {
   }
 };
 
+// Get featured products
+exports.getFeaturedProducts = async (req, res) => {
+  try {
+    // Just return 8 random products as featured for now, 
+    // or you could add a 'isFeatured' field to the model
+    const products = await Product.find().limit(8);
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Get single product by ID
 exports.getProduct = async (req, res) => {
   try {

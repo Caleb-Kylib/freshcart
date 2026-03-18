@@ -4,6 +4,7 @@ const { protect, adminOnly } = require("../middleware/authMiddleware");
 
 // Public routes
 router.get("/", ctrl.getProducts);
+router.get("/featured", ctrl.getFeaturedProducts);
 router.get("/:id", ctrl.getProduct);
 
 // Admin only routes

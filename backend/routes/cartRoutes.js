@@ -13,11 +13,25 @@ router.get("/", protect, async (req, res) => {
 
 router.post("/", protect, async (req, res) => {
   try {
-    const cart = await Cart.findOneAndUpdate(
-      { userId: req.user.id },
-      req.body,
-      { new: true, upsert: true }
-    );
+    const { productId, quantity, name, price, image } = req.body;
+    
+    let cart = await Cart.findOne({ userId: req.user.id });
+    
+    if (!cart) {
+      cart = new Cart({ userId: req.user.id, items: [] });
+    }
+
+    const itemIndex = cart.items.findIndex(p => p.productId.toString() === productId);
+
+    if (itemIndex > -1) {
+      // Product exists, update quantity
+      cart.items[itemIndex].quantity += (quantity || 1);
+    } else {
+      // Add new item
+      cart.items.push({ productId, quantity, name, price, image });
+    }
+
+    await cart.save();
     res.json(cart);
   } catch (error) {
     res.status(500).json({ message: error.message });

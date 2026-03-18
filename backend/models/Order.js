@@ -24,7 +24,9 @@ const orderSchema = new mongoose.Schema(
       default: "Pending"
     },
     shippingAddress: String,
-    customerPhone: String
+    customerPhone: String,
+    pesapalOrderTrackingId: String,
+    pesapalMerchantReference: String
   },
   { timestamps: true }
 );

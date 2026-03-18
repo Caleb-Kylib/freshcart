@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const pesapalConfig = require("../utils/pesapal");
 
 // Create new order
 exports.createOrder = async (req, res) => {
@@ -39,14 +40,94 @@ exports.createOrder = async (req, res) => {
       shippingAddress,
       customerPhone,
       orderStatus: "Pending",
-      paymentStatus: "Pending"
+      paymentStatus: "Pending",
+      pesapalMerchantReference: `FC-${Date.now()}-${Math.floor(Math.random() * 1000)}`
     });
 
     // Populate user info and product details
     await order.populate("userId");
 
+    // Pesapal Integration Logic
+    if (req.body.paymentMethod === 'Pesapal') {
+      try {
+        const token = await pesapalConfig.getAuthToken();
+        const ipnId = await pesapalConfig.registerIPN(token, "https://example.com/api/orders/pesapal-ipn"); // Requires public IPN URL
+        
+        const orderData = {
+          id: order.pesapalMerchantReference,
+          currency: "KES",
+          amount: totalAmount,
+          description: `FreshCart Order ${order._id}`,
+          callback_url: "http://localhost:5173/payment-status",
+          notification_id: ipnId,
+          billing_address: {
+            email_address: order.userId.email,
+            phone_number: customerPhone,
+            country_code: "KE",
+            first_name: order.userId.name,
+            middle_name: "",
+            last_name: "",
+            line_1: shippingAddress,
+            line_2: "",
+            city: "",
+            state: "",
+            postal_code: "",
+            zip_code: ""
+          }
+        };
+
+        const pesapalResponse = await pesapalConfig.submitOrder(token, orderData);
+        
+        // Save tracking ID
+        order.pesapalOrderTrackingId = pesapalResponse.order_tracking_id;
+        await order.save();
+
+        return res.status(201).json({ 
+          order, 
+          redirect_url: pesapalResponse.redirect_url 
+        });
+      } catch (pesapalError) {
+        console.error("Pesapal Process Error:", pesapalError);
+        // Fallback to manual M-Pesa or standard creation if Pesapal fails to generate link
+        return res.status(201).json({ order, pesapalError: "Failed to generate payment link" });
+      }
+    }
+
     res.status(201).json(order);
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Pesapal IPN Webhook
+exports.pesapalIPN = async (req, res) => {
+  try {
+    const { OrderTrackingId, OrderMerchantReference, OrderNotificationType } = req.query;
+    
+    if (!OrderTrackingId) {
+      return res.status(400).json({ error: "Missing tracking ID" });
+    }
+
+    const token = await pesapalConfig.getAuthToken();
+    const statusData = await pesapalConfig.getTransactionStatus(token, OrderTrackingId);
+
+    const order = await Order.findOne({ pesapalOrderTrackingId: OrderTrackingId });
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    if (statusData.payment_status_description === "COMPLETED") {
+      order.paymentStatus = "Paid";
+      order.orderStatus = "Processing";
+      await order.save();
+    } else if (statusData.payment_status_description === "FAILED" || statusData.payment_status_description === "INVALID") {
+      order.paymentStatus = "Failed";
+      await order.save();
+    }
+
+    res.status(200).json({ status: 200, message: "IPN Received and Processed" });
+  } catch (error) {
+    console.error("IPN Process Error:", error);
     res.status(500).json({ message: error.message });
   }
 };
