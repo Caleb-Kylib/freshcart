@@ -1,43 +1,36 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrderContext';
-import { useProducts } from '../context/ProductContext';
-import { CheckCircle, Loader2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Trash2, Plus, Minus, CreditCard, Truck, MapPin, Phone, User, ShoppingBag, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 const Checkout = () => {
-    const { cartItems, cartTotal, clearCart } = useCart();
-    const { user } = useAuth();
-    const { placeOrder } = useOrders();
-    const { updateStockAfterOrder } = useProducts();
     const navigate = useNavigate();
+    const { cartItems, cartTotal, clearCart, removeFromCart, updateQuantity } = useCart();
+    const { placeOrder } = useOrders();
+    const { user } = useAuth();
 
-    const [formData, setFormData] = useState({
-        name: user?.name || '',
-        email: user?.email || '',
-        phone: '',
-        address: '',
-        city: 'Nairobi',
-    });
-    const [paymentMethod, setPaymentMethod] = useState('Pesapal'); // Default to Pesapal
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const [orderSuccess, setOrderSuccess] = useState(false);
+    const [orderDetails, setOrderDetails] = useState(null);
+    const [formData, setFormData] = useState({
+        customerName: user?.name || '',
+        customerPhone: user?.phone || '',
+        shippingAddress: '',
+        paymentMethod: 'M-PesaSTK'
+    });
 
-    if (cartItems.length === 0 && !success) {
-        navigate('/cart');
-        return null;
-    }
-
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        if (cartItems.length === 0) return;
 
-        // Create Order Object in format backend expects
+        setLoading(true);
         const orderData = {
             items: cartItems.map(item => ({
                 productId: item._id || item.id,
@@ -46,211 +39,248 @@ const Checkout = () => {
                 quantity: item.quantity,
                 image: item.image
             })),
-            shippingAddress: `${formData.address}, ${formData.city}`,
-            customerPhone: formData.phone,
             totalAmount: cartTotal,
-            paymentMethod: paymentMethod
+            shippingAddress: formData.shippingAddress,
+            customerPhone: formData.customerPhone,
+            paymentMethod: formData.paymentMethod
         };
 
-        try {
-            const result = await placeOrder(orderData);
-            if (result.success) {
-                updateStockAfterOrder(cartItems);
-                clearCart();
-                
-                if (paymentMethod === 'Pesapal' && result.redirect_url) {
-                    // Redirect to Pesapal iframe/payment page
-                    window.location.href = result.redirect_url;
-                } else {
-                    setSuccess(true);
-                }
-            } else {
-                alert(result.message || "Failed to place order");
-            }
-        } catch (error) {
-            console.error("Checkout error:", error);
-            alert("An unexpected error occurred. Please check your connection.");
-        } finally {
-            setLoading(false);
+        const result = await placeOrder(orderData);
+        setLoading(false);
+
+        if (result.success) {
+            setOrderDetails(result.order);
+            setOrderSuccess(true);
+            clearCart();
+            // Redirect after 5 seconds or keep showing success
+            setTimeout(() => {
+                navigate('/payment-status', { state: { orderId: result.order._id || result.order.id } });
+            }, 5000);
+        } else {
+            alert(result.message || "Failed to place order. Please try again.");
         }
     };
 
-    if (success) {
+    if (orderSuccess) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-                <div className="bg-white p-8 md:p-12 rounded-3xl shadow-lg max-w-md text-center">
-                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-primary">
-                        <CheckCircle size={40} />
+            <div className="pt-32 pb-24 min-h-screen bg-gray-50 flex items-center justify-center px-4">
+                <div className="max-w-md w-full bg-white rounded-[3rem] p-10 shadow-2xl border border-emerald-50 text-center animate-in zoom-in-95 duration-500">
+                    <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-8 text-emerald-600">
+                        <CheckCircle2 size={56} className="animate-bounce" />
                     </div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Order Confirmed!</h2>
-                    <p className="text-gray-600 mb-8">
-                        Thank you, {formData.name}. We have received your order.
-                        {paymentMethod === 'M-Pesa' ? 
-                            <span> You will receive an M-Pesa prompt on <b>{formData.phone}</b> shortly to complete payment.</span> : 
-                            <span> You will be redirected to complete your payment...</span>}
-                    </p>
-                    <button onClick={() => navigate('/')} className="btn-primary w-full">
-                        Back to Home
+                    <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">Order Placed!</h2>
+                    <p className="text-gray-500 mb-8 font-medium">Thank you for shopping with FreshCart. Your organic goodness is on the way!</p>
+                    
+                    <div className="bg-emerald-50 rounded-2xl p-6 mb-8 text-left border border-emerald-100">
+                        <p className="text-xs font-black uppercase tracking-widest text-emerald-600 mb-2">Order Summary</p>
+                        <div className="flex justify-between text-gray-900 font-bold mb-1">
+                            <span>Order ID:</span>
+                            <span className="font-mono text-xs">#{orderDetails?._id?.toString().slice(-8).toUpperCase()}</span>
+                        </div>
+                        <div className="flex justify-between text-gray-900 font-bold">
+                            <span>Total Paid:</span>
+                            <span>KES {cartTotal}</span>
+                        </div>
+                    </div>
+
+                    <button 
+                        onClick={() => navigate('/')}
+                        className="w-full bg-emerald-600 text-white font-black py-4 rounded-2xl hover:bg-emerald-700 transition-all flex items-center justify-center gap-3 active:scale-95"
+                    >
+                        Return to Shop <ArrowRight size={20} />
                     </button>
+                    <p className="text-gray-400 text-xs mt-6">Redirecting to status page in 5 seconds...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (cartItems.length === 0) {
+        return (
+            <div className="pt-32 pb-24 min-h-screen bg-gray-50 flex items-center justify-center px-4">
+                <div className="text-center">
+                    <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-8 text-gray-400">
+                        <ShoppingBag size={48} />
+                    </div>
+                    <h2 className="text-3xl font-black text-gray-900 mb-4">Your Cart is Empty</h2>
+                    <p className="text-gray-500 mb-8">Add some fresh organic produce to your cart first.</p>
+                    <Link to="/products" className="btn-primary inline-flex items-center gap-3">
+                        <ArrowRight size={20} className="rotate-180" /> Start Shopping
+                    </Link>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="pt-32 pb-20 min-h-screen bg-gray-50">
+        <div className="pt-32 pb-24 min-h-screen bg-gray-50">
             <div className="container-custom">
-                <h1 className="text-3xl font-bold mb-8 text-center text-gray-900">Checkout</h1>
+                <div className="flex flex-col lg:flex-row gap-12">
+                    {/* Checkout Form */}
+                    <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="bg-emerald-600 text-white p-2 rounded-xl">
+                                <Truck size={24} />
+                            </div>
+                            <h1 className="text-3xl font-black text-gray-900 tracking-tight">Checkout</h1>
+                        </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
-                    {/* Form */}
-                    <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                        <h2 className="text-xl font-bold mb-6 text-gray-800">Delivery Details</h2>
-                        <form id="checkout-form" onSubmit={handleSubmit} className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                                <input
-                                    required
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-green-100 outline-none transition-all"
-                                    placeholder="John Doe"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                                <input
-                                    required
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-green-100 outline-none transition-all"
-                                    placeholder="john@example.com"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number (M-Pesa)</label>
-                                <input
-                                    required
-                                    type="tel"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-green-100 outline-none transition-all"
-                                    placeholder="07XX XXX XXX"
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
-                                    <select
-                                        name="city"
-                                        value={formData.city}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-green-100 outline-none transition-all bg-white"
-                                    >
-                                        <option>Nairobi</option>
-                                        <option>Kiambu</option>
-                                        <option>Machakos</option>
-                                        <option>Kajiado</option>
-                                    </select>
+                        <form onSubmit={handleSubmit} className="space-y-8">
+                            {/* Delivery Info */}
+                            <div className="bg-white overflow-hidden rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 p-8 md:p-10">
+                                <h3 className="text-xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+                                    <MapPin className="text-emerald-600" size={20} /> 1. Delivery Details
+                                </h3>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-black uppercase tracking-widest text-gray-500 ml-1">Full Name</label>
+                                        <div className="relative">
+                                            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                            <input
+                                                type="text"
+                                                name="customerName"
+                                                required
+                                                placeholder="Enter your name"
+                                                value={formData.customerName}
+                                                onChange={handleInputChange}
+                                                className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 outline-none transition-all font-medium"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-black uppercase tracking-widest text-gray-500 ml-1">Phone Number (M-Pesa)</label>
+                                        <div className="relative">
+                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                            <input
+                                                type="tel"
+                                                name="customerPhone"
+                                                required
+                                                placeholder="07XX XXX XXX"
+                                                value={formData.customerPhone}
+                                                onChange={handleInputChange}
+                                                className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 outline-none transition-all font-medium"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <label className="text-sm font-black uppercase tracking-widest text-gray-500 ml-1">Shipping Address</label>
+                                        <div className="relative">
+                                            <MapPin className="absolute left-4 top-4 text-gray-400" size={18} />
+                                            <textarea
+                                                name="shippingAddress"
+                                                required
+                                                rows="3"
+                                                placeholder="Apartment, Street Name, Estate, City..."
+                                                value={formData.shippingAddress}
+                                                onChange={handleInputChange}
+                                                className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 outline-none transition-all font-medium resize-none"
+                                            ></textarea>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Address / Estate</label>
-                                    <input
-                                        required
-                                        type="text"
-                                        name="address"
-                                        value={formData.address}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-green-100 outline-none transition-all"
-                                        placeholder="e.g. Westlands, Plot 10"
-                                    />
+                            </div>
+
+                            {/* Payment Method */}
+                            <div className="bg-white overflow-hidden rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 p-8 md:p-10">
+                                <h3 className="text-xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+                                    <CreditCard className="text-emerald-600" size={20} /> 2. Payment Method
+                                </h3>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <label className={`relative flex items-center gap-4 p-6 rounded-2xl border-2 transition-all cursor-pointer ${formData.paymentMethod === 'M-PesaSTK' ? 'border-emerald-600 bg-emerald-50' : 'border-gray-100 hover:border-emerald-200'}`}>
+                                        <input
+                                            type="radio"
+                                            name="paymentMethod"
+                                            value="M-PesaSTK"
+                                            checked={formData.paymentMethod === 'M-PesaSTK'}
+                                            onChange={handleInputChange}
+                                            className="hidden"
+                                        />
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${formData.paymentMethod === 'M-PesaSTK' ? 'border-emerald-600' : 'border-gray-300'}`}>
+                                            {formData.paymentMethod === 'M-PesaSTK' && <div className="w-3 h-3 bg-emerald-600 rounded-full" />}
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-gray-900 tracking-tight">M-Pesa Prompt</p>
+                                            <p className="text-xs text-emerald-600 font-bold">Fast & Secure</p>
+                                        </div>
+                                        <img src="/mpesa-logo.png" alt="M-Pesa" className="ml-auto h-8 opacity-80" />
+                                    </label>
+
+                                    <label className={`relative flex items-center gap-4 p-6 rounded-2xl border-2 transition-all cursor-pointer ${formData.paymentMethod === 'COD' ? 'border-emerald-600 bg-emerald-50' : 'border-gray-100 hover:border-emerald-200'}`}>
+                                        <input
+                                            type="radio"
+                                            name="paymentMethod"
+                                            value="COD"
+                                            checked={formData.paymentMethod === 'COD'}
+                                            onChange={handleInputChange}
+                                            className="hidden"
+                                        />
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${formData.paymentMethod === 'COD' ? 'border-emerald-600' : 'border-gray-300'}`}>
+                                            {formData.paymentMethod === 'COD' && <div className="w-3 h-3 bg-emerald-600 rounded-full" />}
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-gray-900 tracking-tight">Cash on Delivery</p>
+                                            <p className="text-xs text-gray-500 font-bold italic">Pay when you receive</p>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
                         </form>
                     </div>
 
-                    {/* Order Summary */}
-                    <div>
-                        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 sticky top-32">
-                            <h2 className="text-xl font-bold mb-6 text-gray-800">Your Order</h2>
-                            <div className="max-h-60 overflow-y-auto mb-6 pr-2 space-y-4 custom-scrollbar">
-                                {cartItems.map(item => (
-                                    <div key={item.id} className="flex justify-between items-center text-sm">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden">
-                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                                            </div>
-                                            <span className="text-gray-600">{item.name} <span className="text-xs text-gray-400">x{item.quantity}</span></span>
+                    {/* Order Summary Sidebar */}
+                    <div className="lg:w-[400px]">
+                        <div className="bg-emerald-900 text-white rounded-[3rem] p-8 md:p-10 shadow-2xl sticky top-32">
+                            <h3 className="text-2xl font-black mb-8 border-b border-emerald-800 pb-6 uppercase tracking-widest text-[14px]">Order Summary</h3>
+                            
+                            <div className="space-y-6 mb-10 max-h-[300px] overflow-y-auto scrollbar-hide pr-2">
+                                {cartItems.map((item) => (
+                                    <div key={item._id || item.id} className="flex gap-4">
+                                        <div className="w-16 h-16 bg-white/10 rounded-2xl overflow-hidden shrink-0">
+                                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                                         </div>
-                                        <span className="font-medium">KES {item.price * item.quantity}</span>
+                                        <div className="flex-1">
+                                            <p className="font-bold text-sm leading-tight text-white/90 line-clamp-1">{item.name}</p>
+                                            <p className="text-xs text-emerald-400 font-black mt-1 uppercase tracking-widest">{item.quantity} x KES {item.price}</p>
+                                        </div>
+                                        <p className="font-black text-sm">KES {item.quantity * item.price}</p>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="border-t border-gray-100 pt-4 space-y-3">
-                                <div className="flex justify-between text-gray-600">
+                            <div className="space-y-4 border-t border-emerald-800 pt-8 mb-8 font-bold">
+                                <div className="flex justify-between text-emerald-300">
                                     <span>Subtotal</span>
                                     <span>KES {cartTotal}</span>
                                 </div>
-                                <div className="flex justify-between text-gray-600">
+                                <div className="flex justify-between text-emerald-300">
                                     <span>Delivery</span>
-                                    <span className="text-green-600 font-medium">Free</span>
+                                    <span>KES 0</span>
                                 </div>
-                                <div className="flex justify-between font-bold text-xl text-gray-900 border-t border-gray-100 pt-3">
+                                <div className="flex justify-between text-2xl font-black pt-4 border-t border-emerald-800/50">
                                     <span>Total</span>
-                                    <span>KES {cartTotal}</span>
+                                    <span className="text-amber-400">KES {cartTotal}</span>
                                 </div>
                             </div>
 
-                            <div className="mt-8">
-                                <div className="space-y-3 mb-6">
-                                    <label className="flex items-center gap-3 p-4 border rounded-xl cursor-pointer transition-all hover:bg-gray-50 bg-white">
-                                        <input
-                                            type="radio"
-                                            name="paymentMethod"
-                                            value="Pesapal"
-                                            checked={paymentMethod === 'Pesapal'}
-                                            onChange={(e) => setPaymentMethod(e.target.value)}
-                                            className="w-5 h-5 text-primary focus:ring-primary"
-                                        />
-                                        <div className="flex-1">
-                                            <span className="block font-bold text-gray-900">Secure Online Payment</span>
-                                            <span className="block text-xs text-gray-500">M-Pesa, Airtel Money, Visa, Mastercard</span>
-                                        </div>
-                                        <div className="flex gap-1 items-center">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1 rounded">Pesapal</span>
-                                        </div>
-                                    </label>
-
-                                    <label className="flex items-center gap-3 p-4 border rounded-xl cursor-pointer transition-all hover:bg-gray-50 bg-white">
-                                        <input
-                                            type="radio"
-                                            name="paymentMethod"
-                                            value="M-Pesa"
-                                            checked={paymentMethod === 'M-Pesa'}
-                                            onChange={(e) => setPaymentMethod(e.target.value)}
-                                            className="w-5 h-5 text-primary focus:ring-primary"
-                                        />
-                                        <div className="flex-1">
-                                            <span className="block font-bold text-gray-900">M-Pesa Prompt</span>
-                                            <span className="block text-xs text-gray-500">Pay directly on your phone</span>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    form="checkout-form"
-                                    disabled={loading}
-                                    className="btn-primary w-full py-4 rounded-xl flex items-center justify-center gap-2"
-                                >
-                                    {loading ? <><Loader2 className="animate-spin" /> Processing...</> : `Pay KES ${cartTotal}`}
-                                </button>
+                            <button
+                                onClick={handleSubmit}
+                                disabled={loading}
+                                className={`w-full py-6 rounded-3xl font-black text-lg transition-all flex items-center justify-center gap-4 bg-amber-400 text-emerald-950 hover:bg-white active:scale-95 shadow-2xl shadow-emerald-950/20 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                {loading ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-emerald-950/30 border-t-emerald-950 animate-spin rounded-full" />
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>Pay KES {cartTotal} <ArrowRight size={22} /></>
+                                )}
+                            </button>
+                            
+                            <div className="mt-8 flex items-center justify-center gap-3 text-emerald-400 text-xs font-bold uppercase tracking-widest">
+                                <ShieldCheck size={16} /> Secure SSL Checkout
                             </div>
                         </div>
                     </div>

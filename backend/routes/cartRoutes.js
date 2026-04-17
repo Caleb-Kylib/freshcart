@@ -13,7 +13,7 @@ router.get("/", protect, async (req, res) => {
 
 router.post("/", protect, async (req, res) => {
   try {
-    const { productId, quantity, name, price, image } = req.body;
+    const { productId, quantity, name, price, image } = req. body;
     
     let cart = await Cart.findOne({ userId: req.user.id });
     

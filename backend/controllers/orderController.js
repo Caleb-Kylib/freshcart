@@ -1,11 +1,11 @@
 const Order = require("../models/Order");
 const Product = require("../models/Product");
-const pesapalConfig = require("../utils/pesapal");
+const { initiateMpesaSTK, checkPaymentStatus } = require("../utils/intasend");
 
 // Create new order
 exports.createOrder = async (req, res) => {
   try {
-    const { items, shippingAddress, totalAmount, customerPhone } = req.body;
+    const { items, shippingAddress, totalAmount, customerPhone, paymentMethod, shippingMethod, shippingCost } = req.body;
     const userId = req.user.id;
 
     // Validation
@@ -32,102 +32,88 @@ exports.createOrder = async (req, res) => {
       await product.save();
     }
 
-    // Create order
+    // Create order in DB
     const order = await Order.create({
       userId,
       items,
       totalAmount,
       shippingAddress,
       customerPhone,
+      shippingMethod: shippingMethod || "Standard Delivery",
+      shippingCost: shippingCost || 0,
       orderStatus: "Pending",
-      paymentStatus: "Pending",
-      pesapalMerchantReference: `FC-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+      paymentStatus: "Pending"
     });
 
-    // Populate user info and product details
+    // Populate user info
     await order.populate("userId");
 
-    // Pesapal Integration Logic
-    if (req.body.paymentMethod === 'Pesapal') {
+    // --- IntaSend M-Pesa STK Push ---
+    if (paymentMethod === "M-Pesa" || paymentMethod === "Pesapal") {
       try {
-        const token = await pesapalConfig.getAuthToken();
-        const ipnId = await pesapalConfig.registerIPN(token, "https://example.com/api/orders/pesapal-ipn"); // Requires public IPN URL
-        
-        const orderData = {
-          id: order.pesapalMerchantReference,
-          currency: "KES",
+        const stkResult = await initiateMpesaSTK({
+          phone: customerPhone,
           amount: totalAmount,
-          description: `FreshCart Order ${order._id}`,
-          callback_url: "http://localhost:5173/payment-status",
-          notification_id: ipnId,
-          billing_address: {
-            email_address: order.userId.email,
-            phone_number: customerPhone,
-            country_code: "KE",
-            first_name: order.userId.name,
-            middle_name: "",
-            last_name: "",
-            line_1: shippingAddress,
-            line_2: "",
-            city: "",
-            state: "",
-            postal_code: "",
-            zip_code: ""
-          }
-        };
+          orderId: order._id.toString(),
+          email: order.userId?.email || "",
+          name: order.userId?.name || ""
+        });
 
-        const pesapalResponse = await pesapalConfig.submitOrder(token, orderData);
-        
-        // Save tracking ID
-        order.pesapalOrderTrackingId = pesapalResponse.order_tracking_id;
+        // Save the invoice ID so we can check status later
+        order.intasendInvoiceId = stkResult.id || stkResult.invoice_id;
         await order.save();
 
-        return res.status(201).json({ 
-          order, 
-          redirect_url: pesapalResponse.redirect_url 
+        return res.status(201).json({
+          order,
+          stkPushSent: true,
+          message: "M-Pesa prompt sent to your phone. Enter your PIN to complete payment."
         });
-      } catch (pesapalError) {
-        console.error("Pesapal Process Error:", pesapalError);
-        // Fallback to manual M-Pesa or standard creation if Pesapal fails to generate link
-        return res.status(201).json({ order, pesapalError: "Failed to generate payment link" });
+      } catch (stkError) {
+        console.error("IntaSend STK Push Error:", stkError.message);
+        // Order is still saved — just no automatic STK push
+        return res.status(201).json({
+          order,
+          stkPushSent: false,
+          stkError: stkError.message,
+          message: "Order placed but STK push failed. Please pay manually."
+        });
       }
     }
 
-    res.status(201).json(order);
+    // For any other payment method (cash on delivery, etc.) just save and return
+    res.status(201).json({ order });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Pesapal IPN Webhook
-exports.pesapalIPN = async (req, res) => {
+// IntaSend Payment Status Check (called from frontend polling)
+exports.checkIntasendPayment = async (req, res) => {
   try {
-    const { OrderTrackingId, OrderMerchantReference, OrderNotificationType } = req.query;
-    
-    if (!OrderTrackingId) {
-      return res.status(400).json({ error: "Missing tracking ID" });
+    const { invoiceId, orderId } = req.body;
+
+    if (!invoiceId || !orderId) {
+      return res.status(400).json({ message: "invoiceId and orderId are required" });
     }
 
-    const token = await pesapalConfig.getAuthToken();
-    const statusData = await pesapalConfig.getTransactionStatus(token, OrderTrackingId);
+    const statusData = await checkPaymentStatus(invoiceId);
+    const state = statusData?.invoice?.state; // "COMPLETE", "PENDING", "FAILED"
 
-    const order = await Order.findOne({ pesapalOrderTrackingId: OrderTrackingId });
-    if (!order) {
-      return res.status(404).json({ error: "Order not found" });
-    }
+    const order = await Order.findById(orderId);
+    if (!order) return res.status(404).json({ message: "Order not found" });
 
-    if (statusData.payment_status_description === "COMPLETED") {
+    if (state === "COMPLETE") {
       order.paymentStatus = "Paid";
       order.orderStatus = "Processing";
       await order.save();
-    } else if (statusData.payment_status_description === "FAILED" || statusData.payment_status_description === "INVALID") {
+    } else if (state === "FAILED" || state === "CANCELLED") {
       order.paymentStatus = "Failed";
       await order.save();
     }
 
-    res.status(200).json({ status: 200, message: "IPN Received and Processed" });
+    res.json({ state, order });
   } catch (error) {
-    console.error("IPN Process Error:", error);
+    console.error("IntaSend Status Check Error:", error.message);
     res.status(500).json({ message: error.message });
   }
 };

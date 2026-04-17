@@ -25,8 +25,9 @@ const orderSchema = new mongoose.Schema(
     },
     shippingAddress: String,
     customerPhone: String,
-    pesapalOrderTrackingId: String,
-    pesapalMerchantReference: String
+    shippingMethod: { type: String, default: "Standard Delivery" },
+    shippingCost: { type: Number, default: 0 },
+    intasendInvoiceId: String
   },
   { timestamps: true }
 );

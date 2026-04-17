@@ -52,7 +52,12 @@ export const OrderProvider = ({ children }) => {
             const data = await response.json();
             if (response.ok) {
                 setOrders(prev => [data.order || data, ...prev]);
-                return { success: true, order: data.order || data, redirect_url: data.redirect_url };
+                return { 
+                    success: true, 
+                    order: data.order || data, 
+                    stkPushSent: data.stkPushSent,
+                    message: data.message
+                };
             } else {
                 throw new Error(data.message || 'Order failed');
             }
