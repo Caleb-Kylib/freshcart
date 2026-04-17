@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 
 // Pesapal Configuration
-const PESAPAL_CONSUMER_KEY = process.env.PESAPAL_CONSUMER_KEY || "ZUkA1TLm7YvyLIASJNuIszFz62v3ci4R";
-const PESAPAL_CONSUMER_SECRET = process.env.PESAPAL_CONSUMER_SECRET || "62cv5LvmacCr8UaKPNnIjXbVrq8";
+const PESAPAL_CONSUMER_KEY = process.env.PESAPAL_CONSUMER_KEY;
+const PESAPAL_CONSUMER_SECRET = process.env.PESAPAL_CONSUMER_SECRET;
 const PESAPAL_ENV = process.env.PESAPAL_ENV || "sandbox"; // "sandbox" or "production"
 
 const BASE_URL = PESAPAL_ENV === "sandbox" 

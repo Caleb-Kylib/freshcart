@@ -9,6 +9,8 @@ const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const cartRoutes = require("./routes/cartRoutes");
+const ussdRoutes = require("./routes/ussd");
+
 
 // Load environment variables from backend/.env
 dotenv.config({ path: path.join(__dirname, ".env") });
@@ -26,6 +28,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 
 // Health Check Route
 app.get("/", (req, res) => {
@@ -37,6 +41,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/ussd", ussdRoutes);
+
 
 // Logout Route
 app.post("/api/logout", (req, res) => {
