@@ -26,6 +26,8 @@ import AdminOrders from "./pages/AdminOrders";
 import AdminUsers from "./pages/AdminUsers";
 import AdminReports from "./pages/AdminReports";
 import ProtectedRoute from "./components/ProtectedRoute";
+import WhatsAppChat from "./components/WhatsAppChat";
+
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -140,6 +142,8 @@ function App() {
         {/* Storefront Catch-all (EVERYTHING ELSE) */}
         <Route path="/*" element={<StorefrontLayout />} />
       </Routes>
+
+      <WhatsAppChat />
     </>
   );
 }
