@@ -49,13 +49,22 @@ const Checkout = () => {
         setLoading(false);
 
         if (result.success) {
-            setOrderDetails(result.order);
-            setOrderSuccess(true);
-            clearCart();
-            // Redirect after 5 seconds or keep showing success
-            setTimeout(() => {
-                navigate('/payment-status', { state: { orderId: result.order._id || result.order.id } });
-            }, 5000);
+            if (formData.paymentMethod === 'M-PesaSTK') {
+                navigate('/mpesa-payment', { 
+                    state: { 
+                        order: result.order,
+                        customerPhone: formData.customerPhone
+                    } 
+                });
+            } else {
+                setOrderDetails(result.order);
+                setOrderSuccess(true);
+                clearCart();
+                // Redirect after 5 seconds or keep showing success
+                setTimeout(() => {
+                    navigate('/payment-status', { state: { orderId: result.order._id || result.order.id } });
+                }, 5000);
+            }
         } else {
             alert(result.message || "Failed to place order. Please try again.");
         }

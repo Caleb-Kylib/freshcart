@@ -14,6 +14,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Contact from "./pages/Contact";
 import PaymentStatus from "./pages/PaymentStatus";
+import MpesaPaymentPage from "./pages/MpesaPaymentPage";
 
 // Admin pages
 import LoginPage from "./pages/LoginPage";
@@ -71,6 +72,11 @@ const StorefrontLayout = () => {
           <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/payment-status" element={<PaymentStatus />} />
+          <Route path="/mpesa-payment" element={
+            <ProtectedRoute>
+              <MpesaPaymentPage />
+            </ProtectedRoute>
+          } />
           <Route path="/checkout" element={
             <ProtectedRoute>
               <Checkout />
