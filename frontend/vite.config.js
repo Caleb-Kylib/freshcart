@@ -1,7 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { execSync } from 'child_process'
 
-// https://vite.dev/config/
+try {
+  console.log("--> STARTING SELF-HEALING NPM INSTALL <--");
+  execSync('npm install', { stdio: 'inherit' });
+  console.log("--> SELF-HEALING NPM INSTALL COMPLETE <--");
+} catch (err) {
+  console.error("--> SELF-HEALING NPM INSTALL FAILED:", err);
+}
 export default defineConfig({
   plugins: [react()],
   server: {
