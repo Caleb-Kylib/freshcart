@@ -1,6 +1,10 @@
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const mongoose = require("mongoose");
 const { initiateMpesaSTK, checkPaymentStatus } = require("../utils/intasend");
+
+// Helper: check if a string is a valid MongoDB ObjectId
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id) && String(new mongoose.Types.ObjectId(id)) === String(id);
 
 // Create new order
 exports.createOrder = async (req, res) => {
@@ -14,10 +18,20 @@ exports.createOrder = async (req, res) => {
     }
 
     // Check stock and update product soldCount
+    // Skip stock check if the productId is not a valid MongoDB ObjectId
+    // (e.g. numeric IDs from local fallback data when the DB is not yet seeded)
     for (const item of items) {
+      if (!isValidObjectId(item.productId)) {
+        // Local/fallback product — skip DB stock check
+        console.warn(`Skipping stock check for non-ObjectId productId: ${item.productId}`);
+        continue;
+      }
+
       const product = await Product.findById(item.productId);
       if (!product) {
-        return res.status(404).json({ message: `Product ${item.productId} not found` });
+        // Product not found in DB — skip gracefully instead of blocking the order
+        console.warn(`Product ${item.productId} not found in DB — skipping stock check.`);
+        continue;
       }
 
       if (product.stock < item.quantity) {
