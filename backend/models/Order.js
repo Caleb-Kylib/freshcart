@@ -27,7 +27,15 @@ const orderSchema = new mongoose.Schema(
     customerPhone: String,
     shippingMethod: { type: String, default: "Standard Delivery" },
     shippingCost: { type: Number, default: 0 },
-    intasendInvoiceId: String
+    paymentMethod: { type: String, default: "M-Pesa" },
+    daraja: {
+      merchantRequestId: String,
+      checkoutRequestId: String,
+      resultCode: Number,
+      resultDesc: String,
+      receiptNumber: String,
+      paidAt: Date
+    }
   },
   { timestamps: true }
 );

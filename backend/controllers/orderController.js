@@ -1,204 +1,125 @@
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 const mongoose = require("mongoose");
-const { initiateMpesaSTK, checkPaymentStatus } = require("../utils/intasend");
+const { normalizeKenyanPhone, stkPush, stkQuery } = require("../utils/daraja");
 
-// Helper: check if a string is a valid MongoDB ObjectId
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id) && String(new mongoose.Types.ObjectId(id)) === String(id);
+const ownsOrder = (order, user) => user.role === "admin" || order.userId.toString() === user.id;
 
-// Create new order
 exports.createOrder = async (req, res) => {
   try {
     const { items, shippingAddress, totalAmount, customerPhone, paymentMethod, shippingMethod, shippingCost } = req.body;
-    const userId = req.user.id;
+    if (!items?.length) return res.status(400).json({ message: "Order must contain at least one item" });
 
-    // Validation
-    if (!items || items.length === 0) {
-      return res.status(400).json({ message: "Order must contain at least one item" });
-    }
-
-    // Check stock and update product soldCount
-    // Skip stock check if the productId is not a valid MongoDB ObjectId
-    // (e.g. numeric IDs from local fallback data when the DB is not yet seeded)
     for (const item of items) {
-      if (!isValidObjectId(item.productId)) {
-        // Local/fallback product — skip DB stock check
-        console.warn(`Skipping stock check for non-ObjectId productId: ${item.productId}`);
-        continue;
-      }
-
+      if (!isValidObjectId(item.productId)) continue;
       const product = await Product.findById(item.productId);
-      if (!product) {
-        // Product not found in DB — skip gracefully instead of blocking the order
-        console.warn(`Product ${item.productId} not found in DB — skipping stock check.`);
-        continue;
-      }
-
-      if (product.stock < item.quantity) {
-        return res.status(400).json({
-          message: `Insufficient stock for ${product.name}. Available: ${product.stock}`
-        });
-      }
-
-      // Deduct stock and increment soldCount
+      if (!product) continue;
+      if (product.stock < item.quantity) return res.status(400).json({ message: `Insufficient stock for ${product.name}. Available: ${product.stock}` });
       product.stock -= item.quantity;
       product.soldCount = (product.soldCount || 0) + item.quantity;
       await product.save();
     }
 
-    // Create order in DB
     const order = await Order.create({
-      userId,
-      items,
-      totalAmount,
-      shippingAddress,
-      customerPhone,
-      shippingMethod: shippingMethod || "Standard Delivery",
-      shippingCost: shippingCost || 0,
-      orderStatus: "Pending",
-      paymentStatus: "Pending"
+      userId: req.user.id, items, totalAmount, shippingAddress, customerPhone,
+      paymentMethod: paymentMethod || "M-Pesa", shippingMethod: shippingMethod || "Standard Delivery",
+      shippingCost: shippingCost || 0, orderStatus: "Pending", paymentStatus: "Pending"
     });
-
-    // Populate user info
     await order.populate("userId");
-
-    // --- IntaSend M-Pesa STK Push ---
-    if (paymentMethod === "M-Pesa" || paymentMethod === "Pesapal") {
-      try {
-        const stkResult = await initiateMpesaSTK({
-          phone: customerPhone,
-          amount: totalAmount,
-          orderId: order._id.toString(),
-          email: order.userId?.email || "",
-          name: order.userId?.name || ""
-        });
-
-        // Save the invoice ID so we can check status later
-        order.intasendInvoiceId = stkResult.id || stkResult.invoice_id;
-        await order.save();
-
-        return res.status(201).json({
-          order,
-          stkPushSent: true,
-          message: "M-Pesa prompt sent to your phone. Enter your PIN to complete payment."
-        });
-      } catch (stkError) {
-        console.error("IntaSend STK Push Error:", stkError.message);
-        // Order is still saved — just no automatic STK push
-        return res.status(201).json({
-          order,
-          stkPushSent: false,
-          stkError: stkError.message,
-          message: "Order placed but STK push failed. Please pay manually."
-        });
-      }
-    }
-
-    // For any other payment method (cash on delivery, etc.) just save and return
     res.status(201).json({ order });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// IntaSend Payment Status Check (called from frontend polling)
-exports.checkIntasendPayment = async (req, res) => {
+exports.initiateDarajaStkPush = async (req, res) => {
   try {
-    const { invoiceId, orderId } = req.body;
-
-    if (!invoiceId || !orderId) {
-      return res.status(400).json({ message: "invoiceId and orderId are required" });
-    }
-
-    const statusData = await checkPaymentStatus(invoiceId);
-    const state = statusData?.invoice?.state; // "COMPLETE", "PENDING", "FAILED"
-
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!ownsOrder(order, req.user)) return res.status(403).json({ message: "Unauthorized" });
+    if (order.paymentStatus === "Paid") return res.status(409).json({ message: "This order has already been paid." });
 
-    if (state === "COMPLETE") {
-      order.paymentStatus = "Paid";
-      order.orderStatus = "Processing";
-      await order.save();
-    } else if (state === "FAILED" || state === "CANCELLED") {
-      order.paymentStatus = "Failed";
-      await order.save();
+    const phone = normalizeKenyanPhone(req.body.phone || order.customerPhone);
+    const result = await stkPush({ phone, amount: order.totalAmount, accountReference: `FC${order._id.toString().slice(-8)}`, transactionDesc: "FreshCart order" });
+    order.customerPhone = phone;
+    order.daraja = { merchantRequestId: result.MerchantRequestID, checkoutRequestId: result.CheckoutRequestID, resultDesc: result.ResponseDescription };
+    await order.save();
+    res.json({ message: "M-Pesa prompt sent. Enter your PIN to complete payment.", order });
+  } catch (error) {
+    console.error("Daraja STK Push Error:", error.message);
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const applyDarajaResult = async (order, result) => {
+  const resultCode = Number(result.ResultCode);
+  const metadata = result.CallbackMetadata?.Item || [];
+  const receiptNumber = metadata.find((item) => item.Name === "MpesaReceiptNumber")?.Value;
+  order.daraja = {
+    ...order.daraja?.toObject?.(), checkoutRequestId: result.CheckoutRequestID || order.daraja?.checkoutRequestId,
+    merchantRequestId: result.MerchantRequestID || order.daraja?.merchantRequestId, resultCode,
+    resultDesc: result.ResultDesc, receiptNumber: receiptNumber || order.daraja?.receiptNumber,
+    paidAt: resultCode === 0 ? new Date() : order.daraja?.paidAt
+  };
+  if (resultCode === 0) { order.paymentStatus = "Paid"; order.orderStatus = "Processing"; }
+  else if (Number.isFinite(resultCode)) order.paymentStatus = "Failed";
+  await order.save();
+};
+
+exports.handleDarajaCallback = async (req, res) => {
+  const result = req.body?.Body?.stkCallback;
+  if (!result?.CheckoutRequestID) return res.status(400).json({ ResultCode: 1, ResultDesc: "Invalid callback" });
+  try {
+    const order = await Order.findOne({ "daraja.checkoutRequestId": result.CheckoutRequestID });
+    if (!order) return res.status(404).json({ ResultCode: 1, ResultDesc: "Order not found" });
+    await applyDarajaResult(order, result);
+    res.json({ ResultCode: 0, ResultDesc: "Accepted" });
+  } catch (error) {
+    console.error("Daraja callback error:", error.message);
+    res.status(500).json({ ResultCode: 1, ResultDesc: "Unable to process callback" });
+  }
+};
+
+exports.getDarajaPaymentStatus = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!ownsOrder(order, req.user)) return res.status(403).json({ message: "Unauthorized" });
+    if (order.paymentStatus === "Pending" && order.daraja?.checkoutRequestId) {
+      try {
+        const result = await stkQuery(order.daraja.checkoutRequestId);
+        if (result.ResultCode !== undefined) await applyDarajaResult(order, result);
+      } catch (error) { console.warn("Daraja status query skipped:", error.message); }
     }
-
-    res.json({ state, order });
-  } catch (error) {
-    console.error("IntaSend Status Check Error:", error.message);
-    res.status(500).json({ message: error.message });
-  }
+    res.json({ order });
+  } catch (error) { res.status(500).json({ message: error.message }); }
 };
 
-// Get user's orders
 exports.getOrders = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const orders = await Order.find({ userId })
-      .populate("userId", "name email")
-      .populate("items.productId")
-      .sort({ createdAt: -1 });
-
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  try { res.json(await Order.find({ userId: req.user.id }).populate("userId", "name email").populate("items.productId").sort({ createdAt: -1 })); }
+  catch (error) { res.status(500).json({ message: error.message }); }
 };
 
-// Get all orders (Admin only)
 exports.getAllOrders = async (req, res) => {
-  try {
-    const orders = await Order.find()
-      .populate("userId", "name email")
-      .populate("items.productId")
-      .sort({ createdAt: -1 });
-
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  try { res.json(await Order.find().populate("userId", "name email").populate("items.productId").sort({ createdAt: -1 })); }
+  catch (error) { res.status(500).json({ message: error.message }); }
 };
 
-// Get single order by ID
 exports.getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id)
-      .populate("userId", "name email phone")
-      .populate("items.productId");
-
+    const order = await Order.findById(req.params.id).populate("userId", "name email phone").populate("items.productId");
     if (!order) return res.status(404).json({ message: "Order not found" });
-
-    // Ensure user can only view their own order (unless admin)
-    if (order.userId._id.toString() !== req.user.id && req.user.role !== "admin") {
-      return res.status(403).json({ message: "Unauthorized" });
-    }
-
+    if (!ownsOrder(order, req.user)) return res.status(403).json({ message: "Unauthorized" });
     res.json(order);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  } catch (error) { res.status(500).json({ message: error.message }); }
 };
 
-// Update order status (Admin only)
 exports.updateStatus = async (req, res) => {
   try {
     const { orderStatus, paymentStatus } = req.body;
-
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      {
-        ...(orderStatus && { orderStatus }),
-        ...(paymentStatus && { paymentStatus })
-      },
-      { new: true }
-    ).populate("userId");
-
+    const order = await Order.findByIdAndUpdate(req.params.id, { ...(orderStatus && { orderStatus }), ...(paymentStatus && { paymentStatus }) }, { new: true }).populate("userId");
     if (!order) return res.status(404).json({ message: "Order not found" });
-
     res.json(order);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  } catch (error) { res.status(500).json({ message: error.message }); }
 };
