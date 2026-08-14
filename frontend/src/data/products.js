@@ -22,7 +22,7 @@ export const products = [
         name: "Red Apples (Imported)",
         category: "Fruits",
         price: 350,
-        image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?q=80&w=300&auto=format&fit=crop",
+        image: "/products/red-apple.jpg",
         description: "Crisp and sweet red apples, full of flavor and freshness.",
         unit: "kg"
     },
@@ -49,7 +49,7 @@ export const products = [
         name: "Green Smoothie",
         category: "Smoothies",
         price: 450,
-        image: "https://images.unsplash.com/photo-1610970881699-44a5587cabec?q=80&w=300&auto=format&fit=crop",
+        image: "/products/smoothies.jpg",
         description: "Detox green smoothie with spinach, apple, kale, and lemon.",
         unit: "500ml"
     },
@@ -58,7 +58,7 @@ export const products = [
         name: "Fresh Orange Juice",
         category: "Juices",
         price: 500,
-        image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?q=80&w=300&auto=format&fit=crop",
+        image: "/products/oranges.jpg",
         description: "100% pure squeezed orange juice. No added sugar.",
         unit: "1L"
     },
@@ -67,7 +67,7 @@ export const products = [
         name: "Fresh Spinach",
         category: "Vegetables",
         price: 50,
-        image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?q=80&w=300&auto=format&fit=crop",
+        image: "/products/Spinach.jpg",
         description: "Organic green spinach leaves, washed and ready to cook.",
         unit: "bunch"
     },
@@ -76,7 +76,7 @@ export const products = [
         name: "Tomatoes",
         category: "Vegetables",
         price: 150,
-        image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=300&auto=format&fit=crop",
+        image: "/products/vegetables.jpg",
         description: "Ripe red tomatoes, perfect for cooking stews and salads.",
         unit: "kg"
     },
@@ -85,7 +85,7 @@ export const products = [
         name: "Carrots",
         category: "Vegetables",
         price: 100,
-        image: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?q=80&w=300&auto=format&fit=crop",
+        image: "/products/carrots.jpg",
         description: "Crunchy orange carrots, rich in Vitamin A.",
         unit: "kg"
     },
@@ -103,7 +103,7 @@ export const products = [
         name: "Coriander (Dhania)",
         category: "Herbs",
         price: 30,
-        image: "https://images.unsplash.com/photo-1588879464627-c10ba12543e4?q=80&w=300&auto=format&fit=crop",
+        image: "/products/herbs.jpg",
         description: "Fresh coriander leaves to deliver that distinct flavor to your meals.",
         unit: "bunch"
     },
@@ -112,7 +112,7 @@ export const products = [
         name: "Pineapple Mint Juice",
         category: "Juices",
         price: 450,
-        image: "https://images.unsplash.com/photo-1556881286-fc6915169721?q=80&w=300&auto=format&fit=crop",
+        image: "/products/pinacolada-smoothie.jpg",
         description: "Refreshing pineapple juice with a hint of fresh mint.",
         unit: "500ml"
     },
@@ -121,7 +121,7 @@ export const products = [
         name: "Wild Berries Blast",
         category: "Juices",
         price: 550,
-        image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=300&auto=format&fit=crop",
+        image: "/products/wildberries.jpg",
         description: "A blend of raspberries, blueberries, and strawberries.",
         unit: "500ml"
     },
@@ -130,7 +130,7 @@ export const products = [
         name: "Pure Mango Nectar",
         category: "Juices",
         price: 480,
-        image: "https://images.unsplash.com/photo-1546173159-315724a93c90?q=80&w=300&auto=format&fit=crop",
+        image: "/products/mango-juice-featured-2.jpg",
         description: "Thick and sweet nectar made from ripe Ngowe mangoes.",
         unit: "500ml"
     },
@@ -139,7 +139,7 @@ export const products = [
         name: "Cold Pressed Watermelon",
         category: "Juices",
         price: 400,
-        image: "https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?q=80&w=300&auto=format&fit=crop",
+        image: "/products/melon.jpg",
         description: "Hydrating cold-pressed watermelon juice, perfect for hot days.",
         unit: "500ml"
     },
@@ -148,7 +148,7 @@ export const products = [
         name: "Passion Fruit Delight",
         category: "Juices",
         price: 450,
-        image: "https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?q=80&w=300&auto=format&fit=crop",
+        image: "/products/passionjuice.jpg",
         description: "Tangy and aromatic fresh passion fruit juice.",
         unit: "500ml"
     },
@@ -157,7 +157,7 @@ export const products = [
         name: "Apple & Ginger Zest",
         category: "Juices",
         price: 500,
-        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=300&auto=format&fit=crop",
+        image: "/products/gingershots.jpg",
         description: "Crisp apple juice with a spicy ginger kick.",
         unit: "500ml"
     },
@@ -166,7 +166,7 @@ export const products = [
         name: "Tropical Punch",
         category: "Juices",
         price: 520,
-        image: "https://images.unsplash.com/photo-1497551060073-4c5ab6435f12?q=80&w=300&auto=format&fit=crop",
+        image: "/products/juices.jpg",
         description: "A vibrant mix of pineapple, passion, and orange juices.",
         unit: "500ml"
     },
@@ -175,7 +175,7 @@ export const products = [
         name: "Beetroot & Carrot Detox",
         category: "Juices",
         price: 500,
-        image: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?q=80&w=300&auto=format&fit=crop",
+        image: "/products/detox.jpg",
         description: "Healthy beet and carrot blend for a natural energy boost.",
         unit: "500ml"
     },
@@ -184,7 +184,7 @@ export const products = [
         name: "Deluxe Fruit Basket",
         category: "Lifestyle Bundles",
         price: 2500,
-        image: "https://images.unsplash.com/photo-1590779033100-9f60502a6a3d?q=80&w=300&auto=format&fit=crop",
+        image: "/products/fruit-basket.jpg",
         description: "A premium selection of seasonal fruits, beautifully presented.",
         unit: "basket"
     },
@@ -193,7 +193,7 @@ export const products = [
         name: "Small Wellness Basket",
         category: "Lifestyle Bundles",
         price: 1500,
-        image: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=300&auto=format&fit=crop",
+        image: "/products/grocery-box.jpg",
         description: "Perfect for a healthy gift or weekly home supply.",
         unit: "basket"
     }
@@ -207,4 +207,3 @@ export const categories = [
     { name: "Smoothies", image: "/products/smoothies.jpg", description: "Nutrient-packed energy boosts" },
     { name: "Herbs", image: "/products/herbs.jpg", description: "Aromatic culinary essentials" }
 ];
-

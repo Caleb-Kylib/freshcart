@@ -1,14 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { execSync } from 'child_process'
 
-try {
-  console.log("--> STARTING SELF-HEALING NPM INSTALL <--");
-  execSync('npm install', { stdio: 'inherit' });
-  console.log("--> SELF-HEALING NPM INSTALL COMPLETE <--");
-} catch (err) {
-  console.error("--> SELF-HEALING NPM INSTALL FAILED:", err);
-}
+// Dependencies are installed explicitly with npm install/npm ci. Running npm
+// from Vite's config corrupts or locks node_modules while Vite is starting.
 export default defineConfig({
   plugins: [react()],
   server: {

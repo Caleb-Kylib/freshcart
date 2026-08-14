@@ -39,7 +39,7 @@ const Blog = () => {
             <div className="relative py-32 px-4 overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <img
-                        src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2574&auto=format&fit=crop"
+                        src="/products/grocery-section.jpg"
                         alt="Wellness Blog Banner"
                         className="w-full h-full object-cover"
                     />

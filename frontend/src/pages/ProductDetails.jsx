@@ -24,8 +24,8 @@ const ProductDetails = () => {
     // Simple thumbnail mock (since our schema only has one image usually)
     const thumbnails = product ? [
         product.image,
-        "https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=2670&auto=format&fit=crop", // placeholder 1
-        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2670&auto=format&fit=crop"  // placeholder 2
+        "/products/grocery-fridge.jpg", // placeholder 1
+        "/products/grocery-box.jpg"  // placeholder 2
     ] : [];
 
     useEffect(() => {

@@ -18,7 +18,7 @@ const Checkout = () => {
         customerName: user?.name || '',
         customerPhone: user?.phone || '',
         shippingAddress: '',
-        paymentMethod: 'M-PesaSTK'
+        paymentMethod: 'M-Pesa'
     });
 
     const handleInputChange = (e) => {
@@ -49,7 +49,7 @@ const Checkout = () => {
         setLoading(false);
 
         if (result.success) {
-            if (formData.paymentMethod === 'M-PesaSTK') {
+            if (formData.paymentMethod === 'M-Pesa') {
                 navigate('/mpesa-payment', { 
                     state: { 
                         order: result.order,
@@ -197,17 +197,17 @@ const Checkout = () => {
                                 </h3>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <label className={`relative flex items-center gap-4 p-6 rounded-2xl border-2 transition-all cursor-pointer ${formData.paymentMethod === 'M-PesaSTK' ? 'border-emerald-600 bg-emerald-50' : 'border-gray-100 hover:border-emerald-200'}`}>
+                                    <label className={`relative flex items-center gap-4 p-6 rounded-2xl border-2 transition-all cursor-pointer ${formData.paymentMethod === 'M-Pesa' ? 'border-emerald-600 bg-emerald-50' : 'border-gray-100 hover:border-emerald-200'}`}>
                                         <input
                                             type="radio"
                                             name="paymentMethod"
-                                            value="M-PesaSTK"
-                                            checked={formData.paymentMethod === 'M-PesaSTK'}
+                                            value="M-Pesa"
+                                            checked={formData.paymentMethod === 'M-Pesa'}
                                             onChange={handleInputChange}
                                             className="hidden"
                                         />
-                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${formData.paymentMethod === 'M-PesaSTK' ? 'border-emerald-600' : 'border-gray-300'}`}>
-                                            {formData.paymentMethod === 'M-PesaSTK' && <div className="w-3 h-3 bg-emerald-600 rounded-full" />}
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${formData.paymentMethod === 'M-Pesa' ? 'border-emerald-600' : 'border-gray-300'}`}>
+                                            {formData.paymentMethod === 'M-Pesa' && <div className="w-3 h-3 bg-emerald-600 rounded-full" />}
                                         </div>
                                         <div>
                                             <p className="font-black text-gray-900 tracking-tight">M-Pesa Prompt</p>

@@ -32,7 +32,7 @@ const Contact = () => {
             <div className="relative py-32 px-4 mb-20 overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <img
-                        src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=2574&auto=format&fit=crop"
+                        src="/products/grocery-section.jpg"
                         alt="Contact Us Banner"
                         className="w-full h-full object-cover"
                     />

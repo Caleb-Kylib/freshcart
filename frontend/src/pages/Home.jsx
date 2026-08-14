@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, Truck, ShieldCheck, Leaf, Package, ShoppingCart, MapPin, Tag, Sparkles, Mail, ChevronDown, Plus, Minus, AlertCircle } from 'lucide-react';
+import {
+    ArrowRight, Star, Truck, ShieldCheck, Leaf, Package,
+    ShoppingCart, MapPin, Tag, Sparkles, Mail, ChevronDown,
+    Plus, Clock, Percent, Heart, ChevronRight, Zap, Timer, BadgeCheck
+} from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import ProductCarousel from '../components/ProductCarousel';
 import { useProducts } from '../context/ProductContext';
@@ -11,20 +15,20 @@ const FAQItem = ({ question, answer }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className={`group border-b border-emerald-100 transition-all duration-300 ${isOpen ? 'bg-emerald-50/30' : 'hover:bg-emerald-50/10'}`}>
+        <div className={`border border-gray-100 rounded-2xl mb-3 transition-all duration-300 ${isOpen ? 'bg-emerald-50/50 shadow-sm' : 'hover:border-emerald-200'}`}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
+                className="w-full flex items-center justify-between p-5 text-left focus:outline-none"
             >
-                <span className={`text-lg font-bold transition-colors ${isOpen ? 'text-emerald-700' : 'text-gray-800'}`}>
+                <span className={`font-semibold transition-colors ${isOpen ? 'text-emerald-700' : 'text-gray-800'}`}>
                     {question}
                 </span>
-                <div className={`p-2 rounded-full transition-all duration-500 ${isOpen ? 'bg-emerald-600 text-white rotate-180' : 'bg-emerald-100 text-emerald-600'}`}>
-                    <ChevronDown size={20} />
+                <div className={`p-1.5 rounded-full transition-all duration-300 ${isOpen ? 'bg-emerald-600 text-white rotate-180' : 'bg-gray-100 text-gray-500'}`}>
+                    <ChevronDown size={16} />
                 </div>
             </button>
-            <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-                <div className="p-6 pt-0 text-gray-600 font-medium leading-relaxed">
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                <div className="px-5 pb-5 text-gray-600 leading-relaxed">
                     {answer}
                 </div>
             </div>
@@ -34,59 +38,20 @@ const FAQItem = ({ question, answer }) => {
 
 const Home = () => {
     const { products, loading, error } = useProducts();
-    const { addToCart, addItemsToCart } = useCart();
+    const { addToCart } = useCart();
     const [bestSellers, setBestSellers] = useState([]);
     const [newArrivals, setNewArrivals] = useState([]);
     const [fruitBaskets, setFruitBaskets] = useState([]);
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
-    const handleAddRecipeBundle = async () => {
-        // Find matching products or use mock data if not found
-        const bundleItems = [
-            { name: 'Organic Ginger', price: 200, image: '/products/ginger.jpg' },
-            { name: 'Farm Lemons', price: 150, image: '/products/lemons.jpg' },
-            { name: 'Raw Honey', price: 850, image: '/products/honey.jpg' },
-            { name: 'Fresh Turmeric', price: 180, image: '/products/turmeric.jpg' },
-            { name: 'Cayenne Powder', price: 120, image: '/products/cayenne.jpg' }
-        ];
-
-        const productsToAdd = bundleItems.map(item => ({
-            product: products.find(p => p.name.includes(item.name)) || { ...item, _id: `bundle-${item.name.toLowerCase().replace(/\s+/g, '-')}` },
-            quantity: 1
-        }));
-
-        await addItemsToCart(productsToAdd);
-        alert('Immunity Shot Bundle added to your cart!');
-    };
-
-    const handleAddBundle = async (bundle) => {
-        // Mock a few products for the bundle
-        const productsToAdd = [
-            {
-                product: {
-                    _id: `bundle-${bundle.name.toLowerCase().replace(/\s+/g, '-')}`,
-                    name: bundle.name,
-                    price: parseInt(bundle.price.replace(',', '')),
-                    image: bundle.image
-                },
-                quantity: 1
-            }
-        ];
-        await addItemsToCart(productsToAdd);
-        alert(`${bundle.name} added to your cart!`);
-    };
-
     useEffect(() => {
         if (products && products.length > 0) {
-            // Sort by soldCount for Best Sellers
             const sortedBySales = [...products].sort((a, b) => (b.soldCount || 0) - (a.soldCount || 0));
-            setBestSellers(sortedBySales.slice(0, 4));
+            setBestSellers(sortedBySales.slice(0, 8));
 
-            // Sort by createdAt for New Arrivals (newest first)
             const sortedByNew = [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setNewArrivals(sortedByNew.slice(0, 8));
 
-            // Filter for Lifestyle Bundles ONLY (User request: remove fruit baskets from this section)
             const bundles = products.filter(p => p.category === 'Lifestyle Bundles');
             setFruitBaskets(bundles.length > 0 ? bundles.slice(0, 3) : []);
         }
@@ -95,14 +60,13 @@ const Home = () => {
     useEffect(() => {
         const calculateTimeLeft = () => {
             const now = new Date();
-            // Target: Next Sunday 23:59:59
             const sunday = new Date();
             const daysUntilSunday = now.getDay() === 0 ? 0 : 7 - now.getDay();
             sunday.setDate(now.getDate() + daysUntilSunday);
             sunday.setHours(23, 59, 59, 999);
 
             const difference = sunday.getTime() - now.getTime();
-            
+
             if (difference > 0) {
                 return {
                     days: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -141,411 +105,361 @@ const Home = () => {
     ];
 
     return (
-        <div className="min-h-screen">
-            {/* Hero Section */}
-            <section className="relative h-[80vh] flex items-center bg-gray-900">
+        <div className="min-h-screen bg-white">
+            {/* ===== HERO SECTION ===== */}
+            <section className="relative min-h-[85vh] flex items-center overflow-hidden">
+                {/* Background */}
                 <div className="absolute inset-0 z-0">
                     <img
-                        src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2574&auto=format&fit=crop"
+                        src="/products/grocery-section.jpg"
                         alt="Fresh Market"
-                        className="w-full h-full object-cover opacity-50"
+                        className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/70 to-gray-900/30" />
                 </div>
 
-                <div className="container-custom relative z-10 pt-20">
-                    <div className="max-w-2xl text-white">
-                        <span className="bg-primary/20 text-primary-light border border-primary/30 py-1 px-3 rounded-full text-sm font-semibold mb-6 inline-block backdrop-blur-sm">
-                            Same-day delivery in Nairobi
-                        </span>
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                            Fresh Organic <br />
-                            <span className="text-primary">Groceries</span> Daily
-                        </h1>
-                        <p className="text-xl text-gray-200 mb-8 leading-relaxed">
-                            We bring the farm to your doorstep. Experience the freshest fruits, vegetables, and juices Kenya has to offer.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <Link to="/products" className="btn-primary text-center">Shop Now</Link>
-                            <Link to="/products?category=Juices" className="btn-secondary text-white border-white hover:bg-white hover:text-green-800 text-center">View Juices</Link>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-
-            {/* About Platform Section */}
-            <section className="py-24 bg-white overflow-hidden">
-                <div className="container-custom">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                        {/* Left: Image Container */}
-                        <div className="relative group order-2 lg:order-1">
-                            <div className="absolute -top-6 -left-6 w-32 h-32 bg-emerald-100 rounded-full blur-3xl group-hover:bg-emerald-200 transition-all duration-700"></div>
-                            <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-emerald-100/50 rounded-full blur-2xl group-hover:bg-emerald-200/40 transition-all duration-700"></div>
-
-                            <div className="relative rounded-[3rem] overflow-hidden shadow-2xl transform rotate-1 group-hover:rotate-0 transition-transform duration-700">
-                                <img
-                                    src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=2574&auto=format&fit=crop"
-                                    alt="Fresh Produce Nairobi"
-                                    className="w-full h-[600px] object-cover"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 via-transparent to-transparent"></div>
-
-                                <div className="absolute bottom-8 left-8 right-8 bg-white/95 backdrop-blur-md p-6 rounded-3xl shadow-2xl flex items-center gap-4 border border-white/50">
-                                    <div className="w-14 h-14 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-200">
-                                        <Leaf size={28} />
-                                    </div>
-                                    <div>
-                                        <p className="font-black text-gray-900 text-lg leading-tight">100% Farm Fresh</p>
-                                        <p className="text-sm font-medium text-gray-500">Harvested & Delivered Daily</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Right: Text Content */}
-                        <div className="relative z-10 order-1 lg:order-2">
-                            <span className="bg-emerald-100 text-emerald-800 font-black text-xs uppercase tracking-[0.3em] mb-6 px-5 py-2 rounded-full inline-block shadow-sm">
-                                About FreshCart Kenya
-                            </span>
-                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.1] mb-6">
-                                Supplying Health <br />
-                                <span className="text-emerald-600 italic">to Your Home</span>
-                            </h2>
-                            <h3 className="text-xl md:text-2xl font-bold text-gray-700 mb-8 leading-relaxed border-l-4 border-emerald-500 pl-6">
-                                Buy Fruits & Veggies From Our Online Grocery Delivery in Nairobi
-                            </h3>
-
-                            <div className="space-y-6 text-gray-600">
-                                <p className="text-lg leading-relaxed">
-                                    Our grocery delivery in Nairobi services indulges you in the vibrant flavours and nutritional goodness of our exquisite selection of fruits and vegetables at <span className="font-bold text-gray-900">FreshCart Kenya</span>. From succulent seasonal fruits bursting with sweetness to crisp, farm-fresh vegetables teeming with vitamins and minerals, our products embody the essence of wholesome goodness.
-                                </p>
-                                <p className="text-lg leading-relaxed">
-                                    Sourced directly from local farmers who share our dedication to quality and sustainability, each item in our inventory is handpicked at the peak of freshness to ensure unparalleled taste and nutritional value. Whether you’re craving the juiciest of oranges, the crunchiest of carrots, or the richest of avocados, we have a bounty of nature’s finest offerings waiting to elevate your culinary adventures.
-                                </p>
-                                <p className="text-lg leading-relaxed font-bold text-emerald-900 italic">
-                                    Explore our diverse range of fruits and veggies and discover the joy of nourishing your body with the freshest produce Nairobi has to offer.
-                                </p>
+                <div className="container-custom relative z-10 pt-28 pb-16">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        {/* Left: Content */}
+                        <div className="text-white">
+                            {/* Promo badge */}
+                            <div className="inline-flex items-center gap-2 bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 px-4 py-2 rounded-full text-sm font-semibold mb-6 backdrop-blur-sm">
+                                <Zap size={16} className="text-yellow-400" />
+                                Free delivery on orders above KES 2,000
                             </div>
 
-                            <div className="mt-12 flex flex-wrap items-center gap-8">
-                                <Link to="/products" className="group flex items-center gap-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black px-10 py-5 rounded-2xl transition-all shadow-xl shadow-emerald-200 active:scale-95">
-                                    Shop the Harvest <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+                            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] mb-6">
+                                Fresh Groceries<br />
+                                Delivered to Your<br />
+                                <span className="text-emerald-400">Door in Hours</span>
+                            </h1>
+
+                            <p className="text-lg text-gray-300 mb-8 max-w-lg leading-relaxed">
+                                Shop from Nairobi's freshest selection of organic fruits, vegetables, juices, and more. Farm-picked daily, delivered same-day.
+                            </p>
+
+                            {/* CTAs */}
+                            <div className="flex flex-wrap gap-4 mb-10">
+                                <Link
+                                    to="/products"
+                                    className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg shadow-emerald-900/30 hover:shadow-xl active:scale-[0.98]"
+                                >
+                                    <ShoppingCart size={20} />
+                                    Start Shopping
                                 </Link>
+                                <Link
+                                    to="/products?category=Fruits"
+                                    className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-8 py-4 rounded-xl border border-white/20 backdrop-blur-sm transition-all"
+                                >
+                                    Today's Deals
+                                    <ArrowRight size={18} />
+                                </Link>
+                            </div>
 
-                                <div className="flex items-center gap-4">
-                                    <div className="flex -space-x-3">
-                                        {[22, 34, 45, 67].map((id) => (
-                                            <div key={id} className="w-12 h-12 rounded-full border-4 border-white overflow-hidden bg-gray-200 shadow-xl">
-                                                <img src={`https://randomuser.me/api/portraits/thumb/men/${id}.jpg`} alt="User" />
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-black text-gray-900 leading-none mb-1">2.4k+ Reviews</p>
-                                        <div className="flex text-yellow-500">
-                                            {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
-                                        </div>
-                                    </div>
+                            {/* Trust indicators */}
+                            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-300">
+                                <div className="flex items-center gap-2">
+                                    <Clock size={16} className="text-emerald-400" />
+                                    Same-day delivery
                                 </div>
+                                <div className="flex items-center gap-2">
+                                    <ShieldCheck size={16} className="text-emerald-400" />
+                                    Freshness guaranteed
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Leaf size={16} className="text-emerald-400" />
+                                    100% organic
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right: Featured deal card */}
+                        <div className="hidden lg:block">
+                            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">HOT DEAL</span>
+                                    <span className="text-gray-300 text-sm">Ends Sunday</span>
+                                </div>
+                                <h3 className="text-white text-2xl font-bold mb-2">Weekend Super Saver</h3>
+                                <p className="text-gray-300 mb-6">Up to 30% off on fresh vegetables and cold-pressed juices</p>
+
+                                <div className="grid grid-cols-3 gap-3 mb-6">
+                                    {[
+                                        { img: "/products/carrots.jpg", name: "Carrots", price: "120" },
+                                        { img: "/products/Broccoligreen.jpg", name: "Broccoli", price: "250" },
+                                        { img: "/products/cucumber.jpg", name: "Cucumber", price: "80" },
+                                    ].map((item, i) => (
+                                        <div key={i} className="bg-white/10 rounded-xl p-3 text-center border border-white/10">
+                                            <img src={item.img} alt={item.name} className="w-full h-16 object-cover rounded-lg mb-2" />
+                                            <p className="text-white text-xs font-semibold">{item.name}</p>
+                                            <p className="text-emerald-400 text-xs font-bold">KES {item.price}</p>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <Link
+                                    to="/products?category=Vegetables"
+                                    className="block text-center bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition-all"
+                                >
+                                    Shop Vegetables
+                                </Link>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {newArrivals.length > 0 && (
-                <section className="py-16 bg-gray-50">
-                    <div className="container-custom">
-                        <div className="flex items-center gap-2 mb-8">
-                            <Sparkles className="text-yellow-500" />
-                            <h2 className="text-3xl font-bold text-gray-900">New Arrivals</h2>
+            {/* ===== TRUST / DELIVERY BANNER ===== */}
+            <section className="bg-emerald-700 py-4 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiLz48cGF0aCBkPSJNMjAgMjBtLTEgMGEgMSAxIDAgMSAwIDIgMGExIDEgMCAxIDAtMiAwIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48L2c+PC9zdmc+')] opacity-30"></div>
+                <div className="container-custom relative z-10">
+                    <div className="flex flex-wrap items-center justify-between gap-4 text-white">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white/20 p-2 rounded-lg">
+                                <Truck size={20} />
+                            </div>
+                            <div>
+                                <p className="font-bold text-sm">Free Delivery</p>
+                                <p className="text-emerald-100 text-xs">Orders over KES 2,000</p>
+                            </div>
                         </div>
-                        <ProductCarousel products={newArrivals} />
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white/20 p-2 rounded-lg">
+                                <Timer size={20} />
+                            </div>
+                            <div>
+                                <p className="font-bold text-sm">Same-Day Delivery</p>
+                                <p className="text-emerald-100 text-xs">Order before 12 PM</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white/20 p-2 rounded-lg">
+                                <ShieldCheck size={20} />
+                            </div>
+                            <div>
+                                <p className="font-bold text-sm">Freshness Guarantee</p>
+                                <p className="text-emerald-100 text-xs">Or your money back</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white/20 p-2 rounded-lg">
+                                <BadgeCheck size={20} />
+                            </div>
+                            <div>
+                                <p className="font-bold text-sm">Certified Organic</p>
+                                <p className="text-emerald-100 text-xs">From local farms</p>
+                            </div>
+                        </div>
                     </div>
-                </section>
-            )}
+                </div>
+            </section>
 
-            {/* Categories */}
-            <section className="py-24 bg-gray-50/50">
+            {/* ===== SHOP BY CATEGORY ===== */}
+            <section className="py-14 bg-gray-50">
                 <div className="container-custom">
-                    <div className="text-center max-w-3xl mx-auto mb-16">
-                        <span className="bg-primary/10 text-primary font-black text-xs uppercase tracking-[0.3em] mb-4 px-5 py-2 rounded-full inline-block shadow-sm">
-                            Our Collections
-                        </span>
-                        <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight mt-4">Shop by Category</h2>
-                        <p className="text-gray-500 mt-4 text-lg">Indulge in our handpicked selections of fresh produce, delivered straight from the farm.</p>
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Shop by Category</h2>
+                            <p className="text-gray-500 mt-1">Browse our fresh aisles</p>
+                        </div>
+                        <Link to="/products" className="hidden sm:flex items-center gap-1 text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
+                            View All <ChevronRight size={18} />
+                        </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                         {categories.map((cat, index) => (
                             <Link
                                 to={`/products?category=${cat.name}`}
                                 key={index}
-                                className="group relative h-[450px] overflow-hidden rounded-[2.5rem] shadow-xl shadow-gray-200/50 transition-all duration-700 hover:-translate-y-2"
+                                className="group flex flex-col items-center p-5 bg-white rounded-2xl border border-gray-100 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50 transition-all duration-300 hover:-translate-y-1"
                             >
-                                <img
-                                    src={cat.image}
-                                    alt={cat.name}
-                                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-900/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity"></div>
-
-                                <div className="absolute inset-0 p-10 flex flex-col justify-end">
-                                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                        <h3 className="text-white text-3xl font-black mb-3 group-hover:text-primary-light transition-colors">{cat.name}</h3>
-                                        <p className="text-gray-200 font-bold mb-8 transition-opacity duration-700 italic">
-                                            {cat.description || "Discover our premium selection."}
-                                        </p>
-                                        <div className="flex items-center gap-3 bg-white text-gray-900 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95">
-                                            Explore Now <ArrowRight size={16} className="text-primary" />
-                                        </div>
-                                    </div>
+                                <div className="w-20 h-20 rounded-full overflow-hidden mb-3 ring-4 ring-gray-50 group-hover:ring-emerald-100 transition-all">
+                                    <img
+                                        src={cat.image}
+                                        alt={cat.name}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                    />
                                 </div>
-
-                                <div className="absolute top-8 right-8 w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-white border border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-500 transform hover:scale-110">
-                                    <Plus size={24} />
-                                </div>
+                                <h3 className="font-semibold text-gray-800 text-sm text-center group-hover:text-emerald-700 transition-colors">
+                                    {cat.name}
+                                </h3>
+                                <p className="text-xs text-gray-400 mt-1 text-center line-clamp-1">{cat.description}</p>
                             </Link>
                         ))}
                     </div>
                 </div>
             </section>
 
-
-
-            {/* Recipe Spotlight */}
-            <section className="py-24 bg-white overflow-hidden">
+            {/* ===== FLASH SALE / DEALS COUNTDOWN ===== */}
+            <section className="py-12 bg-white">
                 <div className="container-custom">
-                    <div className="bg-emerald-900 rounded-[4rem] overflow-hidden shadow-2xl relative">
-                        <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
-                            <div className="absolute top-[-10%] right-[-10%] w-[120%] h-[120%] bg-white blur-[120px] rounded-full"></div>
-                        </div>
+                    <div className="bg-gradient-to-r from-emerald-800 to-emerald-900 rounded-3xl p-8 md:p-10 relative overflow-hidden">
+                        {/* Background decoration */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-400/10 rounded-full blur-3xl"></div>
+                        <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-400/10 rounded-full blur-3xl"></div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
-                            <div className="p-12 md:p-20 text-white relative z-10">
-                                <span className="bg-amber-400/20 text-amber-300 border border-amber-400/30 py-2 px-6 rounded-full text-xs font-black mb-6 inline-block uppercase tracking-[0.3em] backdrop-blur-md">
-                                    Wellness Recipe of the Week
-                                </span>
-                                <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">
-                                    Immunity Power <br />
-                                    <span className="text-amber-400 italic">Zesty Ginger Shots</span>
-                                </h2>
-                                <p className="text-emerald-100 text-lg mb-10 max-w-lg leading-relaxed font-medium">
-                                    Your natural daily shield. This high-potency tonic kickstarts your metabolism, aids digestion, and keeps your immune system at its peak.
-                                </p>
-
-                                <div className="space-y-8 mb-12">
-                                    <h4 className="font-black flex items-center gap-3 text-amber-200 uppercase tracking-[0.2em] text-xs">
-                                        <Package size={20} /> The Immunity Box Ingredients:
-                                    </h4>
-                                    <ul className="grid grid-cols-2 gap-y-4 gap-x-8">
-                                        {[
-                                            'Organic Ginger Root',
-                                            'Farm-Fresh Lemons',
-                                            'Premium Raw Honey',
-                                            'Fresh Turmeric Root',
-                                            'Pinch of Cayenne',
-                                            'Organic Oranges'
-                                        ].map((item, i) => (
-                                            <li key={i} className="flex items-center gap-3 text-emerald-50/90 font-bold group">
-                                                <div className="w-2 h-2 bg-amber-400 rounded-full group-hover:scale-150 transition-transform"></div>
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
+                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                            <div className="text-white">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <Zap size={20} className="text-yellow-400" />
+                                    <span className="text-yellow-400 font-bold text-sm uppercase tracking-wider">Flash Sale</span>
                                 </div>
-
-                                <button
-                                    onClick={handleAddRecipeBundle}
-                                    className="group flex items-center gap-6 bg-amber-400 hover:bg-white text-emerald-950 font-black px-12 py-6 rounded-3xl transition-all shadow-2xl shadow-amber-500/30 active:scale-95 text-lg"
-                                >
-                                    Get the Recipe Box <ArrowRight className="group-hover:translate-x-3 transition-transform" />
-                                </button>
+                                <h2 className="text-3xl md:text-4xl font-bold mb-2">Weekend Super Deals</h2>
+                                <p className="text-emerald-200 max-w-md">Up to 30% off on organic vegetables and fresh juices. Don't miss out!</p>
                             </div>
-                            <div className="h-full min-h-[600px] relative">
-                                <img
-                                    src="/products/gingershots.jpg"
-                                    alt="Ginger Immunity Shots"
-                                    className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[2000ms]"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-r lg:bg-gradient-to-l from-transparent via-transparent to-emerald-900 lg:w-1/2"></div>
 
-                                <div className="absolute top-10 right-10 bg-white/10 backdrop-blur-xl p-8 rounded-[3rem] border border-white/20 hidden xl:block">
-                                    <p className="text-amber-400 font-black text-4xl mb-1">100%</p>
-                                    <p className="text-white font-bold text-sm uppercase tracking-widest">Natural Energizer</p>
-                                </div>
+                            {/* Countdown */}
+                            <div className="flex items-center gap-3">
+                                {[
+                                    { val: timeLeft.days, label: "Days" },
+                                    { val: timeLeft.hours, label: "Hrs" },
+                                    { val: timeLeft.minutes, label: "Min" },
+                                    { val: timeLeft.seconds, label: "Sec" },
+                                ].map((unit, i) => (
+                                    <div key={i} className="bg-white/10 backdrop-blur border border-white/10 rounded-xl p-3 text-center min-w-[70px]">
+                                        <span className="block text-2xl md:text-3xl font-black text-white">{String(unit.val).padStart(2, '0')}</span>
+                                        <span className="text-[10px] text-emerald-200 uppercase font-bold tracking-wider">{unit.label}</span>
+                                    </div>
+                                ))}
                             </div>
+
+                            <Link
+                                to="/products"
+                                className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold px-8 py-4 rounded-xl transition-all whitespace-nowrap shadow-lg shadow-yellow-400/20 active:scale-95"
+                            >
+                                Shop Deals
+                            </Link>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Error Message */}
-            {error && (
-                <div className="container-custom mt-8">
-                    <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-[2rem] flex flex-col items-center text-center gap-4">
-                        <AlertCircle className="w-12 h-12 text-red-500" />
-                        <div>
-                            <h3 className="text-xl font-bold mb-1">Connection Issue</h3>
-                            <p className="font-medium">{error}</p>
-                            <p className="text-sm mt-3 opacity-70 italic font-mono">Tip: Check if your MongoDB Atlas IP Whitelist includes your current IP address.</p>
+            {/* ===== BEST SELLERS ===== */}
+            {bestSellers.length > 0 && (
+                <section className="py-14 bg-white">
+                    <div className="container-custom">
+                        <div className="flex items-center justify-between mb-8">
+                            <div className="flex items-center gap-3">
+                                <div className="bg-orange-100 p-2.5 rounded-xl">
+                                    <Tag size={22} className="text-orange-600" />
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Best Sellers</h2>
+                                    <p className="text-gray-500 text-sm">Most loved by our customers</p>
+                                </div>
+                            </div>
+                            <Link to="/products" className="hidden sm:flex items-center gap-1 text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
+                                See All <ChevronRight size={18} />
+                            </Link>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {bestSellers.slice(0, 4).map((product) => (
+                                <ProductCard key={product._id || product.id} product={product} />
+                            ))}
                         </div>
                     </div>
-                </div>
+                </section>
             )}
 
-            {/* Sustainability & Impact Counter */}
-            <section className="py-20 bg-emerald-50/50">
+            {/* ===== NEW ARRIVALS CAROUSEL ===== */}
+            {newArrivals.length > 0 && (
+                <section className="py-14 bg-gray-50">
+                    <div className="container-custom">
+                        <div className="flex items-center justify-between mb-8">
+                            <div className="flex items-center gap-3">
+                                <div className="bg-emerald-100 p-2.5 rounded-xl">
+                                    <Sparkles size={22} className="text-emerald-600" />
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Fresh Arrivals</h2>
+                                    <p className="text-gray-500 text-sm">Just added to our shelves</p>
+                                </div>
+                            </div>
+                            <Link to="/products" className="hidden sm:flex items-center gap-1 text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
+                                View All <ChevronRight size={18} />
+                            </Link>
+                        </div>
+                        <ProductCarousel products={newArrivals} />
+                    </div>
+                </section>
+            )}
+
+            {/* ===== PROMOTIONAL BANNER (Recipe/Bundle) ===== */}
+            <section className="py-14 bg-white">
                 <div className="container-custom">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-                        <div className="p-8 rounded-[3rem] bg-white shadow-xl shadow-emerald-100/50 border border-emerald-50 transform hover:-translate-y-2 transition-all duration-300">
-                            <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-emerald-600">
-                                <Leaf size={32} />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Left banner */}
+                        <div className="relative rounded-3xl overflow-hidden h-[320px] group">
+                            <img
+                                src="/products/gingershots.jpg"
+                                alt="Immunity Shots"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-r from-gray-900/80 to-transparent" />
+                            <div className="absolute inset-0 p-8 md:p-10 flex flex-col justify-center">
+                                <span className="text-emerald-400 text-sm font-bold uppercase tracking-wider mb-2">Wellness Bundle</span>
+                                <h3 className="text-white text-2xl md:text-3xl font-bold mb-3 max-w-xs">Immunity Ginger Shot Kit</h3>
+                                <p className="text-gray-300 text-sm mb-6 max-w-xs">Everything you need for a week of natural immunity-boosting shots.</p>
+                                <Link
+                                    to="/products?category=Lifestyle+Bundles"
+                                    className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl w-fit transition-all"
+                                >
+                                    Shop Bundles <ArrowRight size={16} />
+                                </Link>
                             </div>
-                            <h3 className="text-4xl font-black text-emerald-900 mb-2">50+</h3>
-                            <p className="text-emerald-700 font-bold uppercase tracking-widest text-xs">Local Farmers Supported</p>
                         </div>
-                        <div className="p-8 rounded-[3rem] bg-white shadow-xl shadow-emerald-100/50 border border-emerald-50 transform hover:-translate-y-2 transition-all duration-300">
-                            <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-emerald-600">
-                                <ShieldCheck size={32} />
+
+                        {/* Right banner */}
+                        <div className="relative rounded-3xl overflow-hidden h-[320px] group">
+                            <img
+                                src="/products/fruit-basket.jpg"
+                                alt="Fruit Basket"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-r from-gray-900/80 to-transparent" />
+                            <div className="absolute inset-0 p-8 md:p-10 flex flex-col justify-center">
+                                <span className="text-yellow-400 text-sm font-bold uppercase tracking-wider mb-2">This Week's Pick</span>
+                                <h3 className="text-white text-2xl md:text-3xl font-bold mb-3 max-w-xs">Premium Fruit Baskets</h3>
+                                <p className="text-gray-300 text-sm mb-6 max-w-xs">Seasonal fruit boxes packed fresh for gifting or home enjoyment.</p>
+                                <Link
+                                    to="/products?category=Fruits"
+                                    className="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold px-6 py-3 rounded-xl w-fit transition-all"
+                                >
+                                    Shop Fruits <ArrowRight size={16} />
+                                </Link>
                             </div>
-                            <h3 className="text-4xl font-black text-emerald-900 mb-2">0%</h3>
-                            <p className="text-emerald-700 font-bold uppercase tracking-widest text-xs">Plastic Packaging Goal</p>
-                        </div>
-                        <div className="p-8 rounded-[3rem] bg-white shadow-xl shadow-emerald-100/50 border border-emerald-50 transform hover:-translate-y-2 transition-all duration-300">
-                            <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-emerald-600">
-                                <Star size={32} />
-                            </div>
-                            <h3 className="text-4xl font-black text-emerald-900 mb-2">100%</h3>
-                            <p className="text-emerald-700 font-bold uppercase tracking-widest text-xs">Organic Certified</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-
-
-            {/* Features Banner */}
-            <section className="bg-white py-12 border-b border-gray-100">
-                <div className="container-custom grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-                    <div className="flex items-center gap-4 justify-center md:justify-start p-4 hover:shadow-lg rounded-xl transition-shadow cursor-default">
-                        <div className="bg-green-100 p-4 rounded-full text-primary">
-                            <Truck size={32} />
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-lg">Fast Delivery</h3>
-                            <p className="text-gray-500">Same day delivery in Nairobi</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-4 justify-center md:justify-start p-4 hover:shadow-lg rounded-xl transition-shadow cursor-default">
-                        <div className="bg-green-100 p-4 rounded-full text-primary">
-                            <ShieldCheck size={32} />
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-lg">Quality Guarantee</h3>
-                            <p className="text-gray-500">100% money back guarantee</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-4 justify-center md:justify-start p-4 hover:shadow-lg rounded-xl transition-shadow cursor-default">
-                        <div className="bg-green-100 p-4 rounded-full text-primary">
-                            <Leaf size={32} />
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-lg">Organic & Fresh</h3>
-                            <p className="text-gray-500">Sourced directly from farmers</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-
-            {/* Seasonal Offers */}
-            <section className="py-16 bg-emerald-900 text-white relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-white blur-3xl"></div>
-                    <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-yellow-400 blur-3xl"></div>
-                </div>
-                <div className="container-custom relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div className="max-w-xl">
-                        <span className="bg-yellow-400 text-yellow-900 font-bold px-3 py-1 rounded-full text-sm mb-4 inline-block">Limited Time Offer</span>
-                        <h2 className="text-4xl font-bold mb-4">Weekend Super Sale!</h2>
-                        <p className="text-emerald-100 text-lg mb-6">Get up to 30% off on all organic vegetables and fresh juices. Offer valid until Sunday.</p>
-                        <div className="flex gap-4">
-                            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl text-center min-w-[90px] border border-white/5">
-                                <span className="block text-3xl font-black">{String(timeLeft.days).padStart(2, '0')}</span>
-                                <span className="text-[10px] text-emerald-200 uppercase font-black tracking-widest">Days</span>
-                            </div>
-                            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl text-center min-w-[90px] border border-white/5">
-                                <span className="block text-3xl font-black">{String(timeLeft.hours).padStart(2, '0')}</span>
-                                <span className="text-[10px] text-emerald-200 uppercase font-black tracking-widest">Hours</span>
-                            </div>
-                            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl text-center min-w-[90px] border border-white/5">
-                                <span className="block text-3xl font-black">{String(timeLeft.minutes).padStart(2, '0')}</span>
-                                <span className="text-[10px] text-emerald-200 uppercase font-black tracking-widest">Mins</span>
-                            </div>
-                            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl text-center min-w-[90px] border border-white/5">
-                                <span className="block text-3xl font-black text-yellow-400">{String(timeLeft.seconds).padStart(2, '0')}</span>
-                                <span className="text-[10px] text-emerald-200 uppercase font-black tracking-widest">Secs</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="hidden md:block relative">
-                        <img
-                            src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2574&auto=format&fit=crop"
-                            alt="Offer"
-                            className="w-80 h-80 object-cover rounded-full border-8 border-white/10 shadow-2xl rotate-6 hover:rotate-0 transition-transform duration-500"
-                        />
-                        <div className="absolute -bottom-6 -right-6 bg-yellow-400 text-yellow-900 font-black text-xl p-6 rounded-full shadow-lg rotate-12">
-                            30% <br /> OFF
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Fruit Baskets Section */}
-            <section className="py-24 bg-gray-50">
+            {/* ===== LIFESTYLE BUNDLES ===== */}
+            <section className="py-14 bg-gray-50">
                 <div className="container-custom">
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                        <div className="max-w-xl">
-                            <span className="text-emerald-600 font-black text-xs uppercase tracking-[0.3em] mb-4 block">Premium Packs</span>
-                            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight uppercase">Lifestyle Bundles</h2>
+                    <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-purple-100 p-2.5 rounded-xl">
+                                <Package size={22} className="text-purple-600" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Lifestyle Bundles</h2>
+                                <p className="text-gray-500 text-sm">Curated packs for your health goals</p>
+                            </div>
                         </div>
-                        <p className="text-gray-500 font-medium max-w-sm">Hand-picked combinations for specific health goals and household needs.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {fruitBaskets.length > 0 ? (
                             fruitBaskets.map((product) => (
                                 <ProductCard key={product._id || product.id} product={product} />
                             ))
                         ) : (
-                            // Fallback if no baskets found in products list
                             [
-                                {
-                                    name: "Detox Smoothie Box",
-                                    price: "2,450",
-                                    unit: "box",
-                                    image: "/products/gingershots.jpg",
-                                    category: "Lifestyle Bundles",
-                                    _id: "basket-1"
-                                },
-                                {
-                                    name: "Family Veggie Staple",
-                                    price: "3,800",
-                                    unit: "box",
-                                    image: "/products/vegetables.jpg",
-                                    category: "Lifestyle Bundles",
-                                    _id: "basket-2"
-                                },
-                                {
-                                    name: "Fruit Fiesta Pack",
-                                    price: "1,950",
-                                    unit: "box",
-                                    image: "/products/wildberries.jpg",
-                                    category: "Lifestyle Bundles",
-                                    _id: "basket-3"
-                                }
+                                { name: "Detox Smoothie Box", price: 2450, unit: "box", image: "/products/gingershots.jpg", category: "Lifestyle Bundles", _id: "basket-1" },
+                                { name: "Family Veggie Staple", price: 3800, unit: "box", image: "/products/vegetables.jpg", category: "Lifestyle Bundles", _id: "basket-2" },
+                                { name: "Fruit Fiesta Pack", price: 1950, unit: "box", image: "/products/wildberries.jpg", category: "Lifestyle Bundles", _id: "basket-3" }
                             ].map((product) => (
                                 <ProductCard key={product._id} product={product} />
                             ))
@@ -554,334 +468,318 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Featured Products (Best Sellers) */}
-            {bestSellers.length > 0 && (
-                <section className="py-20 bg-white">
-                    <div className="container-custom">
-                        <div className="text-center max-w-2xl mx-auto mb-16">
-                            <h2 className="text-3xl font-bold mb-4 text-gray-900">Our Best Sellers</h2>
-                            <p className="text-gray-500">Hand-picked favorites that our customers love. Freshness guaranteed in every bite.</p>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                            {bestSellers.map((product) => (
-                                <ProductCard key={product._id || product.id} product={product} />
-                            ))}
-                        </div>
-
-                        <div className="mt-12 text-center">
-                            <Link to="/products" className="btn-secondary inline-block">Shop All Products</Link>
-                        </div>
-                    </div>
-                </section>
-            )}
-
-
-            {/* How to Order */}
-            <section className="py-16 bg-white border-b border-gray-100">
+            {/* ===== HOW IT WORKS ===== */}
+            <section className="py-16 bg-white">
                 <div className="container-custom">
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
-                        <p className="text-gray-500">Get your fresh groceries in 3 simple steps</p>
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">How It Works</h2>
+                        <p className="text-gray-500">Get fresh groceries in 3 simple steps</p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center relative connection-line">
-                        <div className="relative z-10">
-                            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
-                                <Package size={40} />
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                        {[
+                            {
+                                icon: <ShoppingCart size={28} />,
+                                title: "Browse & Add to Cart",
+                                desc: "Explore our wide range of fresh organic produce and add items to your cart.",
+                                step: "01",
+                                color: "bg-emerald-50 text-emerald-600"
+                            },
+                            {
+                                icon: <Tag size={28} />,
+                                title: "Pay with M-Pesa",
+                                desc: "Quick, secure checkout with M-Pesa. Just confirm on your phone.",
+                                step: "02",
+                                color: "bg-blue-50 text-blue-600"
+                            },
+                            {
+                                icon: <Truck size={28} />,
+                                title: "We Deliver Fresh",
+                                desc: "Same-day delivery right to your doorstep. Freshness guaranteed.",
+                                step: "03",
+                                color: "bg-orange-50 text-orange-600"
+                            }
+                        ].map((step, i) => (
+                            <div key={i} className="text-center relative">
+                                <div className={`w-16 h-16 ${step.color} rounded-2xl flex items-center justify-center mx-auto mb-5`}>
+                                    {step.icon}
+                                </div>
+                                <span className="absolute top-0 right-1/4 text-5xl font-black text-gray-100">{step.step}</span>
+                                <h3 className="text-lg font-bold text-gray-900 mb-2 relative z-10">{step.title}</h3>
+                                <p className="text-gray-500 text-sm leading-relaxed relative z-10">{step.desc}</p>
                             </div>
-                            <h3 className="text-xl font-bold mb-3">1. Browse Products</h3>
-                            <p className="text-gray-500">Explore our wide range of fresh organic produce and add to cart.</p>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ===== FARM TO TABLE ===== */}
+            <section className="py-16 bg-emerald-50/50">
+                <div className="container-custom">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <span className="text-emerald-600 text-sm font-bold uppercase tracking-wider mb-3 block">Our Promise</span>
+                            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                                From Local Farms<br />
+                                to Your Kitchen
+                            </h2>
+                            <p className="text-gray-600 mb-8 leading-relaxed">
+                                We work directly with over 50 certified organic farmers across Kenya. Every item is harvested fresh each morning and quality-checked at our Nairobi hub before being dispatched to your home.
+                            </p>
+
+                            <div className="space-y-4 mb-8">
+                                {[
+                                    { time: "6:00 AM", text: "Produce harvested at peak freshness" },
+                                    { time: "9:00 AM", text: "Quality inspection at our Nairobi hub" },
+                                    { time: "By 1:00 PM", text: "Delivered fresh to your door" }
+                                ].map((item, i) => (
+                                    <div key={i} className="flex items-center gap-4">
+                                        <div className="bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg min-w-[80px] text-center">
+                                            {item.time}
+                                        </div>
+                                        <p className="text-gray-700 font-medium">{item.text}</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="flex items-center gap-6">
+                                <div className="text-center">
+                                    <p className="text-3xl font-black text-emerald-700">50+</p>
+                                    <p className="text-xs text-gray-500 font-semibold">Local Farms</p>
+                                </div>
+                                <div className="w-px h-10 bg-gray-200"></div>
+                                <div className="text-center">
+                                    <p className="text-3xl font-black text-emerald-700">100%</p>
+                                    <p className="text-xs text-gray-500 font-semibold">Organic</p>
+                                </div>
+                                <div className="w-px h-10 bg-gray-200"></div>
+                                <div className="text-center">
+                                    <p className="text-3xl font-black text-emerald-700">2.4k+</p>
+                                    <p className="text-xs text-gray-500 font-semibold">Happy Customers</p>
+                                </div>
+                            </div>
                         </div>
-                        <div className="relative z-10">
-                            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
-                                <ShoppingCart size={40} />
+
+                        <div className="relative">
+                            <div className="rounded-3xl overflow-hidden shadow-2xl shadow-emerald-100">
+                                <img
+                                    src="/products/grocery-fridge.jpg"
+                                    alt="Fresh Produce"
+                                    className="w-full h-[500px] object-cover"
+                                />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">2. Place Order</h3>
-                            <p className="text-gray-500">Confirm your items and choose your preferred payment method.</p>
-                        </div>
-                        <div className="relative z-10">
-                            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
-                                <Truck size={40} />
+                            {/* Floating badge */}
+                            <div className="absolute -bottom-4 -left-4 bg-white p-4 rounded-2xl shadow-xl border border-gray-100">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-emerald-100 p-2.5 rounded-xl">
+                                        <Leaf size={24} className="text-emerald-600" />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-gray-900 text-sm">100% Farm Fresh</p>
+                                        <p className="text-xs text-gray-500">Harvested daily</p>
+                                    </div>
+                                </div>
                             </div>
-                            <h3 className="text-xl font-bold mb-3">3. Fast Delivery</h3>
-                            <p className="text-gray-500">We deliver your fresh groceries right to your doorstep.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Farm-to-Table Timeline */}
-            <section className="py-24 bg-white relative overflow-hidden">
-                <div className="container-custom relative z-10">
-                    <div className="text-center max-w-3xl mx-auto mb-20">
-                        <span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-6 inline-block">Our Journey</span>
-                        <h2 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tight">Farm to Table Sourcing</h2>
-                        <p className="text-gray-500 mt-6 text-lg font-medium leading-relaxed">We've spent years perfecting our logistics to ensure your food is literally harvested and delivered within hours.</p>
-                    </div>
-
-                    <div className="relative">
-                        {/* Connecting Line (Desktop) */}
-                        <div className="hidden lg:block absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-emerald-100 via-emerald-400 to-emerald-100 -translate-y-1/2"></div>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                            {[
-                                {
-                                    time: "06:00 AM",
-                                    title: "Daily Harvest",
-                                    desc: "Our farmers harvest the freshest produce at the crack of dawn when nutrients are at their peak.",
-                                    icon: <Leaf size={40} />,
-                                    color: "bg-emerald-500"
-                                },
-                                {
-                                    time: "09:00 AM",
-                                    title: "Quality Check",
-                                    desc: "Every item is hand-inspected at our Nairobi hub. If it's not perfect, it doesn't leave.",
-                                    icon: <ShieldCheck size={40} />,
-                                    color: "bg-emerald-600"
-                                },
-                                {
-                                    time: "01:00 PM",
-                                    title: "Prime Delivery",
-                                    desc: "Our fleet of eco-friendly bikes delivers your order directly to your kitchen door.",
-                                    icon: <Truck size={40} />,
-                                    color: "bg-emerald-700"
-                                }
-                            ].map((step, i) => (
-                                <div key={i} className="relative group text-center flex flex-col items-center">
-                                    <div className={`w-24 h-24 ${step.color} text-white rounded-[2rem] flex items-center justify-center mb-8 shadow-2xl relative z-10 transform group-hover:rotate-12 transition-transform duration-500 shadow-emerald-200`}>
-                                        {step.icon}
-                                    </div>
-                                    <div className="bg-emerald-50 text-emerald-700 px-4 py-1 rounded-full text-[10px] font-black mb-4 uppercase tracking-[0.2em]">
-                                        {step.time}
-                                    </div>
-                                    <h3 className="text-2xl font-black text-gray-900 mb-4">{step.title}</h3>
-                                    <p className="text-gray-500 font-medium leading-relaxed max-w-xs">{step.desc}</p>
+            {/* ===== DELIVERY AREAS ===== */}
+            <section className="py-14 bg-white">
+                <div className="container-custom">
+                    <div className="bg-gray-50 rounded-3xl p-8 md:p-12 border border-gray-100">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                            <div>
+                                <span className="text-emerald-600 text-sm font-bold uppercase tracking-wider mb-3 block">Delivery Coverage</span>
+                                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">We Deliver Across Nairobi</h2>
+                                <p className="text-gray-600 mb-6 leading-relaxed">
+                                    Same-day delivery available for orders placed before 12 PM. We cover most residential areas in the city.
+                                </p>
+                                <div className="grid grid-cols-2 gap-3 mb-6">
+                                    {['Kilimani', 'Westlands', 'Lavington', 'Kileleshwa', 'Karen', 'Langata', 'Runda', 'Muthaiga'].map((area) => (
+                                        <div key={area} className="flex items-center gap-2 text-gray-700 text-sm">
+                                            <MapPin size={14} className="text-emerald-600 shrink-0" />
+                                            <span>{area}</span>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
+                                <Link to="/products" className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl transition-all">
+                                    Start Shopping <ArrowRight size={16} />
+                                </Link>
+                            </div>
+                            <div className="relative h-72 md:h-80 rounded-2xl overflow-hidden">
+                                <img
+                                    src="/products/shopping-cart.jpg"
+                                    alt="Nairobi Delivery"
+                                    className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-emerald-900/20 flex items-center justify-center">
+                                    <div className="bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-lg flex items-center gap-3">
+                                        <div className="bg-emerald-100 p-2 rounded-full text-emerald-600 animate-bounce">
+                                            <MapPin size={20} />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-gray-900 text-sm">Nairobi, Kenya</p>
+                                            <p className="text-xs text-gray-500">Same-day delivery</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </section >
+            </section>
 
-            {/* FAQ Section */}
-            < section className="py-24 bg-white" >
+            {/* ===== TESTIMONIALS ===== */}
+            <section className="py-16 bg-gray-50">
                 <div className="container-custom">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="text-center mb-16">
-                            <span className="text-emerald-600 font-black text-xs uppercase tracking-[0.3em] mb-4 block">Help Center</span>
-                            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight italic">Frequently Asked Questions</h2>
-                            <p className="text-gray-500 mt-4 text-lg">Everything you need to know about FreshCart deliveries and quality.</p>
+                    <div className="text-center mb-10">
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">What Our Customers Say</h2>
+                        <p className="text-gray-500">Trusted by thousands of Nairobi families</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[
+                            { name: "Wanjiku K.", area: "Kilimani", text: "The vegetables are always fresh and crisp. Same-day delivery is a game changer for busy weekdays!" },
+                            { name: "Brian M.", area: "Westlands", text: "I love the fruit baskets for gifting. Quality is consistently excellent and the packaging is beautiful." },
+                            { name: "Amina H.", area: "Lavington", text: "Finally, a grocery delivery that actually delivers organic produce. My family only shops here now." }
+                        ].map((review, i) => (
+                            <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+                                <div className="flex text-yellow-400 mb-3">
+                                    {[...Array(5)].map((_, j) => <Star key={j} size={16} fill="currentColor" />)}
+                                </div>
+                                <p className="text-gray-600 mb-5 leading-relaxed">"{review.text}"</p>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                                        <span className="text-emerald-700 font-bold text-sm">{review.name.charAt(0)}</span>
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-gray-900 text-sm">{review.name}</p>
+                                        <p className="text-xs text-gray-500">{review.area} Customer</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ===== FAQ ===== */}
+            <section className="py-16 bg-white">
+                <div className="container-custom">
+                    <div className="max-w-3xl mx-auto">
+                        <div className="text-center mb-10">
+                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Frequently Asked Questions</h2>
+                            <p className="text-gray-500">Everything you need to know about our service</p>
                         </div>
 
-                        <div className="bg-white rounded-[3rem] overflow-hidden shadow-2xl shadow-emerald-100 border border-emerald-50">
+                        <div>
                             {faqs.map((faq, idx) => (
                                 <FAQItem key={idx} question={faq.question} answer={faq.answer} />
                             ))}
                         </div>
                     </div>
                 </div>
-            </section >
+            </section>
 
-            {/* Partner Farms */}
-            < section className="py-16 bg-stone-50" >
+            {/* ===== BLOG PREVIEW ===== */}
+            <section className="py-14 bg-gray-50">
                 <div className="container-custom">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Partner Farms</h2>
-                        <p className="text-gray-500">We source directly from trusted local farmers to ensure maximum freshness.</p>
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-12 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                        {['GreenFields', 'OrganicValley', 'NatureFresh', 'HighlandGrowers', 'SunnyHarvest'].map((farm) => (
-                            <div key={farm} className="text-2xl font-black text-gray-400 flex items-center gap-2">
-                                <Leaf size={24} /> {farm}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section >
-
-            {/* Delivery Areas */}
-            < section className="py-16 bg-white" >
-                <div className="container-custom">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div className="flex items-center justify-between mb-8">
                         <div>
-                            <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">We Deliver To You</span>
-                            <h2 className="text-3xl font-bold text-gray-900 mb-6">Delivery Areas in Nairobi</h2>
-                            <p className="text-gray-600 mb-8 leading-relaxed">
-                                We currently cover most residential areas in Nairobi. Check our delivery zone map to see if we deliver to your doorstep. Same-day delivery available for orders placed before 12 PM.
-                            </p>
-                            <div className="grid grid-cols-2 gap-4">
-                                {['Kilimani', 'Westlands', 'Lavington', 'Kileleshwa', 'Karen', 'Langata', 'Runda', 'Muthaiga'].map((area) => (
-                                    <div key={area} className="flex items-center gap-2 text-gray-700">
-                                        <MapPin size={18} className="text-primary" />
-                                        <span>{area}</span>
-                                    </div>
-                                ))}
-                            </div>
-                            <Link to="/delivery-info" className="btn-primary mt-8 inline-block">Check Full Coverage</Link>
+                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">From Our Blog</h2>
+                            <p className="text-gray-500 mt-1">Tips for healthy living</p>
                         </div>
-                        <div className="bg-gray-100 rounded-2xl h-96 w-full relative overflow-hidden group">
-                            <img
-                                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2674&auto=format&fit=crop"
-                                alt="Nairobi Map"
-                                className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <div className="bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg flex items-center gap-3">
-                                    <div className="bg-green-100 p-2 rounded-full text-primary animate-bounce">
-                                        <MapPin size={24} />
-                                    </div>
-                                    <div>
-                                        <p className="font-bold text-gray-900">Nairobi, Kenya</p>
-                                        <p className="text-xs text-gray-500">Headquarters</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section >
-
-            {/* Blog Section */}
-            < section className="py-24 bg-white" >
-                <div className="container-custom">
-                    <div className="flex justify-between items-end mb-12">
-                        <div>
-                            <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Wellness Corner</span>
-                            <h2 className="text-3xl md:text-4xl font-black text-gray-900">Latest from our Blog</h2>
-                        </div>
-                        <Link to="/blog" className="text-primary font-bold flex items-center gap-2 hover:gap-3 transition-all group">
-                            Explore all articles <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                        <Link to="/blog" className="hidden sm:flex items-center gap-1 text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
+                            All Articles <ChevronRight size={18} />
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {[
                             {
                                 id: 1,
-                                title: "The Benefits of Organic Produce: Why It Matters",
-                                excerpt: "Discover why switching to organic fruits and vegetables can significantly improve your well-being.",
+                                title: "The Benefits of Organic Produce",
+                                excerpt: "Discover why switching to organic can improve your well-being.",
                                 image: "/products/vegetables.jpg",
                                 date: "Mar 5, 2026"
                             },
                             {
                                 id: 2,
-                                title: "Top 5 Superfoods for Better Heart Health",
-                                excerpt: "Learn which five superfoods are scientifically proven to support cardiovascular health.",
+                                title: "Top 5 Superfoods for Heart Health",
+                                excerpt: "Five foods scientifically proven to support cardiovascular health.",
                                 image: "/products/Blueberries.jpg",
                                 date: "Mar 4, 2026"
                             },
                             {
                                 id: 3,
-                                title: "Maintaining a Balanced Diet in a Busy Lifestyle",
-                                excerpt: "Actionable advice on how to eat healthily even when you're short on time.",
+                                title: "Balanced Diet in a Busy Lifestyle",
+                                excerpt: "Eat healthily even when you're short on time.",
                                 image: "/products/berry-blast.jpg",
                                 date: "Mar 3, 2026"
                             }
                         ].map((post) => (
-                            <Link key={post.id} to={`/blog/${post.id}`} className="group block">
-                                <div className="relative h-64 rounded-3xl overflow-hidden mb-6 shadow-lg shadow-emerald-50">
+                            <Link key={post.id} to={`/blog/${post.id}`} className="group block bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300">
+                                <div className="relative h-48 overflow-hidden">
                                     <img
                                         src={post.image}
                                         alt={post.title}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     />
-                                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-gray-900 border border-gray-100">
+                                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs font-semibold text-gray-700">
                                         {post.date}
                                     </div>
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors leading-tight">
-                                    {post.title}
-                                </h3>
-                                <p className="text-gray-500 text-sm line-clamp-2 leading-relaxed">
-                                    {post.excerpt}
-                                </p>
+                                <div className="p-5">
+                                    <h3 className="font-bold text-gray-900 mb-2 group-hover:text-emerald-700 transition-colors line-clamp-2">
+                                        {post.title}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm line-clamp-2">{post.excerpt}</p>
+                                </div>
                             </Link>
                         ))}
                     </div>
                 </div>
-            </section >
+            </section>
 
-            {/* Testimonials */}
-            < section className="py-20 bg-green-50" >
-                <div className="container-custom">
-                    <h2 className="text-3xl font-bold text-center mb-16 text-gray-900">What Our Customers Say</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[1, 2, 3].map((i) => (
-                            <div key={i} className="bg-white p-8 rounded-2xl shadow-sm relative">
-                                <div className="flex text-yellow-400 mb-4">
-                                    {[...Array(5)].map((_, i) => <Star key={i} size={18} fill="currentColor" />)}
-                                </div>
-                                <p className="text-gray-600 mb-6 italic">"The vegetables are always fresh and crisp. Delivery to Kilimani was super fast. Highly recommended!"</p>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden">
-                                        <img src={`https://randomuser.me/api/portraits/thumb/women/${10 + i}.jpg`} alt="User" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-sm">Wanjiku K.</h4>
-                                        <p className="text-xs text-gray-500">Verified Customer</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+            {/* ===== NEWSLETTER ===== */}
+            <section className="py-16 bg-emerald-800">
+                <div className="container-custom text-center max-w-2xl mx-auto">
+                    <div className="bg-emerald-700/50 p-3 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-5">
+                        <Mail size={24} className="text-emerald-200" />
                     </div>
-                </div>
-            </section >
-
-
-            {/* Community Gallery */}
-            < section className="py-24 bg-gray-900 text-white overflow-hidden" >
-                <div className="container-custom">
-                    <div className="text-center max-w-2xl mx-auto mb-20">
-                        <span className="text-primary font-black text-xs uppercase tracking-[0.3em] mb-4 block">#FreshCartKenya</span>
-                        <h2 className="text-4xl md:text-5xl font-black mb-6">Join Our Fresh Community</h2>
-                        <p className="text-gray-400 font-medium leading-relaxed">Tag us on Instagram for a chance to be featured and win weekly shopping vouchers.</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 h-[600px]">
-                        {[
-                            { img: "/products/strawberryjuice.jpg", span: "row-span-2 col-span-2" },
-                            { img: "/products/mango.jpg", span: "row-span-1 col-span-1" },
-                            { img: "/products/cloves.jpg", span: "row-span-1 col-span-2" },
-                            { img: "/products/lettuce.jpg", span: "row-span-1 col-span-1" },
-                            { img: "/products/passionjuice.jpg", span: "row-span-1 col-span-1" },
-                            { img: "/products/dragonfruit.jpg", span: "row-span-1 col-span-2" }
-                        ].map((item, i) => (
-                            <div key={i} className={`relative overflow-hidden group rounded-[2rem] ${item.span}`}>
-                                <img src={item.img} alt="Community Member" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-125" />
-                                <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-sm">
-                                    <div className="text-center flex flex-col items-center">
-                                        <Star size={32} className="text-white animate-bounce" />
-                                        <p className="font-black text-sm uppercase tracking-widest mt-2">View Post</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section >
-
-            {/* Newsletter Signup */}
-            < section className="py-20 bg-emerald-900 text-white" >
-                <div className="container-custom text-center max-w-3xl mx-auto">
-                    <div className="bg-emerald-800/50 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                        <Mail size={32} />
-                    </div>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4">Get 10% Off Your First Order</h2>
-                    <p className="text-emerald-100 mb-8 text-lg">Subscribe to our newsletter and get exclusive offers, fresh arrival alerts, and healthy recipes delivered to your inbox.</p>
-                    <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Get 10% Off Your First Order</h2>
+                    <p className="text-emerald-200 mb-8">Subscribe for exclusive offers, fresh arrival alerts, and healthy recipes.</p>
+                    <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                         <input
                             type="email"
-                            placeholder="Enter your email address"
-                            className="flex-1 px-6 py-4 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                            placeholder="Enter your email"
+                            className="flex-1 px-5 py-3.5 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"
                         />
-                        <button className="bg-yellow-400 text-yellow-900 font-bold px-8 py-4 rounded-xl hover:bg-yellow-300 transition-colors">
+                        <button className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold px-6 py-3.5 rounded-xl transition-colors whitespace-nowrap">
                             Subscribe
                         </button>
                     </div>
-                    <p className="text-xs text-emerald-400 mt-4">We respect your privacy. Unsubscribe at any time.</p>
+                    <p className="text-xs text-emerald-400 mt-3">We respect your privacy. Unsubscribe at any time.</p>
                 </div>
-            </section >
-        </div >
+            </section>
+
+            {/* ===== ERROR MESSAGE ===== */}
+            {error && (
+                <div className="container-custom py-8">
+                    <div className="bg-red-50 border border-red-200 text-red-700 p-5 rounded-2xl flex items-center gap-4">
+                        <div className="bg-red-100 p-2 rounded-xl shrink-0">
+                            <ShieldCheck size={24} className="text-red-500" />
+                        </div>
+                        <div>
+                            <h3 className="font-bold mb-1">Connection Issue</h3>
+                            <p className="text-sm">{error}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 
