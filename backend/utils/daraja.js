@@ -1,7 +1,16 @@
-const DARJA_BASE_URL = process.env.DARAJA_ENV === "production" ? "https://api.safaricom.co.ke" : "https://sandbox.safaricom.co.ke";
+const environment = process.env.MPESA_ENVIRONMENT || process.env.DARAJA_ENV || "sandbox";
+const DARJA_BASE_URL = ["production", "live"].includes(environment.toLowerCase())
+  ? "https://api.safaricom.co.ke"
+  : "https://sandbox.safaricom.co.ke";
 
 const getConfig = () => {
-  const config = { consumerKey: process.env.DARAJA_CONSUMER_KEY, consumerSecret: process.env.DARAJA_CONSUMER_SECRET, shortcode: process.env.DARAJA_SHORTCODE, passkey: process.env.DARAJA_PASSKEY, callbackUrl: process.env.DARAJA_CALLBACK_URL };
+  const config = {
+    consumerKey: process.env.MPESA_CONSUMER_KEY || process.env.DARAJA_CONSUMER_KEY,
+    consumerSecret: process.env.MPESA_CONSUMER_SECRET || process.env.DARAJA_CONSUMER_SECRET,
+    shortcode: process.env.MPESA_SHORTCODE || process.env.DARAJA_SHORTCODE,
+    passkey: process.env.MPESA_PASSKEY || process.env.DARAJA_PASSKEY,
+    callbackUrl: process.env.MPESA_CALLBACK_URL || process.env.DARAJA_CALLBACK_URL
+  };
   const missing = Object.entries(config).filter(([, value]) => !value).map(([key]) => key);
   if (missing.length) throw new Error(`Daraja is not configured: missing ${missing.join(", ")}`);
   return config;
@@ -37,7 +46,7 @@ const stkPush = async ({ phone, amount, accountReference, transactionDesc }) => 
   const accessToken = await getAccessToken();
   const response = await fetch(`${DARJA_BASE_URL}/mpesa/stkpush/v1/processrequest`, {
     method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
-    body: JSON.stringify({ BusinessShortCode: shortcode, Password: paymentPassword(shortcode, passkey, Timestamp), Timestamp, TransactionType: process.env.DARAJA_TRANSACTION_TYPE || "CustomerPayBillOnline", Amount: Math.round(Number(amount)), PartyA: phone, PartyB: shortcode, PhoneNumber: phone, CallBackURL: callbackUrl, AccountReference: accountReference.slice(0, 12), TransactionDesc: transactionDesc.slice(0, 13) })
+    body: JSON.stringify({ BusinessShortCode: shortcode, Password: paymentPassword(shortcode, passkey, Timestamp), Timestamp, TransactionType: process.env.MPESA_TRANSACTION_TYPE || process.env.DARAJA_TRANSACTION_TYPE || "CustomerPayBillOnline", Amount: Math.round(Number(amount)), PartyA: phone, PartyB: shortcode, PhoneNumber: phone, CallBackURL: callbackUrl, AccountReference: accountReference.slice(0, 12), TransactionDesc: transactionDesc.slice(0, 13) })
   });
   const data = await readJson(response);
   if (!response.ok || data.ResponseCode !== "0") throw new Error(data.errorMessage || data.ResponseDescription || "Daraja rejected the STK Push request.");

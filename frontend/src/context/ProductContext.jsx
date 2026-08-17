@@ -5,6 +5,22 @@ const ProductContext = createContext();
 
 export const useProducts = () => useContext(ProductContext);
 
+const categoryFallbackImages = {
+    Fruits: '/products/mango.jpg',
+    Vegetables: '/products/vegetables.jpg',
+    Juices: '/products/juices.jpg',
+    Smoothies: '/products/smoothies.jpg',
+    Herbs: '/products/herbs.jpg',
+    'Lifestyle Bundles': '/products/grocery-box.jpg'
+};
+
+const normaliseProductImage = (product) => ({
+    ...product,
+    image: typeof product.image === 'string' && product.image.startsWith('/products/')
+        ? product.image
+        : categoryFallbackImages[product.category] || '/products/grocery-box.jpg'
+});
+
 export const ProductProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -32,7 +48,7 @@ export const ProductProvider = ({ children }) => {
                 // If API fails, fall back to local data
                 console.warn('Backend API failed, falling back to local data');
                 const localProducts = (await import('../data/products')).products;
-                setProducts(localProducts || []);
+                setProducts((localProducts || []).map(normaliseProductImage));
                 return;
             }
 
@@ -43,12 +59,12 @@ export const ProductProvider = ({ children }) => {
 
             try {
                 const data = JSON.parse(text);
-                const apiProducts = data.products || [];
+                const apiProducts = (data.products || []).map(normaliseProductImage);
 
                 // If API returns no products, use local data
                 if (apiProducts.length === 0) {
                     const localProducts = (await import('../data/products')).products;
-                    setProducts(localProducts || []);
+                    setProducts((localProducts || []).map(normaliseProductImage));
                 } else {
                     setProducts(apiProducts);
                 }
@@ -60,7 +76,7 @@ export const ProductProvider = ({ children }) => {
             console.error('Error fetching products, using local fallback:', error);
             try {
                 const localProducts = (await import('../data/products')).products;
-                setProducts(localProducts || []);
+                setProducts((localProducts || []).map(normaliseProductImage));
             } catch (fallbackError) {
                 setError(error.message === 'Failed to fetch'
                     ? 'Cannot connect to backend server and local fallback failed.'
@@ -76,7 +92,7 @@ export const ProductProvider = ({ children }) => {
             const response = await fetch(`${API_URL}/featured`);
             if (response.ok) {
                 const data = await response.json();
-                setFeaturedProducts(data || []);
+                setFeaturedProducts((data || []).map(normaliseProductImage));
             }
         } catch (error) {
             console.error('Error fetching featured products:', error);
@@ -95,7 +111,7 @@ export const ProductProvider = ({ children }) => {
             });
             const newProduct = await response.json();
             if (response.ok) {
-                setProducts(prev => [newProduct, ...prev]);
+                setProducts(prev => [normaliseProductImage(newProduct), ...prev]);
                 return { success: true };
             } else {
                 throw new Error(newProduct.message || 'Failed to add product');
@@ -118,7 +134,7 @@ export const ProductProvider = ({ children }) => {
             });
             const result = await response.json();
             if (response.ok) {
-                setProducts(prev => prev.map(p => (p._id === id || p.id === id) ? result : p));
+                setProducts(prev => prev.map(p => (p._id === id || p.id === id) ? normaliseProductImage(result) : p));
                 return { success: true };
             } else {
                 throw new Error(result.message || 'Failed to update product');

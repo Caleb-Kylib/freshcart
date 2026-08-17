@@ -171,7 +171,7 @@ const ProductModal = ({
                     alt="Preview"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     onError={(e) => {
-                      e.target.src = "https://placehold.co/400x400?text=Image+Not+Found";
+                      e.target.src = "/products/grocery-box.jpg";
                     }}
                   />
                 ) : (

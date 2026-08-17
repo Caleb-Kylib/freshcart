@@ -1,18 +1,43 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-    const [cartItems, setCartItems] = useState(() => {
-        const savedCart = localStorage.getItem('cart');
-        return savedCart ? JSON.parse(savedCart) : [];
-    });
+    const { user, token, loading } = useAuth();
+    const [cartItems, setCartItems] = useState([]);
+
+    const cartStorageKey = user ? `cart:${user._id || user.id}` : null;
 
     useEffect(() => {
-        localStorage.setItem('cart', JSON.stringify(cartItems));
-    }, [cartItems]);
+        if (loading) return;
+
+        // The previous shared "cart" key was restored for every visitor,
+        // including signed-out users. Remove it so carts cannot leak between
+        // browser sessions or accounts.
+        localStorage.removeItem('cart');
+
+        if (!token || !cartStorageKey) {
+            setCartItems([]);
+            return;
+        }
+
+        try {
+            const savedCart = localStorage.getItem(cartStorageKey);
+            setCartItems(savedCart ? JSON.parse(savedCart) : []);
+        } catch {
+            localStorage.removeItem(cartStorageKey);
+            setCartItems([]);
+        }
+    }, [cartStorageKey, loading, token]);
+
+    useEffect(() => {
+        if (!loading && token && cartStorageKey) {
+            localStorage.setItem(cartStorageKey, JSON.stringify(cartItems));
+        }
+    }, [cartItems, cartStorageKey, loading, token]);
 
     const addToCart = async (product, quantity = 1) => {
         const productId = product._id || product.id;

@@ -118,6 +118,12 @@ AT_API_KEY=your_africas_talking_api_key
 AT_USERNAME=your_africas_talking_username
 ```
 
+### Daraja sandbox STK Push
+
+Copy [`backend/.env.example`](backend/.env.example) to `backend/.env` and add the sandbox consumer key, consumer secret, shortcode, and Lipa na M-Pesa passkey from your Daraja application. Set `DARAJA_CALLBACK_URL` to a public HTTPS address ending in `/api/orders/daraja/callback` (for local testing, expose port 5000 with a tunnel such as ngrok). Safaricom cannot send the final payment callback to `localhost`.
+
+The checkout sends the STK prompt after the order is created. The backend records the request ID and changes the order to Paid only after Daraja’s callback or a successful status query.
+
 Start the backend API:
 ```bash
 npm run dev
