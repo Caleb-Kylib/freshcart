@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const cors = require("cors");
+const mongoose = require("mongoose");
 const connectDB = require("./config.js/db");
 
 // Route imports
@@ -17,6 +18,15 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 
 // Connect to MongoDB
 connectDB();
+
+// Check database connection status on startup
+mongoose.connection.once('open', () => {
+  console.log('📊 Database connection established');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ Database connection error:', err.message);
+});
 
 const app = express();
 
