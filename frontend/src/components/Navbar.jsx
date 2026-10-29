@@ -52,14 +52,14 @@ const Navbar = () => {
                 {!isAdminPath && (
                     <div className="hidden lg:flex items-center space-x-1">
                         {[
-                            { name: 'Home', path: '/' },
-                            { name: 'Shop', path: '/products' },
-                            { name: 'Fruits', path: '/products?category=Fruits' },
-                            { name: 'Vegetables', path: '/products?category=Vegetables' },
-                            { name: 'Herbs', path: '/products?category=Herbs' },
-                            { name: 'Smoothies', path: '/products?category=Smoothies' },
-                            { name: 'Blog', path: '/blog' },
-                            { name: 'Contact', path: '/contact' },
+                            { name: 'Home', path: '/', color: 'from-brand-vibrant-blue to-brand-smoothies' },
+                            { name: 'Shop', path: '/products', color: 'from-brand-vibrant-orange to-brand-vibrant-yellow' },
+                            { name: 'Fruits', path: '/products?category=Fruits', color: 'from-brand-fruits to-brand-vibrant-orange' },
+                            { name: 'Vegetables', path: '/products?category=Vegetables', color: 'from-brand-vegetables to-brand-teal' },
+                            { name: 'Herbs', path: '/products?category=Herbs', color: 'from-brand-herbs to-brand-vibrant-purple' },
+                            { name: 'Smoothies', path: '/products?category=Smoothies', color: 'from-brand-smoothies to-brand-vibrant-blue' },
+                            { name: 'Blog', path: '/blog', color: 'from-brand-vibrant-purple to-brand-vibrant-pink' },
+                            { name: 'Contact', path: '/contact', color: 'from-brand-vibrant-coral to-brand-vibrant-amber' },
                         ].map((link) => {
                             const isActive = location.pathname + location.search === link.path ||
                                 (link.path === '/products' && location.pathname === '/products' && !location.search);
@@ -68,7 +68,7 @@ const Navbar = () => {
                                 <Link
                                     key={link.name}
                                     to={link.path}
-                                    className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 hover:scale-105 ${isActive ? 'bg-primary text-white shadow-md' : `${textColor} hover:bg-primary/5 hover:text-primary`}`}
+                                    className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-lg ${isActive ? `bg-gradient-to-r ${link.color} text-white shadow-lg` : `${textColor} hover:bg-gradient-to-r ${link.color} hover:text-white bg-white/10 backdrop-blur-sm`}`}
                                 >
                                     {link.name}
                                 </Link>
@@ -136,24 +136,24 @@ const Navbar = () => {
             {/* Creative Mobile Menu */}
             {isMobileMenuOpen && (
                 <div className="lg:hidden absolute top-full left-4 right-4 bg-white rounded-[2rem] shadow-2xl mt-4 p-8 border border-gray-100 animate-in slide-in-from-top-4 duration-300">
-                    <div className="grid gap-2">
+                    <div className="grid gap-3">
                         {[
-                            { name: 'Home', path: '/' },
-                            { name: 'Product Catalog', path: '/products' },
-                            { name: 'Fruits', path: '/products?category=Fruits' },
-                            { name: 'Vegetables', path: '/products?category=Vegetables' },
-                            { name: 'Herbs', path: '/products?category=Herbs' },
-                            { name: 'Smoothies', path: '/products?category=Smoothies' },
-                            { name: 'Wellness Blog', path: '/blog' },
-                            { name: 'Contact Us', path: '/contact' },
+                            { name: '🏠 Home', path: '/', color: 'bg-gradient-to-r from-brand-vibrant-blue to-brand-smoothies' },
+                            { name: '🛍️ Product Catalog', path: '/products', color: 'bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow' },
+                            { name: '🍎 Fruits', path: '/products?category=Fruits', color: 'bg-gradient-to-r from-brand-fruits to-brand-vibrant-orange' },
+                            { name: '🥦 Vegetables', path: '/products?category=Vegetables', color: 'bg-gradient-to-r from-brand-vegetables to-brand-teal' },
+                            { name: '🌿 Herbs', path: '/products?category=Herbs', color: 'bg-gradient-to-r from-brand-herbs to-brand-vibrant-purple' },
+                            { name: '🥤 Smoothies', path: '/products?category=Smoothies', color: 'bg-gradient-to-r from-brand-smoothies to-brand-vibrant-blue' },
+                            { name: '📚 Wellness Blog', path: '/blog', color: 'bg-gradient-to-r from-brand-vibrant-purple to-brand-vibrant-pink' },
+                            { name: '📞 Contact Us', path: '/contact', color: 'bg-gradient-to-r from-brand-vibrant-coral to-brand-vibrant-amber' },
                         ].map((link) => (
                             <Link
                                 key={link.name}
                                 to={link.path}
-                                className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 hover:bg-primary/5 text-gray-900 font-bold transition-colors group"
+                                className={`flex items-center justify-between p-5 rounded-2xl text-gray-900 font-bold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group ${link.color}`}
                             >
-                                {link.name}
-                                <ArrowRight size={18} className="text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <span className="text-white font-bold">{link.name}</span>
+                                <ArrowRight size={18} className="text-white opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                             </Link>
                         ))}
                     </div>

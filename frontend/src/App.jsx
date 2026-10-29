@@ -5,7 +5,7 @@ import { useAuth } from "./context/AuthContext";
 // User pages
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Home from "./pages/Home";
+import Home from "./pages/HomeEnhanced";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
