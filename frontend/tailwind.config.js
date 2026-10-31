@@ -13,34 +13,34 @@ export default {
         dark: "#2D3748",
         light: "#F7FAFC",
         brand: {
-          primary: "#15803D",
-          secondary: "#22C55E",
-          teal: "#0F766E",
+          primary: "#2F855A",
+          secondary: "#F0FFF4",
+          teal: "#2F855A",
           bg: "#F8FAF8",
           dark: "#111827",
           muted: "#6B7280",
           border: "#E5E7EB",
-          success: "#16A34A",
+          success: "#38A169",
           error: "#EF4444",
           // New vibrant colors
           vibrant: {
-            orange: "#FF6B35",
-            yellow: "#FFD166",
-            lime: "#84CC16",
-            green: "#166534",
-            blue: "#047857",
-            teal: "#0F766E",
-            coral: "#FF6B6B",
-            amber: "#FF9E00"
+            orange: "#2F855A",
+            yellow: "#38A169",
+            lime: "#9AE6B4",
+            green: "#276749",
+            blue: "#38A169",
+            teal: "#2F855A",
+            coral: "#68D391",
+            amber: "#C6F6D5"
           },
           // Category-specific colors
-          fruits: "#FF6B35",      // Orange
-          vegetables: "#2EC4B6",   // Teal
-          herbs: "#15803D",
-          smoothies: "#047857",
-          bundles: "#65A30D",
+          fruits: "#2F855A",
+          vegetables: "#38A169",
+          herbs: "#276749",
+          smoothies: "#48BB78",
+          bundles: "#68D391",
           organic: "#10B981",      // Green
-          fresh: "#FFD166"         // Yellow
+          fresh: "#C6F6D5"
         }
       },
       fontFamily: {
@@ -49,10 +49,10 @@ export default {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'gradient-vibrant': 'linear-gradient(135deg, #FF6B35 0%, #A3E635 20%, #22C55E 45%, #15803D 70%, #0F766E 100%)',
-        'gradient-fresh': 'linear-gradient(135deg, #86EFAC 0%, #22C55E 50%, #047857 100%)',
-        'gradient-warm': 'linear-gradient(135deg, #FF6B35 0%, #FFD166 50%, #FF9E00 100%)',
-        'gradient-cool': 'linear-gradient(135deg, #0F766E 0%, #166534 50%, #84CC16 100%)',
+        'gradient-vibrant': 'linear-gradient(135deg, #2F855A 0%, #38A169 25%, #48BB78 50%, #276749 75%, #68D391 100%)',
+        'gradient-fresh': 'linear-gradient(135deg, #F0FFF4 0%, #38A169 50%, #276749 100%)',
+        'gradient-warm': 'linear-gradient(135deg, #2F855A 0%, #38A169 50%, #68D391 100%)',
+        'gradient-cool': 'linear-gradient(135deg, #276749 0%, #2F855A 50%, #9AE6B4 100%)',
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

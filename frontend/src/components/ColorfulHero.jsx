@@ -1,20 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, ShoppingCart, ArrowRight, Truck, ShieldCheck, Leaf, Clock, BadgeCheck } from 'lucide-react';
-import groceryHero from '../assets/grocery_hero.png';
+import storeImage from '../assets/store.jpg';
 
 const ColorfulHero = () => {
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
       {/* Animated gradient background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-vibrant-blue via-brand-vibrant-green to-brand-vibrant-lime opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-green-900 via-green-800 to-emerald-700 opacity-95" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNMzAgMzBtLTIgMGEyIDIgMCAxIDAgNCAwYTIgMiAwIDEgMC00IDAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-20" />
         
         {/* Animated floating shapes */}
-        <div className="absolute top-1/4 left-10 w-72 h-72 bg-gradient-to-r from-brand-vibrant-orange/30 to-brand-vibrant-yellow/30 rounded-full blur-3xl animate-pulse-slow" />
-        <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-gradient-to-r from-brand-vibrant-green/30 to-brand-vibrant-lime/30 rounded-full blur-3xl animate-pulse-slow animation-delay-1000" />
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-gradient-to-r from-brand-teal/30 to-brand-vibrant-blue/30 rounded-full blur-3xl animate-pulse-slow animation-delay-2000" />
+        <div className="absolute top-1/4 left-10 w-72 h-72 bg-gradient-to-r from-green-500/25 to-lime-300/25 rounded-full blur-3xl animate-pulse-slow" />
+        <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-gradient-to-r from-emerald-500/30 to-green-300/30 rounded-full blur-3xl animate-pulse-slow animation-delay-1000" />
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-gradient-to-r from-emerald-400/25 to-lime-300/25 rounded-full blur-3xl animate-pulse-slow animation-delay-2000" />
       </div>
 
       <div className="container-custom relative z-10 pt-32 pb-20">
@@ -23,11 +23,11 @@ const ColorfulHero = () => {
           <div className="text-white">
             {/* Colorful promo badges */}
             <div className="flex flex-wrap gap-3 mb-8">
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow text-white px-5 py-3 rounded-full text-sm font-bold shadow-lg animate-float">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-500 text-white px-5 py-3 rounded-full text-sm font-bold shadow-lg animate-float">
                 <Zap size={18} className="animate-pulse" />
                 Free delivery on orders above KES 2,000
               </div>
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-vibrant-green to-brand-vibrant-lime text-white px-5 py-3 rounded-full text-sm font-bold shadow-lg animate-float animation-delay-500">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-700 to-green-500 text-white px-5 py-3 rounded-full text-sm font-bold shadow-lg animate-float animation-delay-500">
                 <Clock size={18} />
                 Same-day delivery
               </div>
@@ -39,11 +39,11 @@ const ColorfulHero = () => {
                 Fresh Groceries
               </span>
               <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-vibrant-yellow via-brand-vibrant-orange to-brand-vibrant-coral">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-lime-200 via-green-100 to-emerald-200">
                 Delivered to Your
               </span>
               <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-teal via-brand-vibrant-green to-brand-vibrant-lime">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 via-lime-100 to-green-200">
                 Door in Hours
               </span>
             </h1>
@@ -56,7 +56,7 @@ const ColorfulHero = () => {
             <div className="flex flex-wrap gap-5 mb-12">
               <Link
                 to="/products"
-                className="inline-flex items-center gap-3 bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow hover:from-brand-vibrant-yellow hover:to-brand-vibrant-orange text-white font-bold px-10 py-5 rounded-2xl transition-all shadow-2xl shadow-orange-500/30 hover:shadow-3xl hover:shadow-orange-500/50 active:scale-95 transform hover:-translate-y-1"
+                className="inline-flex items-center gap-3 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white font-bold px-10 py-5 rounded-2xl transition-all shadow-2xl shadow-green-900/30 hover:shadow-green-900/50 active:scale-95 transform hover:-translate-y-1"
               >
                 <ShoppingCart size={22} />
                 Start Shopping Now
@@ -93,7 +93,7 @@ const ColorfulHero = () => {
             <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-brand-vibrant-lime/40 to-brand-teal/40 blur-2xl" />
             <div className="relative h-full min-h-[320px] sm:min-h-[420px] lg:min-h-[560px] overflow-hidden rounded-[2rem] border border-white/30 shadow-2xl">
               <img
-                src={groceryHero}
+                src={storeImage}
                 alt="Fresh fruit and vegetables ready for your kitchen"
                 className="absolute inset-0 h-full w-full object-cover"
               />

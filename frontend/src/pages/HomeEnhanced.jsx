@@ -146,8 +146,8 @@ const HomeEnhanced = () => {
                         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                             <div className="text-center md:text-left">
                                 <div className="flex items-center gap-3 mb-4 justify-center md:justify-start">
-                                    <Zap size={24} className="text-yellow-400 animate-pulse" />
-                                    <span className="text-yellow-400 font-bold text-lg uppercase tracking-wider">⚡ FLASH SALE</span>
+                                    <Zap size={24} className="text-lime-300 animate-pulse" />
+                                    <span className="text-lime-300 font-bold text-lg uppercase tracking-wider">⚡ FLASH SALE</span>
                                 </div>
                                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">Weekend Super Deals</h2>
                                 <p className="text-white/80 text-lg max-w-md">Up to 40% off on organic vegetables and fresh juices. Don't miss out! 🎉</p>
@@ -176,7 +176,7 @@ const HomeEnhanced = () => {
 
                             <Link
                                 to="/products"
-                                className="bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-gray-900 font-bold px-10 py-4 rounded-2xl transition-all whitespace-nowrap shadow-2xl shadow-yellow-400/30 active:scale-95 transform hover:-translate-y-1"
+                                className="bg-gradient-to-r from-lime-300 to-emerald-300 hover:from-lime-200 hover:to-emerald-200 text-emerald-950 font-bold px-10 py-4 rounded-2xl transition-all whitespace-nowrap shadow-2xl shadow-green-900/20 active:scale-95 transform hover:-translate-y-1"
                             >
                                 🛒 Shop Flash Deals
                             </Link>

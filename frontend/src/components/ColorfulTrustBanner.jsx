@@ -7,42 +7,42 @@ const ColorfulTrustBanner = () => {
       icon: <Truck size={24} />,
       title: 'Free Delivery',
       description: 'Orders over KES 2,000',
-      gradient: 'from-brand-vibrant-orange to-brand-vibrant-yellow',
+      gradient: 'from-brand-vibrant-green to-brand-primary',
       delay: '0'
     },
     {
       icon: <Timer size={24} />,
       title: 'Same-Day Delivery',
       description: 'Order before 12 PM',
-      gradient: 'from-brand-vibrant-blue to-brand-smoothies',
+      gradient: 'from-brand-primary to-brand-vibrant-blue',
       delay: '100'
     },
     {
       icon: <ShieldCheck size={24} />,
       title: 'Freshness Guarantee',
       description: 'Or your money back',
-      gradient: 'from-brand-primary to-brand-teal',
+      gradient: 'from-brand-vibrant-green to-brand-primary',
       delay: '200'
     },
     {
       icon: <BadgeCheck size={24} />,
       title: 'Certified Organic',
       description: 'From local farms',
-      gradient: 'from-brand-vegetables to-brand-teal',
+      gradient: 'from-brand-primary to-brand-vibrant-blue',
       delay: '300'
     },
     {
       icon: <Package size={24} />,
       title: 'Careful Packaging',
       description: 'Eco-friendly materials',
-      gradient: 'from-brand-vibrant-green to-brand-vibrant-lime',
+      gradient: 'from-brand-vibrant-blue to-brand-vibrant-green',
       delay: '400'
     },
     {
       icon: <Support size={24} />,
       title: '24/7 Support',
       description: 'Always here to help',
-      gradient: 'from-brand-vibrant-coral to-brand-vibrant-amber',
+      gradient: 'from-brand-vibrant-green to-brand-primary',
       delay: '500'
     },
   ];
@@ -74,10 +74,8 @@ const ColorfulTrustBanner = () => {
 
               <div className="relative z-10">
                 {/* Icon with gradient background */}
-                <div className={`mb-4 w-16 h-16 ${item.gradient} rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300`}>
-                  <div className="text-white transform group-hover:scale-110 transition-transform duration-300">
-                    {item.icon}
-                  </div>
+                <div className={`mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${item.gradient} text-white shadow-lg ring-1 ring-green-900/10 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl`}>
+                  {item.icon}
                 </div>
 
                 {/* Content */}
@@ -92,11 +90,11 @@ const ColorfulTrustBanner = () => {
                 <div className="mt-4 flex items-center">
                   <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
                     <div 
-                      className={`h-full ${item.gradient.replace('from-', 'bg-gradient-to-r ')} rounded-full transition-all duration-1000 group-hover:w-full`}
+                      className={`h-full bg-gradient-to-r ${item.gradient} rounded-full transition-all duration-1000 group-hover:w-full`}
                       style={{ width: '70%' }}
                     />
                   </div>
-                  <div className="ml-2 w-2 h-2 bg-gradient-to-r from-gray-300 to-gray-400 rounded-full group-hover:from-brand-vibrant-orange group-hover:to-brand-vibrant-yellow transition-all duration-300" />
+                  <div className="ml-2 w-2 h-2 bg-green-500 rounded-full transition-all duration-300 group-hover:bg-emerald-700" />
                 </div>
               </div>
 

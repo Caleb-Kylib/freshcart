@@ -2,7 +2,7 @@ import React from 'react';
 
 const ColorfulSection = ({ 
   children, 
-  gradient = 'from-brand-vibrant-blue via-brand-vibrant-green to-brand-vibrant-lime',
+  gradient = 'from-green-800 via-green-700 to-emerald-600',
   bgColor = 'bg-white',
   borderColor = 'border-gray-100',
   padding = 'py-12 px-6',
@@ -26,8 +26,8 @@ const ColorfulSection = ({
       </div>
       
       {/* Decorative elements */}
-      <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-r from-brand-vibrant-orange/10 to-brand-vibrant-yellow/10 rounded-full blur-3xl" />
-      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-r from-brand-vibrant-green/10 to-brand-vibrant-lime/10 rounded-full blur-3xl" />
+      <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-r from-green-400/15 to-lime-300/15 rounded-full blur-3xl" />
+      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-r from-emerald-400/15 to-green-300/15 rounded-full blur-3xl" />
     </div>
   );
 };
@@ -35,15 +35,15 @@ const ColorfulSection = ({
 // Pre-styled colorful sections
 export const ColorfulCard = ({ children, color = 'blue', ...props }) => {
   const gradients = {
-    blue: 'from-brand-vibrant-blue to-brand-smoothies',
-    orange: 'from-brand-vibrant-orange to-brand-vibrant-yellow',
-    green: 'from-brand-primary via-brand-vibrant-green to-brand-vibrant-lime',
-    lime: 'from-brand-vibrant-lime to-brand-vibrant-green',
-    teal: 'from-brand-teal to-brand-vibrant-blue',
-    fruits: 'from-brand-fruits to-brand-vibrant-orange',
-    vegetables: 'from-brand-vegetables to-brand-teal',
-    herbs: 'from-brand-herbs to-brand-vibrant-green',
-    smoothies: 'from-brand-smoothies to-brand-vibrant-blue',
+    blue: 'from-green-700 to-emerald-500',
+    orange: 'from-green-600 to-lime-500',
+    green: 'from-green-800 via-green-700 to-emerald-600',
+    lime: 'from-lime-500 to-green-600',
+    teal: 'from-emerald-700 to-green-500',
+    fruits: 'from-green-700 to-emerald-500',
+    vegetables: 'from-emerald-700 to-green-500',
+    herbs: 'from-green-800 to-emerald-600',
+    smoothies: 'from-green-600 to-lime-500',
   };
 
   return (
@@ -64,8 +64,8 @@ export const ColorfulCard = ({ children, color = 'blue', ...props }) => {
 
 export const ColorfulBanner = ({ children, ...props }) => (
   <ColorfulSection
-    gradient="from-brand-vibrant-orange via-brand-vibrant-yellow to-brand-vibrant-coral"
-    bgColor="bg-gradient-to-r from-brand-vibrant-orange/10 to-brand-vibrant-yellow/10"
+    gradient="from-green-800 via-green-700 to-emerald-600"
+    bgColor="bg-gradient-to-r from-green-800 via-green-700 to-emerald-600"
     borderColor="border-transparent"
     padding="py-16 px-8"
     rounded="rounded-3xl"
@@ -79,9 +79,9 @@ export const ColorfulBanner = ({ children, ...props }) => (
 
 export const ColorfulFeature = ({ icon, title, description, color = 'blue' }) => {
   const colorClasses = {
-    blue: 'bg-gradient-to-r from-brand-vibrant-blue to-brand-smoothies',
-    orange: 'bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow',
-    green: 'bg-gradient-to-r from-brand-primary to-brand-vibrant-lime',
+    blue: 'bg-gradient-to-r from-green-700 to-emerald-500',
+    orange: 'bg-gradient-to-r from-green-600 to-lime-500',
+    green: 'bg-gradient-to-r from-green-800 to-emerald-600',
   };
 
   return (

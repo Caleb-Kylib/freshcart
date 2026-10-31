@@ -8,37 +8,31 @@ const ColorfulCategories = () => {
       name: 'Fruits',
       description: 'Seasonal & exotic fruits',
       image: '/products/mango.jpg',
-      count: '24 items'
     },
     {
       name: 'Vegetables',
       description: 'Fresh farm vegetables',
       image: '/products/grocery-section.jpg',
-      count: '18 items'
     },
     {
       name: 'Herbs',
       description: 'Aromatic & medicinal',
       image: '/products/freshmint.jpg',
-      count: '12 items'
     },
     {
       name: 'Smoothies',
       description: 'Cold-pressed juices',
       image: '/products/strawberryjuice.jpg',
-      count: '8 items'
     },
     {
       name: 'Bundles',
       description: 'Curated wellness packs',
       image: '/products/grocery-box.jpg',
-      count: '6 items'
     },
     {
       name: 'Organic',
       description: 'Certified organic produce',
       image: '/products/home-banner.jpg',
-      count: '15 items'
     },
   ];
 
@@ -51,7 +45,7 @@ const ColorfulCategories = () => {
         {/* Header with gradient text */}
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-black mb-4">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-vibrant-orange via-brand-primary to-brand-vibrant-green">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-800 via-green-600 to-emerald-500">
               Shop by Category
             </span>
           </h2>
@@ -77,16 +71,13 @@ const ColorfulCategories = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-between gap-4 p-5">
+              <div className="p-5">
                 <div>
                   <h3 className="text-xl font-black text-gray-900 transition-colors group-hover:text-emerald-700">{category.name}</h3>
                   <p className="mt-1 text-sm text-gray-600">{category.description}</p>
                   <span className="mt-3 inline-block text-sm font-semibold text-emerald-700">
                     Explore collection
                   </span>
-                </div>
-                <div className="shrink-0 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800">
-                  {category.count}
                 </div>
               </div>
             </Link>
@@ -97,7 +88,7 @@ const ColorfulCategories = () => {
         <div className="text-center mt-12">
           <Link
             to="/products"
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow hover:from-brand-vibrant-yellow hover:to-brand-vibrant-orange text-white font-bold px-10 py-4 rounded-2xl transition-all shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/50 active:scale-95"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-green-700 to-emerald-600 hover:from-green-800 hover:to-emerald-700 text-white font-bold px-10 py-4 rounded-2xl transition-all shadow-lg shadow-green-900/20 hover:shadow-xl hover:shadow-green-900/30 active:scale-95"
           >
             View All Categories
             <ChevronRight size={20} className="group-hover:translate-x-2 transition-transform" />
