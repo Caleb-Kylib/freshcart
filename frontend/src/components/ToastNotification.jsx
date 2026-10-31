@@ -65,7 +65,7 @@ const ToastIcon = ({ type }) => {
     case 'cart':
       return <ShoppingBag className="w-5 h-5 text-brand-vibrant-orange" />;
     case 'favorite':
-      return <Heart className="w-5 h-5 text-brand-vibrant-pink" />;
+      return <Heart className="w-5 h-5 text-brand-vibrant-green" />;
     default:
       return <Info className="w-5 h-5 text-gray-500" />;
   }
@@ -147,7 +147,7 @@ const ToastNotification = ({ toast, onRemove }) => {
             toast.type === 'warning' ? 'bg-yellow-500' :
             toast.type === 'info' ? 'bg-blue-500' :
             toast.type === 'cart' ? 'bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow' :
-            'bg-gradient-to-r from-brand-vibrant-purple to-brand-vibrant-pink'
+            'bg-gradient-to-r from-brand-vibrant-green to-brand-vibrant-lime'
           } transition-all duration-50`}
           style={{ width: `${progress}%` }}
         />

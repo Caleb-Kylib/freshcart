@@ -440,8 +440,8 @@ const Home = () => {
                 <div className="container-custom">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
-                            <div className="bg-purple-100 p-2.5 rounded-xl">
-                                <Package size={22} className="text-purple-600" />
+                            <div className="bg-green-100 p-2.5 rounded-xl">
+                                <Package size={22} className="text-green-700" />
                             </div>
                             <div>
                                 <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Lifestyle Bundles</h2>

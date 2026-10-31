@@ -2,7 +2,7 @@ import React from 'react';
 
 const ColorfulSection = ({ 
   children, 
-  gradient = 'from-brand-vibrant-blue via-brand-vibrant-purple to-brand-vibrant-pink',
+  gradient = 'from-brand-vibrant-blue via-brand-vibrant-green to-brand-vibrant-lime',
   bgColor = 'bg-white',
   borderColor = 'border-gray-100',
   padding = 'py-12 px-6',
@@ -27,7 +27,7 @@ const ColorfulSection = ({
       
       {/* Decorative elements */}
       <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-r from-brand-vibrant-orange/10 to-brand-vibrant-yellow/10 rounded-full blur-3xl" />
-      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-r from-brand-vibrant-purple/10 to-brand-vibrant-pink/10 rounded-full blur-3xl" />
+      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-r from-brand-vibrant-green/10 to-brand-vibrant-lime/10 rounded-full blur-3xl" />
     </div>
   );
 };
@@ -37,13 +37,12 @@ export const ColorfulCard = ({ children, color = 'blue', ...props }) => {
   const gradients = {
     blue: 'from-brand-vibrant-blue to-brand-smoothies',
     orange: 'from-brand-vibrant-orange to-brand-vibrant-yellow',
-    purple: 'from-brand-vibrant-purple to-brand-vibrant-pink',
-    green: 'from-brand-primary to-brand-teal',
-    pink: 'from-brand-vibrant-pink to-brand-vibrant-coral',
+    green: 'from-brand-primary via-brand-vibrant-green to-brand-vibrant-lime',
+    lime: 'from-brand-vibrant-lime to-brand-vibrant-green',
     teal: 'from-brand-teal to-brand-vibrant-blue',
     fruits: 'from-brand-fruits to-brand-vibrant-orange',
     vegetables: 'from-brand-vegetables to-brand-teal',
-    herbs: 'from-brand-herbs to-brand-vibrant-purple',
+    herbs: 'from-brand-herbs to-brand-vibrant-green',
     smoothies: 'from-brand-smoothies to-brand-vibrant-blue',
   };
 
@@ -82,8 +81,7 @@ export const ColorfulFeature = ({ icon, title, description, color = 'blue' }) =>
   const colorClasses = {
     blue: 'bg-gradient-to-r from-brand-vibrant-blue to-brand-smoothies',
     orange: 'bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow',
-    purple: 'bg-gradient-to-r from-brand-vibrant-purple to-brand-vibrant-pink',
-    green: 'bg-gradient-to-r from-brand-primary to-brand-teal',
+    green: 'bg-gradient-to-r from-brand-primary to-brand-vibrant-lime',
   };
 
   return (

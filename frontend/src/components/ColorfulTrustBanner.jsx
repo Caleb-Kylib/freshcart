@@ -35,7 +35,7 @@ const ColorfulTrustBanner = () => {
       icon: <Package size={24} />,
       title: 'Careful Packaging',
       description: 'Eco-friendly materials',
-      gradient: 'from-brand-vibrant-purple to-brand-vibrant-pink',
+      gradient: 'from-brand-vibrant-green to-brand-vibrant-lime',
       delay: '400'
     },
     {
@@ -50,13 +50,13 @@ const ColorfulTrustBanner = () => {
   return (
     <section className="py-12 relative overflow-hidden">
       {/* Animated gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-brand-vibrant-blue/5 via-brand-vibrant-purple/5 to-brand-vibrant-pink/5">
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-vibrant-blue/5 via-brand-vibrant-green/5 to-brand-vibrant-lime/5">
         {/* Animated dots pattern */}
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiLz48cGF0aCBkPSJNMjAgMjBtLTEgMGEgMSAxIDAgMSAwIDIgMGExIDEgMCAxIDAtMiAwIiBmaWxsPSJyZ2JhKDEwLCAxODQsIDk3LCAwLjA1KSIvPjwvZz48L3N2Zz4=')]" />
         
         {/* Floating shapes */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-brand-vibrant-orange/10 to-brand-vibrant-yellow/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-brand-vibrant-purple/10 to-brand-vibrant-pink/10 rounded-full blur-3xl animate-float animation-delay-1000" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-brand-vibrant-green/10 to-brand-vibrant-lime/10 rounded-full blur-3xl animate-float animation-delay-1000" />
       </div>
 
       <div className="container-custom relative z-10">

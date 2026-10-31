@@ -7,49 +7,37 @@ const ColorfulCategories = () => {
     {
       name: 'Fruits',
       description: 'Seasonal & exotic fruits',
-      image: '/products/apple.jpg',
-      gradient: 'from-brand-fruits to-brand-vibrant-orange',
-      icon: '🍎',
+      image: '/products/mango.jpg',
       count: '24 items'
     },
     {
       name: 'Vegetables',
       description: 'Fresh farm vegetables',
-      image: '/products/carrots.jpg',
-      gradient: 'from-brand-vegetables to-brand-teal',
-      icon: '🥦',
+      image: '/products/grocery-section.jpg',
       count: '18 items'
     },
     {
       name: 'Herbs',
       description: 'Aromatic & medicinal',
       image: '/products/freshmint.jpg',
-      gradient: 'from-brand-herbs to-brand-vibrant-purple',
-      icon: '🌿',
       count: '12 items'
     },
     {
       name: 'Smoothies',
       description: 'Cold-pressed juices',
-      image: '/products/berry-blast.jpg',
-      gradient: 'from-brand-smoothies to-brand-vibrant-blue',
-      icon: '🥤',
+      image: '/products/strawberryjuice.jpg',
       count: '8 items'
     },
     {
       name: 'Bundles',
       description: 'Curated wellness packs',
-      image: '/products/fruit-basket.jpg',
-      gradient: 'from-brand-vibrant-pink to-brand-vibrant-purple',
-      icon: '🎁',
+      image: '/products/grocery-box.jpg',
       count: '6 items'
     },
     {
       name: 'Organic',
       description: 'Certified organic produce',
-      image: '/products/leafy-greens.jpg',
-      gradient: 'from-brand-primary to-brand-secondary',
-      icon: '🌱',
+      image: '/products/home-banner.jpg',
       count: '15 items'
     },
   ];
@@ -59,20 +47,11 @@ const ColorfulCategories = () => {
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-white via-emerald-50/30 to-white" />
       
-      {/* Floating shapes */}
-      <div className="absolute top-20 left-10 w-64 h-64 bg-gradient-to-r from-brand-vibrant-orange/10 to-brand-vibrant-yellow/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-brand-vibrant-purple/10 to-brand-vibrant-pink/10 rounded-full blur-3xl" />
-
       <div className="container-custom relative z-10">
         {/* Header with gradient text */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-3 h-3 bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow rounded-full animate-pulse" />
-            <div className="w-3 h-3 bg-gradient-to-r from-brand-vibrant-blue to-brand-smoothies rounded-full animate-pulse animation-delay-300" />
-            <div className="w-3 h-3 bg-gradient-to-r from-brand-vibrant-purple to-brand-vibrant-pink rounded-full animate-pulse animation-delay-600" />
-          </div>
           <h2 className="text-4xl md:text-5xl font-black mb-4">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-vibrant-orange via-brand-primary to-brand-vibrant-purple">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-vibrant-orange via-brand-primary to-brand-vibrant-green">
               Shop by Category
             </span>
           </h2>
@@ -87,49 +66,29 @@ const ColorfulCategories = () => {
             <Link
               key={index}
               to={`/products?category=${category.name}`}
-              className="group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+              className="group overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
-              {/* Background gradient */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-90`} />
-              
-              {/* Image overlay */}
-              <div className="absolute inset-0">
+              <div className="aspect-[4/3] overflow-hidden bg-emerald-50">
                 <img
                   src={category.image}
                   alt={category.name}
-                  className="w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500"
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
               </div>
 
-              {/* Content */}
-              <div className="relative z-10 p-8 h-64 flex flex-col justify-between">
-                {/* Top section */}
+              <div className="flex items-center justify-between gap-4 p-5">
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">{category.icon}</div>
-                    <div className="bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full">
-                      {category.count}
-                    </div>
-                  </div>
-                  
-                  <h3 className="text-2xl font-black text-white mb-2">{category.name}</h3>
-                  <p className="text-gray-200 text-sm">{category.description}</p>
-                </div>
-
-                {/* Bottom section with arrow */}
-                <div className="flex items-center justify-between">
-                  <span className="text-white text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <h3 className="text-xl font-black text-gray-900 transition-colors group-hover:text-emerald-700">{category.name}</h3>
+                  <p className="mt-1 text-sm text-gray-600">{category.description}</p>
+                  <span className="mt-3 inline-block text-sm font-semibold text-emerald-700">
                     Explore collection
                   </span>
-                  <div className="bg-white/20 p-3 rounded-full group-hover:bg-white/30 transition-all duration-300 group-hover:translate-x-2">
-                    <ChevronRight className="text-white" size={20} />
-                  </div>
+                </div>
+                <div className="shrink-0 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800">
+                  {category.count}
                 </div>
               </div>
-
-              {/* Hover effect border */}
-              <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-3xl transition-all duration-500" />
             </Link>
           ))}
         </div>

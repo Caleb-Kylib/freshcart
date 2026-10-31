@@ -46,7 +46,7 @@ const AdminOrders = () => {
             case "Pending": return "bg-amber-50 text-amber-700 border-amber-100";
             case "Paid": return "bg-sky-50 text-sky-700 border-sky-100";
             case "Packed": return "bg-blue-50 text-blue-700 border-blue-100";
-            case "Out for Delivery": return "bg-indigo-50 text-indigo-700 border-indigo-100";
+            case "Out for Delivery": return "bg-green-50 text-green-700 border-green-100";
             case "Delivered": return "bg-emerald-50 text-emerald-700 border-emerald-100";
             case "Cancelled": return "bg-rose-50 text-rose-700 border-rose-100";
             default: return "bg-gray-50 text-gray-700 border-gray-100";

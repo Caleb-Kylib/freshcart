@@ -13,8 +13,9 @@ export default {
         dark: "#2D3748",
         light: "#F7FAFC",
         brand: {
-          primary: "#10B981",
+          primary: "#15803D",
           secondary: "#22C55E",
+          teal: "#0F766E",
           bg: "#F8FAF8",
           dark: "#111827",
           muted: "#6B7280",
@@ -25,19 +26,19 @@ export default {
           vibrant: {
             orange: "#FF6B35",
             yellow: "#FFD166",
-            pink: "#FF6B8B",
-            purple: "#9D4EDD",
-            blue: "#4A90E2",
-            teal: "#2EC4B6",
+            lime: "#84CC16",
+            green: "#166534",
+            blue: "#047857",
+            teal: "#0F766E",
             coral: "#FF6B6B",
             amber: "#FF9E00"
           },
           // Category-specific colors
           fruits: "#FF6B35",      // Orange
           vegetables: "#2EC4B6",   // Teal
-          herbs: "#9D4EDD",        // Purple
-          smoothies: "#4A90E2",    // Blue
-          bundles: "#FF6B8B",      // Pink
+          herbs: "#15803D",
+          smoothies: "#047857",
+          bundles: "#65A30D",
           organic: "#10B981",      // Green
           fresh: "#FFD166"         // Yellow
         }
@@ -48,10 +49,10 @@ export default {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'gradient-vibrant': 'linear-gradient(135deg, #FF6B35 0%, #FFD166 25%, #2EC4B6 50%, #9D4EDD 75%, #4A90E2 100%)',
-        'gradient-fresh': 'linear-gradient(135deg, #10B981 0%, #2EC4B6 50%, #4A90E2 100%)',
+        'gradient-vibrant': 'linear-gradient(135deg, #FF6B35 0%, #A3E635 20%, #22C55E 45%, #15803D 70%, #0F766E 100%)',
+        'gradient-fresh': 'linear-gradient(135deg, #86EFAC 0%, #22C55E 50%, #047857 100%)',
         'gradient-warm': 'linear-gradient(135deg, #FF6B35 0%, #FFD166 50%, #FF9E00 100%)',
-        'gradient-cool': 'linear-gradient(135deg, #4A90E2 0%, #9D4EDD 50%, #FF6B8B 100%)',
+        'gradient-cool': 'linear-gradient(135deg, #0F766E 0%, #166534 50%, #84CC16 100%)',
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

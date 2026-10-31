@@ -15,9 +15,9 @@ const EnhancedProductCard = ({ product }) => {
         const categoryMap = {
             'Fruits': 'from-brand-fruits to-brand-vibrant-orange',
             'Vegetables': 'from-brand-vegetables to-brand-teal',
-            'Herbs': 'from-brand-herbs to-brand-vibrant-purple',
+            'Herbs': 'from-brand-herbs to-brand-vibrant-green',
             'Smoothies': 'from-brand-smoothies to-brand-vibrant-blue',
-            'Lifestyle Bundles': 'from-brand-vibrant-pink to-brand-vibrant-purple',
+            'Lifestyle Bundles': 'from-brand-vibrant-lime to-brand-vibrant-green',
             'default': 'from-brand-primary to-brand-secondary'
         };
         
@@ -84,7 +84,7 @@ const EnhancedProductCard = ({ product }) => {
                     {/* Favorite button */}
                     <button
                         onClick={handleFavorite}
-                        className={`p-2.5 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 transform ${isFavorite ? 'bg-gradient-to-r from-brand-vibrant-pink to-brand-vibrant-coral text-white scale-110' : 'bg-white/90 text-gray-800 hover:bg-white hover:scale-110'}`}
+                        className={`p-2.5 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 transform ${isFavorite ? 'bg-gradient-to-r from-brand-vibrant-lime to-brand-vibrant-green text-white scale-110' : 'bg-white/90 text-gray-800 hover:bg-white hover:scale-110'}`}
                         title={isFavorite ? "Remove from favorites" : "Add to favorites"}
                     >
                         <Heart size={18} className={isFavorite ? "fill-current" : ""} />
@@ -224,7 +224,7 @@ const EnhancedProductCard = ({ product }) => {
                 <div className="flex items-center justify-between mt-3">
                     <button
                         onClick={handleFavorite}
-                        className={`flex items-center gap-1.5 text-sm transition-all duration-300 ${isFavorite ? 'text-brand-vibrant-pink font-bold' : 'text-gray-500 hover:text-brand-vibrant-pink'}`}
+                        className={`flex items-center gap-1.5 text-sm transition-all duration-300 ${isFavorite ? 'text-brand-vibrant-green font-bold' : 'text-gray-500 hover:text-brand-vibrant-green'}`}
                     >
                         <Heart size={16} className={isFavorite ? "fill-current" : ""} />
                         {isFavorite ? 'Saved' : 'Save'}

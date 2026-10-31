@@ -13,8 +13,8 @@ const LoadingSpinner = ({ size = 'medium', color = 'primary', text = 'Loading...
     white: 'border-white border-t-transparent',
     orange: 'border-brand-vibrant-orange border-t-transparent',
     blue: 'border-brand-vibrant-blue border-t-transparent',
-    purple: 'border-brand-vibrant-purple border-t-transparent',
-    gradient: 'border-transparent border-t-brand-vibrant-orange border-r-brand-vibrant-yellow border-b-brand-vibrant-blue border-l-brand-vibrant-purple'
+    green: 'border-brand-vibrant-green border-t-transparent',
+    gradient: 'border-transparent border-t-brand-vibrant-green border-r-brand-vibrant-lime border-b-brand-vibrant-teal border-l-brand-primary'
   };
 
   const spinner = (
@@ -102,7 +102,7 @@ export const ProductCardSkeleton = ({ count = 4 }) => {
 
 // Loading states for different scenarios
 export const PageLoading = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-vibrant-blue/5 via-brand-vibrant-purple/5 to-brand-vibrant-pink/5">
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-vibrant-teal/5 via-brand-vibrant-green/5 to-brand-vibrant-lime/5">
     <div className="text-center">
       <LoadingSpinner size="xlarge" color="gradient" text="Loading FreshCart..." />
       <div className="mt-8 space-y-2">

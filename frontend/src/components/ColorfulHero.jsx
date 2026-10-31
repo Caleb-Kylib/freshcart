@@ -1,18 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, ShoppingCart, ArrowRight, Truck, ShieldCheck, Leaf, Clock, BadgeCheck } from 'lucide-react';
+import groceryHero from '../assets/grocery_hero.png';
 
 const ColorfulHero = () => {
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
       {/* Animated gradient background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-vibrant-blue via-brand-vibrant-purple to-brand-vibrant-pink opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-vibrant-blue via-brand-vibrant-green to-brand-vibrant-lime opacity-90" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNMzAgMzBtLTIgMGEyIDIgMCAxIDAgNCAwYTIgMiAwIDEgMC00IDAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-20" />
         
         {/* Animated floating shapes */}
         <div className="absolute top-1/4 left-10 w-72 h-72 bg-gradient-to-r from-brand-vibrant-orange/30 to-brand-vibrant-yellow/30 rounded-full blur-3xl animate-pulse-slow" />
-        <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-gradient-to-r from-brand-vibrant-purple/30 to-brand-vibrant-pink/30 rounded-full blur-3xl animate-pulse-slow animation-delay-1000" />
+        <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-gradient-to-r from-brand-vibrant-green/30 to-brand-vibrant-lime/30 rounded-full blur-3xl animate-pulse-slow animation-delay-1000" />
         <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-gradient-to-r from-brand-teal/30 to-brand-vibrant-blue/30 rounded-full blur-3xl animate-pulse-slow animation-delay-2000" />
       </div>
 
@@ -26,7 +27,7 @@ const ColorfulHero = () => {
                 <Zap size={18} className="animate-pulse" />
                 Free delivery on orders above KES 2,000
               </div>
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-vibrant-purple to-brand-vibrant-pink text-white px-5 py-3 rounded-full text-sm font-bold shadow-lg animate-float animation-delay-500">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-brand-vibrant-green to-brand-vibrant-lime text-white px-5 py-3 rounded-full text-sm font-bold shadow-lg animate-float animation-delay-500">
                 <Clock size={18} />
                 Same-day delivery
               </div>
@@ -42,7 +43,7 @@ const ColorfulHero = () => {
                 Delivered to Your
               </span>
               <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-teal via-brand-vibrant-blue to-brand-vibrant-purple">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-teal via-brand-vibrant-green to-brand-vibrant-lime">
                 Door in Hours
               </span>
             </h1>
@@ -75,7 +76,7 @@ const ColorfulHero = () => {
                 { icon: <Truck size={20} />, text: 'Same-Day Delivery', color: 'from-brand-vibrant-blue to-brand-smoothies' },
                 { icon: <ShieldCheck size={20} />, text: 'Freshness Guarantee', color: 'from-brand-primary to-brand-teal' },
                 { icon: <Leaf size={20} />, text: '100% Organic', color: 'from-brand-vegetables to-brand-teal' },
-                { icon: <BadgeCheck size={20} />, text: 'Certified Farms', color: 'from-brand-vibrant-purple to-brand-vibrant-pink' },
+                { icon: <BadgeCheck size={20} />, text: 'Certified Farms', color: 'from-brand-vibrant-green to-brand-vibrant-lime' },
               ].map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <div className={`bg-gradient-to-r ${item.color} p-3 rounded-xl shadow-lg`}>
@@ -87,45 +88,31 @@ const ColorfulHero = () => {
             </div>
           </div>
 
-          {/* Right: Featured deals card */}
-          <div className="hidden lg:block">
-            <div className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl border-2 border-white/20 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-              {/* Card background effects */}
-              <div className="absolute -top-20 -right-20 w-60 h-60 bg-gradient-to-r from-brand-vibrant-orange/20 to-brand-vibrant-yellow/20 rounded-full blur-3xl" />
-              <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-gradient-to-r from-brand-vibrant-purple/20 to-brand-vibrant-pink/20 rounded-full blur-3xl" />
-              
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-4 py-2 rounded-full animate-pulse shadow-lg">🔥 HOT DEAL</span>
-                  <span className="text-gray-300 text-sm font-semibold">Ends Sunday</span>
-                </div>
-                
-                <h3 className="text-white text-3xl font-bold mb-3">Weekend Super Saver</h3>
-                <p className="text-gray-300 mb-8 text-lg">Up to 40% off on fresh vegetables and cold-pressed juices 🥤</p>
-
-                {/* Colorful product preview */}
-                <div className="grid grid-cols-3 gap-4 mb-8">
-                  {[
-                    { img: "/products/carrots.jpg", name: "Carrots", price: "120", color: "from-orange-500 to-amber-500" },
-                    { img: "/products/Broccoligreen.jpg", name: "Broccoli", price: "250", color: "from-emerald-500 to-green-500" },
-                    { img: "/products/cucumber.jpg", name: "Cucumber", price: "80", color: "from-lime-500 to-emerald-500" },
-                  ].map((item, i) => (
-                    <div key={i} className="relative group">
-                      <div className={`absolute inset-0 bg-gradient-to-r ${item.color} rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300`} />
-                      <div className="bg-white/10 rounded-xl p-4 text-center border border-white/10 backdrop-blur-sm">
-                        <img src={item.img} alt={item.name} className="w-full h-20 object-cover rounded-lg mb-3 shadow-lg" />
-                        <p className="text-white text-sm font-bold">{item.name}</p>
-                        <p className="text-emerald-300 text-xs font-bold mt-1">KES {item.price}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
+          {/* Featured produce image */}
+          <div className="relative min-h-[320px] sm:min-h-[420px] lg:min-h-[560px]">
+            <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-brand-vibrant-lime/40 to-brand-teal/40 blur-2xl" />
+            <div className="relative h-full min-h-[320px] sm:min-h-[420px] lg:min-h-[560px] overflow-hidden rounded-[2rem] border border-white/30 shadow-2xl">
+              <img
+                src={groceryHero}
+                alt="Fresh fruit and vegetables ready for your kitchen"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-emerald-950/5 to-transparent" />
+              <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/90 px-4 py-2 text-sm font-bold text-emerald-800 shadow-lg backdrop-blur-sm sm:left-7 sm:top-7">
+                <Leaf size={16} />
+                Fresh from local farms
+              </div>
+              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+                <p className="mb-2 text-sm font-bold uppercase tracking-[0.2em] text-lime-200">Picked fresh, delivered fast</p>
+                <h2 className="max-w-md text-3xl font-black leading-tight text-white sm:text-4xl">
+                  Bring home a little more freshness.
+                </h2>
                 <Link
-                  to="/products?category=Vegetables"
-                  className="block text-center bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/50"
+                  to="/products?category=Fruits"
+                  className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 font-bold text-emerald-800 shadow-lg transition hover:bg-lime-100"
                 >
-                  🥦 Shop Fresh Vegetables
+                  Explore fresh produce
+                  <ArrowRight size={18} />
                 </Link>
               </div>
             </div>

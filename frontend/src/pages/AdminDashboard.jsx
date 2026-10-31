@@ -76,7 +76,7 @@ const AdminDashboard = () => {
           { label: "Total Revenue", value: `KES ${stats.revenue.toLocaleString()}`, sub: "+12% from last month", icon: <TrendingUp size={24} />, color: "bg-emerald-500", text: "text-emerald-600", light: "bg-emerald-50" },
           { label: "Active Orders", value: stats.orders, sub: "Pending processing", icon: <ShoppingCart size={24} />, color: "bg-blue-500", text: "text-blue-600", light: "bg-blue-50" },
           { label: "Store Inventory", value: stats.products, sub: "Items listed", icon: <Package size={24} />, color: "bg-orange-500", text: "text-orange-600", light: "bg-orange-50" },
-          { label: "Platform Users", value: stats.users, sub: "Registered accounts", icon: <Users size={24} />, color: "bg-indigo-500", text: "text-indigo-600", light: "bg-indigo-50" },
+          { label: "Platform Users", value: stats.users, sub: "Registered accounts", icon: <Users size={24} />, color: "bg-green-700", text: "text-green-700", light: "bg-green-50" },
         ].map((item, idx) => (
           <div key={idx} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
             <div className={`p-4 ${item.light} ${item.text} rounded-2xl w-fit mb-6 group-hover:scale-110 transition-transform`}>

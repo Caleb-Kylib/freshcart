@@ -94,11 +94,11 @@ const AdminUsers = () => {
                         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-1">
                             Out for Delivery
                         </p>
-                        <p className="text-2xl font-extrabold text-indigo-600">
+                        <p className="text-2xl font-extrabold text-green-700">
                             {outForDeliveryCount}
                         </p>
                     </div>
-                    <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <div className="w-10 h-10 rounded-2xl bg-green-50 flex items-center justify-center text-green-700">
                         <Clock size={20} />
                     </div>
                 </div>
@@ -163,7 +163,7 @@ const AdminUsers = () => {
                                         <tr key={id} className="hover:bg-gray-50/50 transition-colors">
                                             <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${user.role === 'admin' ? 'bg-indigo-100 text-indigo-600' : 'bg-green-100 text-green-600'
+                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${user.role === 'admin' ? 'bg-green-100 text-green-700' : 'bg-green-100 text-green-600'
                                                     }`}>
                                                     {user.name.charAt(0).toUpperCase()}
                                                 </div>
@@ -183,7 +183,7 @@ const AdminUsers = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${user.role === 'admin'
-                                                ? 'bg-indigo-50 text-indigo-600'
+                                                ? 'bg-green-50 text-green-700'
                                                 : 'bg-emerald-50 text-emerald-600'
                                                 }`}>
                                                 {user.role === 'admin' ? <Shield size={12} /> : <User size={12} />}

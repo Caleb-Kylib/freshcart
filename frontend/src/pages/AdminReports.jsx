@@ -35,7 +35,7 @@ const AdminReports = () => {
             change: "-2.4%",
             trend: "down",
             icon: <Users size={24} className="text-white" />,
-            color: "bg-purple-500"
+            color: "bg-green-700"
         }
     ];
 

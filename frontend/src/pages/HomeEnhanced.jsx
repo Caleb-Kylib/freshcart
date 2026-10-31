@@ -112,7 +112,7 @@ const HomeEnhanced = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-vibrant-blue/5 via-brand-vibrant-purple/5 to-brand-vibrant-pink/5">
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-vibrant-teal/5 via-brand-vibrant-green/5 to-brand-vibrant-lime/5">
                 <div className="flex flex-col items-center gap-6">
                     <div className="w-20 h-20 bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow rounded-2xl flex items-center justify-center animate-pulse">
                         <ShoppingCart className="text-white" size={32} />
@@ -158,7 +158,7 @@ const HomeEnhanced = () => {
                                 {[
                                     { val: timeLeft.days, label: "Days", color: 'from-brand-vibrant-orange to-brand-vibrant-yellow' },
                                     { val: timeLeft.hours, label: "Hours", color: 'from-brand-vibrant-blue to-brand-smoothies' },
-                                    { val: timeLeft.minutes, label: "Minutes", color: 'from-brand-vibrant-purple to-brand-vibrant-pink' },
+                                    { val: timeLeft.minutes, label: "Minutes", color: 'from-brand-vibrant-green to-brand-vibrant-lime' },
                                     { val: timeLeft.seconds, label: "Seconds", color: 'from-brand-primary to-brand-teal' },
                                 ].map((unit, i) => (
                                     <div key={i} className="text-center">
@@ -226,12 +226,12 @@ const HomeEnhanced = () => {
                     <div className="container-custom">
                         <div className="flex items-center justify-between mb-12">
                             <div className="flex items-center gap-4">
-                                <div className="bg-gradient-to-r from-brand-vibrant-purple to-brand-vibrant-pink p-3 rounded-2xl shadow-lg">
+                                <div className="bg-gradient-to-r from-brand-vibrant-green to-brand-vibrant-lime p-3 rounded-2xl shadow-lg">
                                     <Sparkles size={24} className="text-white" />
                                 </div>
                                 <div>
                                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-                                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-vibrant-purple to-brand-vibrant-pink">
+                                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-vibrant-green to-brand-vibrant-lime">
                                             Fresh Arrivals
                                         </span>
                                     </h2>
@@ -240,7 +240,7 @@ const HomeEnhanced = () => {
                             </div>
                             <Link 
                                 to="/products" 
-                                className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-brand-vibrant-purple to-brand-vibrant-pink text-white font-bold px-6 py-3 rounded-xl hover:shadow-lg transition-all"
+                                className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-brand-vibrant-green to-brand-vibrant-lime text-white font-bold px-6 py-3 rounded-xl hover:shadow-lg transition-all"
                             >
                                 View All <ChevronRight size={18} />
                             </Link>
@@ -281,7 +281,7 @@ const HomeEnhanced = () => {
                             icon="💚"
                             title="Eco-Friendly Packaging"
                             description="Sustainable packaging that cares for your food and our planet."
-                            color="purple"
+                            color="green"
                         />
                     </div>
                 </div>
@@ -327,10 +327,13 @@ const HomeEnhanced = () => {
 
             {/* ===== NEWSLETTER SIGNUP ===== */}
             <section className="py-16 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-vibrant-purple/10 via-brand-vibrant-pink/10 to-brand-vibrant-coral/10" />
+                <div className="absolute inset-0 bg-gradient-to-br from-brand-vibrant-green/10 via-brand-vibrant-lime/10 to-brand-primary/10" />
                 
                 <div className="container-custom relative z-10">
-                    <ColorfulBanner>
+                    <ColorfulBanner
+                        gradient="from-emerald-900 via-green-800 to-emerald-700"
+                        bgColor="bg-gradient-to-r from-emerald-900 via-green-800 to-emerald-700"
+                    >
                         <div className="text-center">
                             <Sparkles className="w-16 h-16 text-white mx-auto mb-6" />
                             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -345,11 +348,11 @@ const HomeEnhanced = () => {
                                     <input
                                         type="email"
                                         placeholder="Your email address"
-                                        className="flex-1 px-6 py-4 rounded-xl border-2 border-white/30 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:border-white/50 backdrop-blur-sm"
+                                        className="flex-1 px-6 py-4 rounded-xl border-2 border-white/70 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-lime-300"
                                     />
                                     <button
                                         type="submit"
-                                        className="bg-gradient-to-r from-white to-white/90 text-gray-900 font-bold px-8 py-4 rounded-xl hover:shadow-lg transition-all whitespace-nowrap"
+                                        className="bg-gradient-to-r from-lime-300 to-emerald-300 text-emerald-950 font-bold px-8 py-4 rounded-xl hover:from-lime-200 hover:to-emerald-200 hover:shadow-lg transition-all whitespace-nowrap"
                                     >
                                         Subscribe Now
                                     </button>

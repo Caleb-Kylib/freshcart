@@ -11,9 +11,9 @@ const ProductCard = ({ product }) => {
         const categoryMap = {
             'Fruits': 'bg-gradient-to-r from-brand-fruits to-brand-vibrant-orange',
             'Vegetables': 'bg-gradient-to-r from-brand-vegetables to-brand-teal',
-            'Herbs': 'bg-gradient-to-r from-brand-herbs to-brand-vibrant-purple',
+            'Herbs': 'bg-gradient-to-r from-brand-herbs to-brand-vibrant-green',
             'Smoothies': 'bg-gradient-to-r from-brand-smoothies to-brand-vibrant-blue',
-            'Lifestyle Bundles': 'bg-gradient-to-r from-brand-vibrant-pink to-brand-vibrant-purple',
+            'Lifestyle Bundles': 'bg-gradient-to-r from-brand-vibrant-lime to-brand-vibrant-green',
             'default': 'bg-gradient-to-r from-brand-primary to-brand-secondary'
         };
         

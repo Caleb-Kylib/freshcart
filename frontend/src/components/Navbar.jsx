@@ -56,9 +56,9 @@ const Navbar = () => {
                             { name: 'Shop', path: '/products', color: 'from-brand-vibrant-orange to-brand-vibrant-yellow' },
                             { name: 'Fruits', path: '/products?category=Fruits', color: 'from-brand-fruits to-brand-vibrant-orange' },
                             { name: 'Vegetables', path: '/products?category=Vegetables', color: 'from-brand-vegetables to-brand-teal' },
-                            { name: 'Herbs', path: '/products?category=Herbs', color: 'from-brand-herbs to-brand-vibrant-purple' },
+                            { name: 'Herbs', path: '/products?category=Herbs', color: 'from-brand-herbs to-brand-vibrant-green' },
                             { name: 'Smoothies', path: '/products?category=Smoothies', color: 'from-brand-smoothies to-brand-vibrant-blue' },
-                            { name: 'Blog', path: '/blog', color: 'from-brand-vibrant-purple to-brand-vibrant-pink' },
+                            { name: 'Blog', path: '/blog', color: 'from-brand-vibrant-green to-brand-vibrant-lime' },
                             { name: 'Contact', path: '/contact', color: 'from-brand-vibrant-coral to-brand-vibrant-amber' },
                         ].map((link) => {
                             const isActive = location.pathname + location.search === link.path ||
@@ -142,9 +142,9 @@ const Navbar = () => {
                             { name: '🛍️ Product Catalog', path: '/products', color: 'bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow' },
                             { name: '🍎 Fruits', path: '/products?category=Fruits', color: 'bg-gradient-to-r from-brand-fruits to-brand-vibrant-orange' },
                             { name: '🥦 Vegetables', path: '/products?category=Vegetables', color: 'bg-gradient-to-r from-brand-vegetables to-brand-teal' },
-                            { name: '🌿 Herbs', path: '/products?category=Herbs', color: 'bg-gradient-to-r from-brand-herbs to-brand-vibrant-purple' },
+                            { name: '🌿 Herbs', path: '/products?category=Herbs', color: 'bg-gradient-to-r from-brand-herbs to-brand-vibrant-green' },
                             { name: '🥤 Smoothies', path: '/products?category=Smoothies', color: 'bg-gradient-to-r from-brand-smoothies to-brand-vibrant-blue' },
-                            { name: '📚 Wellness Blog', path: '/blog', color: 'bg-gradient-to-r from-brand-vibrant-purple to-brand-vibrant-pink' },
+                            { name: '📚 Wellness Blog', path: '/blog', color: 'bg-gradient-to-r from-brand-vibrant-green to-brand-vibrant-lime' },
                             { name: '📞 Contact Us', path: '/contact', color: 'bg-gradient-to-r from-brand-vibrant-coral to-brand-vibrant-amber' },
                         ].map((link) => (
                             <Link
