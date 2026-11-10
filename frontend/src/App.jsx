@@ -26,6 +26,16 @@ import AdminProducts from "./pages/AdminProducts";
 import AdminOrders from "./pages/AdminOrders";
 import AdminUsers from "./pages/AdminUsers";
 import AdminReports from "./pages/AdminReports";
+
+// Manager pages
+import ManagerDashboard from "./pages/ManagerDashboard";
+import ManagerOrders from "./pages/ManagerOrders";
+import ManagerInventory from "./pages/ManagerInventory";
+import ManagerStockMovements from "./pages/ManagerStockMovements";
+import ManagerReports from "./pages/ManagerReports";
+import ManagerCashierActivity from "./pages/ManagerCashierActivity";
+import ManagerLoginPage from "./pages/ManagerLoginPage";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 import WhatsAppChat from "./components/WhatsAppChat";
 
@@ -56,6 +66,11 @@ const StorefrontLayout = () => {
   // Prevent admins from accessing storefront
   if (user?.role === 'admin' && !location.pathname.startsWith('/admin')) {
     return <Navigate to="/admin" replace />;
+  }
+
+  // Prevent managers from accessing storefront
+  if (user?.role === 'manager' && !location.pathname.startsWith('/manager')) {
+    return <Navigate to="/manager" replace />;
   }
 
   return (
@@ -102,6 +117,7 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin/signup" element={<AdminSignupPage />} />
+        <Route path="/manager/login" element={<ManagerLoginPage />} />
 
         {/* Admin Routes (Scoped under /admin) */}
         <Route
@@ -141,6 +157,56 @@ function App() {
           element={
             <ProtectedRoute adminOnly={true}>
               <AdminReports />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Manager Routes */}
+        <Route
+          path="/manager"
+          element={
+            <ProtectedRoute roleRequired="manager">
+              <ManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/manager/orders"
+          element={
+            <ProtectedRoute roleRequired="manager">
+              <ManagerOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/manager/inventory"
+          element={
+            <ProtectedRoute roleRequired="manager">
+              <ManagerInventory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/manager/stock-movements"
+          element={
+            <ProtectedRoute roleRequired="manager">
+              <ManagerStockMovements />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/manager/reports"
+          element={
+            <ProtectedRoute roleRequired="manager">
+              <ManagerReports />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/manager/cashier-activity"
+          element={
+            <ProtectedRoute roleRequired="manager">
+              <ManagerCashierActivity />
             </ProtectedRoute>
           }
         />

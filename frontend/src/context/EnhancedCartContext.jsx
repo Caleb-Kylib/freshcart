@@ -2,229 +2,187 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useAuth } from './AuthContext';
 import { useToast } from '../components/ToastNotification';
 
-const CartContext = createContext();
+const CartContext = createContext(null);
 
-export const useCart = () => useContext(CartContext);
+export const useCart = () => {
+    const ctx = useContext(CartContext);
+    if (!ctx) throw new Error('useCart must be used inside <CartProvider>');
+    return ctx;
+};
 
 export const CartProvider = ({ children }) => {
     const { user, token, loading } = useAuth();
     const { toastCart, toastSuccess, toastError, toastWarning } = useToast();
-    const [cartItems, setCartItems] = useState([]);
-    const [isUpdating, setIsUpdating] = useState(false);
+
+    const [cartItems,    setCartItems]    = useState([]);
+    const [isUpdating,   setIsUpdating]   = useState(false);
     const [lastAddedItem, setLastAddedItem] = useState(null);
 
     const cartStorageKey = user ? `cart:${user._id || user.id}` : null;
 
+    // ── Hydrate from localStorage ────────────────────────────────────────────
     useEffect(() => {
         if (loading) return;
 
-        // Clean up old shared cart storage
+        // Remove legacy shared key so carts don't leak between accounts
         localStorage.removeItem('cart');
 
-        if (!token || !cartStorageKey) {
-            setCartItems([]);
-            return;
-        }
+        if (!token || !cartStorageKey) { setCartItems([]); return; }
 
         try {
-            const savedCart = localStorage.getItem(cartStorageKey);
-            setCartItems(savedCart ? JSON.parse(savedCart) : []);
+            const saved = localStorage.getItem(cartStorageKey);
+            setCartItems(saved ? JSON.parse(saved) : []);
         } catch {
             localStorage.removeItem(cartStorageKey);
             setCartItems([]);
         }
     }, [cartStorageKey, loading, token]);
 
+    // ── Persist to localStorage ──────────────────────────────────────────────
     useEffect(() => {
         if (!loading && token && cartStorageKey) {
             localStorage.setItem(cartStorageKey, JSON.stringify(cartItems));
         }
     }, [cartItems, cartStorageKey, loading, token]);
 
-    const addToCart = useCallback(async (product, quantity = 1, showToast = true) => {
-        const productId = product._id || product.id;
+    // ── addToCart ────────────────────────────────────────────────────────────
+    const addToCart = useCallback(async (product, quantity = 1, showToastMsg = true) => {
+        const productId   = product._id || product.id;
         const productName = product.name;
+        const maxStock    = product.stock ?? 999;
 
-        // Check if product is already in cart
-        const existingItem = cartItems.find(item => (item._id || item.id) === productId);
-        
-        // Visual feedback
         setIsUpdating(true);
-        
-        // Update local state first for immediate feedback
+
         setCartItems(prev => {
-            if (existingItem) {
-                const newQuantity = existingItem.quantity + quantity;
-                
-                // Show warning if trying to add too many
-                if (newQuantity > (product.stock || 999)) {
-                    if (showToast) {
-                        toastWarning(`Only ${product.stock || 'limited'} ${productName} in stock`);
-                    }
-                    return prev; // Don't update if exceeds stock
+            const existing = prev.find(item => (item._id || item.id) === productId);
+            if (existing) {
+                const newQty = existing.quantity + quantity;
+                if (newQty > maxStock) {
+                    if (showToastMsg) toastWarning(`Only ${maxStock} "${productName}" in stock`);
+                    return prev;
                 }
-                
                 return prev.map(item =>
                     (item._id || item.id) === productId
-                        ? { ...item, quantity: newQuantity }
+                        ? { ...item, quantity: newQty }
                         : item
                 );
             }
-            
-            // Check stock for new items
-            if (quantity > (product.stock || 999)) {
-                if (showToast) {
-                    toastWarning(`Only ${product.stock || 'limited'} ${productName} in stock`);
-                }
+            if (quantity > maxStock) {
+                if (showToastMsg) toastWarning(`Only ${maxStock} "${productName}" in stock`);
                 return prev;
             }
-            
             return [...prev, { ...product, quantity }];
         });
 
-        // Set last added item for undo functionality
         setLastAddedItem({ productId, productName, quantity });
 
-        // Show success toast
-        if (showToast) {
-            if (existingItem) {
-                toastSuccess(`Added ${quantity} more ${productName} to cart! (Total: ${existingItem.quantity + quantity})`, 3000);
+        if (showToastMsg) {
+            const existing = cartItems.find(item => (item._id || item.id) === productId);
+            if (existing) {
+                toastSuccess(`Added ${quantity} more "${productName}" to cart`, 3000);
             } else {
-                toastCart(`${productName} added to cart!`, 3000);
+                toastCart(`"${productName}" added to cart!`, 3500);
             }
         }
 
-        // Sync with backend if logged in
+        // Sync with backend
         if (token) {
             try {
                 await fetch('/api/cart', {
-                    method: 'POST',
+                    method:  'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                        'Content-Type':  'application/json',
+                        'Authorization': `Bearer ${token}`,
                     },
                     body: JSON.stringify({
                         productId,
                         quantity,
-                        name: product.name,
+                        name:  product.name,
                         price: product.price,
-                        image: product.image
-                    })
+                        image: product.image,
+                    }),
                 });
-            } catch (error) {
-                console.error('Error syncing cart with backend:', error);
-                toastError('Failed to sync cart with server. Changes saved locally.');
+            } catch {
+                toastError('Cart not synced with server — changes saved locally.');
             }
         }
 
-        // Add haptic feedback if available
-        if (navigator.vibrate) {
-            navigator.vibrate([50]);
-        }
-
-        // Reset updating state
+        if (navigator.vibrate) navigator.vibrate([40]);
         setTimeout(() => setIsUpdating(false), 300);
     }, [cartItems, token, toastCart, toastSuccess, toastError, toastWarning]);
 
+    // ── addItemsToCart ───────────────────────────────────────────────────────
     const addItemsToCart = useCallback(async (productsToAdd) => {
         setIsUpdating(true);
-        
-        let addedCount = 0;
+        let count = 0;
         for (const item of productsToAdd) {
             await addToCart(item.product, item.quantity || 1, false);
-            addedCount += (item.quantity || 1);
+            count += item.quantity || 1;
         }
-        
-        toastSuccess(`Added ${addedCount} items to cart! 🎉`, 4000);
+        toastSuccess(`Added ${count} items to your cart 🎉`, 4000);
         setIsUpdating(false);
     }, [addToCart, toastSuccess]);
 
+    // ── removeFromCart ───────────────────────────────────────────────────────
     const removeFromCart = useCallback((id, productName = 'Item') => {
         setCartItems(prev => prev.filter(item => (item._id || item.id) !== id));
-        toastSuccess(`${productName} removed from cart`, 3000);
-        
-        if (navigator.vibrate) {
-            navigator.vibrate([30]);
-        }
+        toastSuccess(`"${productName}" removed from cart`, 3000);
+        if (navigator.vibrate) navigator.vibrate([30]);
     }, [toastSuccess]);
 
+    // ── updateQuantity ───────────────────────────────────────────────────────
     const updateQuantity = useCallback((id, delta, productName = 'Item') => {
         setCartItems(prev =>
             prev.map(item => {
-                if ((item._id || item.id) === id) {
-                    const newQty = Math.max(1, item.quantity + delta);
-                    
-                    // Check stock if we have stock info
-                    const productStock = item.stock || 999;
-                    if (newQty > productStock) {
-                        toastWarning(`Only ${productStock} ${productName} in stock`);
-                        return item;
-                    }
-                    
-                    // Show quantity update feedback
-                    if (delta > 0) {
-                        toastSuccess(`Added 1 more ${productName}`, 2000);
-                    } else {
-                        toastSuccess(`Removed 1 ${productName}`, 2000);
-                    }
-                    
-                    return { ...item, quantity: newQty };
+                if ((item._id || item.id) !== id) return item;
+                const newQty   = Math.max(1, item.quantity + delta);
+                const maxStock = item.stock ?? 999;
+                if (newQty > maxStock) {
+                    toastWarning(`Only ${maxStock} "${productName}" in stock`);
+                    return item;
                 }
-                return item;
+                return { ...item, quantity: newQty };
             })
         );
-        
-        if (navigator.vibrate) {
-            navigator.vibrate([20]);
-        }
-    }, [toastSuccess, toastWarning]);
+        if (navigator.vibrate) navigator.vibrate([20]);
+    }, [toastWarning]);
 
+    // ── clearCart ────────────────────────────────────────────────────────────
     const clearCart = useCallback(() => {
-        const itemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+        const count = cartItems.reduce((acc, item) => acc + item.quantity, 0);
         setCartItems([]);
-        toastSuccess(`Cart cleared! Removed ${itemCount} items`, 3000);
-        
-        if (navigator.vibrate) {
-            navigator.vibrate([100, 50, 100]);
-        }
+        toastSuccess(`Cart cleared — ${count} item${count !== 1 ? 's' : ''} removed`, 3000);
+        if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
     }, [cartItems, toastSuccess]);
 
+    // ── undoLastAdd ──────────────────────────────────────────────────────────
     const undoLastAdd = useCallback(() => {
         if (!lastAddedItem) return;
-        
         const { productId, productName, quantity } = lastAddedItem;
         setCartItems(prev => {
-            const item = prev.find(item => (item._id || item.id) === productId);
+            const item = prev.find(i => (i._id || i.id) === productId);
             if (!item) return prev;
-            
             if (item.quantity <= quantity) {
-                // Remove item completely
-                return prev.filter(item => (item._id || item.id) !== productId);
-            } else {
-                // Reduce quantity
-                return prev.map(item =>
-                    (item._id || item.id) === productId
-                        ? { ...item, quantity: item.quantity - quantity }
-                        : item
-                );
+                return prev.filter(i => (i._id || i.id) !== productId);
             }
+            return prev.map(i =>
+                (i._id || i.id) === productId
+                    ? { ...i, quantity: i.quantity - quantity }
+                    : i
+            );
         });
-        
-        toastSuccess(`Undo: Removed ${quantity} ${productName} from cart`, 3000);
+        toastSuccess(`Undo: removed "${productName}" from cart`, 3000);
         setLastAddedItem(null);
     }, [lastAddedItem, toastSuccess]);
 
+    // ── Derived values ───────────────────────────────────────────────────────
     const cartTotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
     const itemCount = cartItems.length;
-
-    // Calculate savings if we have original prices
-    const savings = cartItems.reduce((acc, item) => {
-        if (item.originalPrice) {
-            return acc + (item.originalPrice - item.price) * item.quantity;
-        }
-        return acc;
-    }, 0);
+    const savings   = cartItems.reduce((acc, item) =>
+        item.originalPrice
+            ? acc + (item.originalPrice - item.price) * item.quantity
+            : acc, 0);
 
     return (
         <CartContext.Provider value={{
@@ -240,38 +198,11 @@ export const CartProvider = ({ children }) => {
             itemCount,
             savings,
             isUpdating,
-            lastAddedItem
+            lastAddedItem,
         }}>
             {children}
         </CartContext.Provider>
     );
-};
-
-// Custom hook for cart animations
-export const useCartAnimation = () => {
-    const [isAnimating, setIsAnimating] = useState(false);
-
-    const animateAddToCart = (productId) => {
-        setIsAnimating(true);
-        
-        // Create floating animation element
-        const floatingElement = document.createElement('div');
-        floatingElement.className = 'fixed z-[9999] text-2xl animate-float';
-        floatingElement.textContent = '🛒';
-        floatingElement.style.left = `${window.innerWidth - 100}px`;
-        floatingElement.style.top = '100px';
-        document.body.appendChild(floatingElement);
-        
-        // Remove after animation
-        setTimeout(() => {
-            floatingElement.remove();
-            setIsAnimating(false);
-        }, 1000);
-        
-        return true;
-    };
-
-    return { isAnimating, animateAddToCart };
 };
 
 export default CartContext;

@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Loader2 } from "lucide-react";
 
-const ProtectedRoute = ({ children, adminOnly = false }) => {
+const ProtectedRoute = ({ children, adminOnly = false, roleRequired = null }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -15,11 +15,16 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   }
 
   if (!user) {
-    return <Navigate to={adminOnly ? "/admin/login" : "/login"} replace />;
+    return <Navigate to={adminOnly ? "/admin/login" : roleRequired === "manager" ? "/manager/login" : "/login"} replace />;
   }
 
   if (adminOnly && user.role !== 'admin') {
     return <Navigate to="/admin/login" replace />;
+  }
+
+  if (roleRequired && user.role !== roleRequired) {
+    const redirect = roleRequired === 'manager' ? '/manager/login' : '/login';
+    return <Navigate to={redirect} replace />;
   }
 
   return children;

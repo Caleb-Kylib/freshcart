@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, ShoppingBag, MapPin, CreditCard, Package } from 'lucide-react';
+import { Check, ShoppingBag, MapPin, CreditCard, Package, Info } from 'lucide-react';
 
 const ProgressIndicator = ({ 
   steps = [], 
@@ -28,8 +28,8 @@ const ProgressIndicator = ({
   const getVariantClasses = (status) => {
     const baseClasses = {
       default: {
-        completed: 'bg-gradient-to-r from-brand-primary to-brand-teal text-white',
-        current: 'bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow text-white',
+        completed: 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white',
+        current: 'bg-gradient-to-r from-orange-500 to-amber-400 text-white',
         upcoming: 'bg-gray-100 text-gray-400'
       },
       minimal: {
@@ -39,7 +39,7 @@ const ProgressIndicator = ({
       },
       colorful: {
         completed: 'bg-gradient-to-r from-green-400 to-emerald-500 text-white',
-        current: 'bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow text-white',
+        current: 'bg-gradient-to-r from-orange-500 to-amber-400 text-white',
         upcoming: 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-500'
       }
     };
@@ -112,7 +112,7 @@ const ProgressIndicator = ({
                 <div className="mt-4 text-center">
                   <div className={`text-sm font-bold transition-colors duration-300 ${
                     status === 'completed' ? 'text-green-600' :
-                    status === 'current' ? 'text-brand-vibrant-orange' :
+                    status === 'current'   ? 'text-orange-500' :
                     'text-gray-400'
                   }`}>
                     {step.label}
@@ -127,7 +127,7 @@ const ProgressIndicator = ({
 
               {/* Current step indicator */}
               {status === 'current' && (
-                <div className="absolute -bottom-2 w-4 h-1 bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow rounded-full animate-pulse" />
+                <div className="absolute -bottom-2 w-4 h-1 bg-gradient-to-r from-orange-500 to-amber-400 rounded-full animate-pulse" />
               )}
             </div>
           );
@@ -141,8 +141,8 @@ const ProgressIndicator = ({
         </div>
         <div className="flex items-center gap-2">
           <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow rounded-full transition-all duration-700"
+            <div
+              className="h-full bg-gradient-to-r from-orange-500 to-amber-400 rounded-full transition-all duration-700"
               style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
             />
           </div>
@@ -156,7 +156,7 @@ const ProgressIndicator = ({
       {stepsToUse.find(step => step.id === currentStep)?.instructions && (
         <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
           <div className="flex items-start gap-3">
-            <div className="bg-gradient-to-r from-brand-vibrant-blue to-brand-smoothies p-2 rounded-lg">
+            <div className="bg-blue-600 p-2 rounded-lg">
               <Info size={18} className="text-white" />
             </div>
             <div>
@@ -198,7 +198,7 @@ export const MultiStepForm = ({ children, currentStep, totalSteps, onNext, onBac
           <button
             onClick={onNext}
             disabled={!canProceed}
-            className={`px-8 py-3 rounded-xl font-bold transition-all ${canProceed ? 'bg-gradient-to-r from-brand-vibrant-orange to-brand-vibrant-yellow text-white hover:shadow-lg hover:-translate-y-0.5 active:scale-95' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+            className={`w-full bg-gradient-to-r from-orange-500 to-amber-400 text-white hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 px-8 py-3 rounded-xl font-bold transition-all ${!canProceed && 'bg-none bg-gray-200 text-gray-400 cursor-not-allowed opacity-100'}`}
           >
             {currentStep === totalSteps ? 'Complete Order' : 'Continue →'}
           </button>

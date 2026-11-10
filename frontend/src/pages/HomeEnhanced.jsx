@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-    ArrowRight, Star, Truck, ShieldCheck, Leaf, Package,
-    ShoppingCart, MapPin, Tag, Sparkles, Mail, ChevronDown,
-    Plus, Clock, Percent, Heart, ChevronRight, Zap, Timer, BadgeCheck
+    ArrowRight, Tag, Sparkles, Mail,
+    ChevronDown, ChevronRight, Zap, ShoppingCart, Timer
 } from 'lucide-react';
 import ProductCard from '../components/EnhancedProductCard';
 import ProductCarousel from '../components/ProductCarousel';
 import { useProducts } from '../context/ProductContext';
-import { useCart } from '../context/CartContext';
-import { categories } from '../data/products';
-
-// Import colorful components
 import ColorfulHero from '../components/ColorfulHero';
 import ColorfulCategories from '../components/ColorfulCategories';
 import ColorfulTrustBanner from '../components/ColorfulTrustBanner';
@@ -44,7 +39,6 @@ const FAQItem = ({ question, answer }) => {
 
 const HomeEnhanced = () => {
     const { products, loading, error } = useProducts();
-    const { addToCart } = useCart();
     const [bestSellers, setBestSellers] = useState([]);
     const [newArrivals, setNewArrivals] = useState([]);
     const [fruitBaskets, setFruitBaskets] = useState([]);

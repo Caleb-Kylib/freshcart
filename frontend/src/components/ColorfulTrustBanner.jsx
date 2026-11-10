@@ -3,60 +3,20 @@ import { Truck, Timer, ShieldCheck, BadgeCheck, Package, HeadphonesIcon as Suppo
 
 const ColorfulTrustBanner = () => {
   const trustItems = [
-    {
-      icon: <Truck size={24} />,
-      title: 'Free Delivery',
-      description: 'Orders over KES 2,000',
-      gradient: 'from-brand-vibrant-green to-brand-primary',
-      delay: '0'
-    },
-    {
-      icon: <Timer size={24} />,
-      title: 'Same-Day Delivery',
-      description: 'Order before 12 PM',
-      gradient: 'from-brand-primary to-brand-vibrant-blue',
-      delay: '100'
-    },
-    {
-      icon: <ShieldCheck size={24} />,
-      title: 'Freshness Guarantee',
-      description: 'Or your money back',
-      gradient: 'from-brand-vibrant-green to-brand-primary',
-      delay: '200'
-    },
-    {
-      icon: <BadgeCheck size={24} />,
-      title: 'Certified Organic',
-      description: 'From local farms',
-      gradient: 'from-brand-primary to-brand-vibrant-blue',
-      delay: '300'
-    },
-    {
-      icon: <Package size={24} />,
-      title: 'Careful Packaging',
-      description: 'Eco-friendly materials',
-      gradient: 'from-brand-vibrant-blue to-brand-vibrant-green',
-      delay: '400'
-    },
-    {
-      icon: <Support size={24} />,
-      title: '24/7 Support',
-      description: 'Always here to help',
-      gradient: 'from-brand-vibrant-green to-brand-primary',
-      delay: '500'
-    },
+    { icon: <Truck size={24} />,      title: 'Free Delivery',       description: 'Orders over KES 2,000',   gradient: 'from-green-600 to-emerald-500' },
+    { icon: <Timer size={24} />,      title: 'Same-Day Delivery',   description: 'Order before 12 PM',       gradient: 'from-emerald-600 to-teal-500' },
+    { icon: <ShieldCheck size={24} />, title: 'Freshness Guarantee', description: 'Or your money back',       gradient: 'from-teal-600 to-cyan-500' },
+    { icon: <BadgeCheck size={24} />, title: 'Certified Organic',   description: 'From local farms',         gradient: 'from-green-700 to-emerald-500' },
+    { icon: <Package size={24} />,    title: 'Careful Packaging',   description: 'Eco-friendly materials',   gradient: 'from-emerald-600 to-green-500' },
+    { icon: <Support size={24} />,    title: '24/7 Support',        description: 'Always here to help',      gradient: 'from-cyan-600 to-teal-500' },
   ];
 
   return (
     <section className="py-12 relative overflow-hidden">
       {/* Animated gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-brand-vibrant-blue/5 via-brand-vibrant-green/5 to-brand-vibrant-lime/5">
-        {/* Animated dots pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiLz48cGF0aCBkPSJNMjAgMjBtLTEgMGEgMSAxIDAgMSAwIDIgMGExIDEgMCAxIDAtMiAwIiBmaWxsPSJyZ2JhKDEwLCAxODQsIDk3LCAwLjA1KSIvPjwvZz48L3N2Zz4=')]" />
-        
-        {/* Floating shapes */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-brand-vibrant-orange/10 to-brand-vibrant-yellow/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-brand-vibrant-green/10 to-brand-vibrant-lime/10 rounded-full blur-3xl animate-float animation-delay-1000" />
+      <div className="absolute inset-0 bg-emerald-50/60">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-green-200/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-emerald-200/20 rounded-full blur-3xl" />
       </div>
 
       <div className="container-custom relative z-10">
@@ -64,7 +24,7 @@ const ColorfulTrustBanner = () => {
           {trustItems.map((item, index) => (
             <div
               key={index}
-              className={`group relative p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 hover:border-transparent shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-in slide-in-from-bottom fade-in animation-delay-${item.delay}`}
+              className="group relative p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 hover:border-transparent shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
             >
               {/* Gradient background on hover */}
               <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-500`} />
