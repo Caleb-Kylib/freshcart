@@ -9,7 +9,7 @@ import {
   BarChart3,
   Trash2,
   Eye,
-  CSV
+  FileJson
 } from "lucide-react";
 import { useProducts } from "../context/ProductContext";
 import { useOrders } from "../context/OrderContext";
