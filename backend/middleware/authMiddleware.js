@@ -19,3 +19,15 @@ exports.adminOnly = (req, res, next) => {
     return res.status(403).json({ message: "Admin only" });
   next();
 };
+
+exports.managerOnly = (req, res, next) => {
+  if (req.user.role !== "manager" && req.user.role !== "admin")
+    return res.status(403).json({ message: "Manager or Admin access required" });
+  next();
+};
+
+exports.adminOrManager = (req, res, next) => {
+  if (!['admin', 'manager'].includes(req.user.role))
+    return res.status(403).json({ message: "Manager or Admin access required" });
+  next();
+};

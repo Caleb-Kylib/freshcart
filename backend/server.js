@@ -11,6 +11,7 @@ const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const ussdRoutes = require("./routes/ussd");
+const managerRoutes = require("./routes/managerRoutes");
 
 
 // Load environment variables from backend/.env
@@ -52,6 +53,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/ussd", ussdRoutes);
+app.use("/api/manager", managerRoutes);
 
 
 // Logout Route
