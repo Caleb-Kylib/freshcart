@@ -26,6 +26,7 @@ import AdminProducts from "./pages/AdminProducts";
 import AdminOrders from "./pages/AdminOrders";
 import AdminUsers from "./pages/AdminUsers";
 import AdminReports from "./pages/AdminReports";
+import AdminReportsView from "./pages/AdminReportsView";
 
 // Manager pages
 import ManagerDashboard from "./pages/ManagerDashboard";
@@ -156,7 +157,7 @@ function App() {
           path="/admin/reports"
           element={
             <ProtectedRoute adminOnly={true}>
-              <AdminReports />
+              <AdminReportsView />
             </ProtectedRoute>
           }
         />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../components/AdminLayout";
-import { ShoppingCart, Package, TrendingUp, Plus, ClipboardList, Users, AlertCircle } from "lucide-react";
+import { ShoppingCart, Package, TrendingUp, Plus, ClipboardList, Users, AlertCircle, FileText, Crown } from "lucide-react";
 import { useProducts } from "../context/ProductContext";
 import { useOrders } from "../context/OrderContext";
 import { useAuth } from "../context/AuthContext";
@@ -14,6 +14,7 @@ const AdminDashboard = () => {
     products: 0,
     orders: 0,
     users: 0,
+    managers: 0,
     revenue: 0,
     lowStockCount: 0,
     bestSellers: []
@@ -22,6 +23,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const revenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
     const lowStockCount = products.filter(p => p.stock < 10).length;
+    const managersCount = users.filter(u => u.role === "manager").length;
     const productSales = {};
     orders.forEach(order => {
       order.items.forEach(item => {
@@ -46,6 +48,7 @@ const AdminDashboard = () => {
       products: products.length,
       orders: orders.length,
       users: users.length,
+      managers: managersCount,
       revenue: revenue,
       lowStockCount,
       bestSellers
@@ -71,11 +74,12 @@ const AdminDashboard = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
         {[
           { label: "Total Revenue", value: `KES ${stats.revenue.toLocaleString()}`, sub: "+12% from last month", icon: <TrendingUp size={24} />, color: "bg-emerald-500", text: "text-emerald-600", light: "bg-emerald-50" },
           { label: "Active Orders", value: stats.orders, sub: "Pending processing", icon: <ShoppingCart size={24} />, color: "bg-blue-500", text: "text-blue-600", light: "bg-blue-50" },
           { label: "Store Inventory", value: stats.products, sub: "Items listed", icon: <Package size={24} />, color: "bg-orange-500", text: "text-orange-600", light: "bg-orange-50" },
+          { label: "Total Managers", value: stats.managers, sub: "Active managers", icon: <Crown size={24} />, color: "bg-purple-500", text: "text-purple-600", light: "bg-purple-50" },
           { label: "Platform Users", value: stats.users, sub: "Registered accounts", icon: <Users size={24} />, color: "bg-green-700", text: "text-green-700", light: "bg-green-50" },
         ].map((item, idx) => (
           <div key={idx} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
@@ -145,6 +149,10 @@ const AdminDashboard = () => {
                 <div className="bg-blue-200 group-hover:bg-blue-400 px-3 py-1 rounded-full text-[10px] font-black text-blue-700 group-hover:text-white transition-colors">
                   {stats.orders}
                 </div>
+              </Link>
+              <Link to="/admin/reports" className="flex items-center justify-between p-6 bg-purple-50 hover:bg-purple-500 hover:text-white rounded-[2rem] transition-all group border border-purple-100/50">
+                <span className="font-bold">Manager Reports</span>
+                <FileText size={20} className="group-hover:scale-110 transition-transform" />
               </Link>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import ProductModal from "../components/ProductModal";
-import { Plus, Edit, Trash2, Search, Package } from "lucide-react";
+import { Plus, Edit, Trash2, Search, Package, AlertCircle, CheckCircle } from "lucide-react";
 import { useProducts } from "../context/ProductContext";
 
 const AdminProducts = () => {
@@ -9,22 +9,36 @@ const AdminProducts = () => {
   const [openModal, setOpenModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+
+  // Show toast notification
+  const showToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "success" }), 4000);
+  };
 
   // Save/Update Handler
   const handleSaveProduct = (productData) => {
     if (editingProduct) {
       updateProduct(productData);
+      showToast("Product updated successfully!", "success");
     } else {
       addProduct(productData);
+      showToast("Product added successfully!", "success");
     }
     setOpenModal(false);
     setEditingProduct(null);
   };
 
   // Delete Handler
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      deleteProduct(id);
+      const result = await deleteProduct(id);
+      if (result.success) {
+        showToast("Product deleted successfully!", "success");
+      } else {
+        showToast(`Failed to delete product: ${result.message}`, "error");
+      }
     }
   };
 
@@ -135,7 +149,7 @@ const AdminProducts = () => {
                         <Edit size={20} />
                       </button>
                       <button
-                        onClick={() => handleDelete(p.id)}
+                        onClick={() => handleDelete(p._id)}
                         className="p-3 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-all"
                         title="Delete Product"
                       >
@@ -169,6 +183,25 @@ const AdminProducts = () => {
           onSave={handleSaveProduct}
           editingProduct={editingProduct}
         />
+      )}
+
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className={`fixed bottom-6 right-6 flex items-center gap-3 px-6 py-4 rounded-2xl shadow-lg border-l-4 animate-in fade-in slide-in-from-bottom-4 z-50 ${
+          toast.type === 'success' 
+            ? 'bg-green-50 border-l-green-500 text-green-800' 
+            : 'bg-red-50 border-l-red-500 text-red-800'
+        }`}>
+          {toast.type === 'success' ? (
+            <CheckCircle size={20} className="text-green-600" />
+          ) : (
+            <AlertCircle size={20} className="text-red-600" />
+          )}
+          <div>
+            <p className="font-bold text-sm">{toast.type === 'success' ? 'Success' : 'Error'}</p>
+            <p className="text-xs opacity-90">{toast.message}</p>
+          </div>
+        </div>
       )}
     </AdminLayout>
   );

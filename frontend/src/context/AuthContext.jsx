@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [users, setUsers] = useState([]);
+    const [managers, setManagers] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const API_URL = '/api/auth';
@@ -24,8 +25,10 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         if (user?.role === 'admin' && token) {
             fetchUsers();
+            fetchManagers();
         } else {
             setUsers([]);
+            setManagers([]);
         }
     }, [user, token]);
 
@@ -40,6 +43,20 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             console.error('Error fetching users:', error);
+        }
+    };
+
+    const fetchManagers = async () => {
+        try {
+            const response = await fetch(`${API_URL}/managers`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setManagers(data);
+            }
+        } catch (error) {
+            console.error('Error fetching managers:', error);
         }
     };
 
@@ -97,13 +114,95 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setToken(null);
         setUsers([]);
+        setManagers([]);
         localStorage.removeItem('token');
         localStorage.removeItem('currentUser');
         window.location.href = '/';
     };
 
+    // Create a new manager
+    const createManager = async (name, email, password) => {
+        try {
+            const response = await fetch(`${API_URL}/managers`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ name, email, password })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Failed to create manager');
+
+            // Refresh both users and managers lists
+            await fetchUsers();
+            await fetchManagers();
+            return { success: true, user: data.user, message: data.message };
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    };
+
+    // Update user role
+    const updateUserRole = async (userId, newRole) => {
+        try {
+            const response = await fetch(`${API_URL}/users/${userId}/role`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ role: newRole })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Failed to update user role');
+
+            // Refresh both users and managers lists
+            await fetchUsers();
+            await fetchManagers();
+            return { success: true, user: data.user, message: data.message };
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    };
+
+    // Delete a user
+    const deleteUserAccount = async (userId) => {
+        try {
+            const response = await fetch(`${API_URL}/users/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Failed to delete user');
+
+            // Refresh both users and managers lists
+            await fetchUsers();
+            await fetchManagers();
+            return { success: true, message: data.message };
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, token, users, loading, signup, login, logout, fetchUsers }}>
+        <AuthContext.Provider value={{ 
+            user, 
+            token, 
+            users, 
+            managers,
+            loading, 
+            signup, 
+            login, 
+            logout, 
+            fetchUsers,
+            fetchManagers,
+            createManager,
+            updateUserRole,
+            deleteUserAccount
+        }}>
             {children}
         </AuthContext.Provider>
     );

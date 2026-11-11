@@ -146,14 +146,17 @@ export const ProductProvider = ({ children }) => {
 
     const deleteProduct = async (id) => {
         try {
-            const response = await fetch(`${API_URL}/${id}`, {
+            // Normalize ID: always use MongoDB _id format
+            const productId = id;
+            const response = await fetch(`${API_URL}/${productId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
             if (response.ok) {
-                setProducts(prev => prev.filter(p => (p._id !== id && p.id !== id)));
+                // Filter using MongoDB _id (backend always returns _id)
+                setProducts(prev => prev.filter(p => p._id !== productId));
                 return { success: true };
             } else {
                 const data = await response.json();
