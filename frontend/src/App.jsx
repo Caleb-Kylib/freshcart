@@ -50,8 +50,7 @@ const ScrollToTop = () => {
 };
 
 const StorefrontLayout = () => {
-  const { user, loading } = useAuth();
-  const location = useLocation();
+  const { loading } = useAuth();
 
   if (loading) {
     return (
@@ -64,16 +63,6 @@ const StorefrontLayout = () => {
     );
   }
 
-  // Prevent admins from accessing storefront
-  if (user?.role === 'admin' && !location.pathname.startsWith('/admin')) {
-    return <Navigate to="/admin" replace />;
-  }
-
-  // Prevent managers from accessing storefront
-  if (user?.role === 'manager' && !location.pathname.startsWith('/manager')) {
-    return <Navigate to="/manager" replace />;
-  }
-
   return (
     <div className="flex flex-col min-h-screen font-sans text-gray-800">
       <Navbar />
@@ -82,7 +71,7 @@ const StorefrontLayout = () => {
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/product/:id" element={<ProductDetails />} />
-          <Route path="/products/:id" element={<Navigate to="/product/:id" replace />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogPost />} />
@@ -108,6 +97,19 @@ const StorefrontLayout = () => {
 };
 
 function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+          <p className="text-gray-500 font-medium animate-pulse">Loading FreshCart...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <ScrollToTop />
@@ -120,99 +122,107 @@ function App() {
         <Route path="/admin/signup" element={<AdminSignupPage />} />
         <Route path="/manager/login" element={<ManagerLoginPage />} />
 
-        {/* Admin Routes (Scoped under /admin) */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/products"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <AdminProducts />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/orders"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <AdminOrders />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/users"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <AdminUsers />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/reports"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <AdminReportsView />
-            </ProtectedRoute>
-          }
-        />
+        {/* Admin Routes - Check BEFORE storefront catch-all */}
+        {user?.role === 'admin' && (
+          <>
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/products"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminProducts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/orders"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminOrders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminUsers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/reports"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminReportsView />
+                </ProtectedRoute>
+              }
+            />
+          </>
+        )}
 
-        {/* Manager Routes */}
-        <Route
-          path="/manager"
-          element={
-            <ProtectedRoute roleRequired="manager">
-              <ManagerDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/manager/orders"
-          element={
-            <ProtectedRoute roleRequired="manager">
-              <ManagerOrders />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/manager/inventory"
-          element={
-            <ProtectedRoute roleRequired="manager">
-              <ManagerInventory />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/manager/stock-movements"
-          element={
-            <ProtectedRoute roleRequired="manager">
-              <ManagerStockMovements />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/manager/reports"
-          element={
-            <ProtectedRoute roleRequired="manager">
-              <ManagerReports />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/manager/cashier-activity"
-          element={
-            <ProtectedRoute roleRequired="manager">
-              <ManagerCashierActivity />
-            </ProtectedRoute>
-          }
-        />
+        {/* Manager Routes - Check BEFORE storefront catch-all */}
+        {user?.role === 'manager' && (
+          <>
+            <Route
+              path="/manager"
+              element={
+                <ProtectedRoute roleRequired="manager">
+                  <ManagerDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/manager/orders"
+              element={
+                <ProtectedRoute roleRequired="manager">
+                  <ManagerOrders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/manager/inventory"
+              element={
+                <ProtectedRoute roleRequired="manager">
+                  <ManagerInventory />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/manager/stock-movements"
+              element={
+                <ProtectedRoute roleRequired="manager">
+                  <ManagerStockMovements />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/manager/reports"
+              element={
+                <ProtectedRoute roleRequired="manager">
+                  <ManagerReports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/manager/cashier-activity"
+              element={
+                <ProtectedRoute roleRequired="manager">
+                  <ManagerCashierActivity />
+                </ProtectedRoute>
+              }
+            />
+          </>
+        )}
 
-        {/* Storefront Catch-all (EVERYTHING ELSE) */}
+        {/* Storefront Catch-all (EVERYTHING ELSE) - Now safely at the end */}
         <Route path="/*" element={<StorefrontLayout />} />
       </Routes>
 

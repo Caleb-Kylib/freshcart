@@ -429,38 +429,3 @@ const AdminUsers = () => {
 };
 
 export default AdminUsers;
-                                                    {lastOrderLabel}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
-                                                    Active
-                                                </span>
-                                        </td>
-                                    </tr>
-                                );
-                            })
-                            ) : (
-                                <tr>
-                                    <td colSpan="6" className="px-6 py-12 text-center">
-                                        <div className="flex flex-col items-center">
-                                            <div className="p-4 bg-gray-50 rounded-full mb-3 text-gray-300">
-                                                <Search size={32} />
-                                            </div>
-                                            <p className="text-gray-500 font-medium whitespace-normal max-w-xs">
-                                                No users found matching your search.
-                                            </p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </AdminLayout>
-    );
-};
-
-export default AdminUsers;

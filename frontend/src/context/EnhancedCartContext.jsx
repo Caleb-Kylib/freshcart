@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import { useToast } from '../components/ToastNotification';
+import { getStoredItem, removeStoredItem, setStoredItem } from '../utils/storage';
 
 const CartContext = createContext(null);
 
@@ -25,15 +26,34 @@ export const CartProvider = ({ children }) => {
         if (loading) return;
 
         // Remove legacy shared key so carts don't leak between accounts
-        localStorage.removeItem('cart');
+        removeStoredItem('cart');
 
         if (!token || !cartStorageKey) { setCartItems([]); return; }
 
         try {
-            const saved = localStorage.getItem(cartStorageKey);
-            setCartItems(saved ? JSON.parse(saved) : []);
-        } catch {
-            localStorage.removeItem(cartStorageKey);
+            const saved = getStoredItem(cartStorageKey);
+            const parsed = saved ? JSON.parse(saved) : [];
+            if (!Array.isArray(parsed) || parsed.some(item =>
+                !item ||
+                typeof item !== 'object' ||
+                Array.isArray(item) ||
+                (item._id == null && item.id == null) ||
+                typeof item.name !== 'string' ||
+                typeof item.price !== 'number' ||
+                !Number.isFinite(item.price) ||
+                typeof item.quantity !== 'number' ||
+                !Number.isFinite(item.quantity) ||
+                item.quantity <= 0
+            )) {
+                console.warn('Discarding invalid saved cart data.');
+                removeStoredItem(cartStorageKey);
+                setCartItems([]);
+                return;
+            }
+            setCartItems(parsed);
+        } catch (error) {
+            console.warn(`Discarding unreadable saved cart data:`, error);
+            removeStoredItem(cartStorageKey);
             setCartItems([]);
         }
     }, [cartStorageKey, loading, token]);
@@ -41,7 +61,7 @@ export const CartProvider = ({ children }) => {
     // ── Persist to localStorage ──────────────────────────────────────────────
     useEffect(() => {
         if (!loading && token && cartStorageKey) {
-            localStorage.setItem(cartStorageKey, JSON.stringify(cartItems));
+            setStoredItem(cartStorageKey, JSON.stringify(cartItems));
         }
     }, [cartItems, cartStorageKey, loading, token]);
 

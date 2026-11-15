@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getStoredItem, removeStoredItem, setStoredItem } from '../utils/storage';
 
 const AuthContext = createContext();
 
@@ -6,7 +7,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token'));
+    const [token, setToken] = useState(() => getStoredItem('token'));
     const [users, setUsers] = useState([]);
     const [managers, setManagers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -14,9 +15,22 @@ export const AuthProvider = ({ children }) => {
     const API_URL = '/api/auth';
 
     useEffect(() => {
-        const savedUser = localStorage.getItem('currentUser');
+        const savedUser = getStoredItem('currentUser');
         if (savedUser && token) {
-            setUser(JSON.parse(savedUser));
+            try {
+                const parsedUser = JSON.parse(savedUser);
+                if (!parsedUser || typeof parsedUser !== 'object' || Array.isArray(parsedUser)) {
+                    throw new Error('Saved user data is invalid.');
+                }
+                setUser(parsedUser);
+            } catch {
+                removeStoredItem('currentUser');
+                removeStoredItem('token');
+                setUser(null);
+                setToken(null);
+            }
+        } else {
+            setUser(null);
         }
         setLoading(false);
     }, [token]);
@@ -72,8 +86,8 @@ export const AuthProvider = ({ children }) => {
 
             setUser(data.user);
             setToken(data.token);
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            setStoredItem('token', data.token);
+            setStoredItem('currentUser', JSON.stringify(data.user));
             return { success: true };
         } catch (error) {
             const message = error.message === 'Failed to fetch'
@@ -99,8 +113,8 @@ export const AuthProvider = ({ children }) => {
 
             setUser(data.user);
             setToken(data.token);
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            setStoredItem('token', data.token);
+            setStoredItem('currentUser', JSON.stringify(data.user));
             return { success: true, user: data.user };
         } catch (error) {
             const message = error.message === 'Failed to fetch'
@@ -115,8 +129,8 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         setUsers([]);
         setManagers([]);
-        localStorage.removeItem('token');
-        localStorage.removeItem('currentUser');
+        removeStoredItem('token');
+        removeStoredItem('currentUser');
         window.location.href = '/';
     };
 
